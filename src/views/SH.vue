@@ -46,7 +46,7 @@ export default class SH extends Vue {
     // invoke('new_window');
     invoke('create_ssh', {
       SSHInfo: {
-        ip: '10.1.1.90',
+        ip: '',
         port: 22,
         username: '',
         passwd: '',
