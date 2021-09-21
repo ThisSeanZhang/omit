@@ -1,30 +1,55 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </div>
-  <router-view/>
+  <Title/>
+  path:{{message}}
+  <router-view />
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script lang="ts">
+import { Vue, Options } from 'vue-class-component';
+import { invoke } from '@tauri-apps/api/tauri';
+import Title from '@/views/Title.vue';
 
-#nav {
-  padding: 30px;
+@Options({
+  components: {
+    Title,
+  },
+})
+export default class App extends Vue {
+  public message = '';
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
+  created():void {
+    invoke<string>('current_path')
+      .then(value => {
+        this.message = value;
+      });
   }
+}
+</script>
+<style lang="scss">
+html, body , #app {
+  margin: 0px;
+  // overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+/*控制整个滚动条*/
+::-webkit-scrollbar {
+    background-color: lightgray;
+    width: 10px;
+    height: 10px;
+    background-clip: padding-box;
+}
+/*滚动条两端方向按钮*/
+::-webkit-scrollbar-button {
+    background-color: pink;
+}
+/*滚动条中间滑动部分*/
+::-webkit-scrollbar-thumb {
+    background-color: blue;
+    border-radius: 5px;
+}
+/*滚动条右下角区域*/
+::-webkit-scrollbar-corner {
+    background-color: red;
 }
 </style>

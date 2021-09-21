@@ -54,11 +54,11 @@
     "windows": [
       {
         "title": "Tauri App",
-        "width": 800,
-        "height": 600,
+        "width": 1152,
+        "height": 648,
         "resizable": true,
-        "transparent": false,
-        "decorations": true,
+        "transparent": true,
+        "decorations": false,
         "fullscreen": false
       }
     ],
