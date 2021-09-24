@@ -3,7 +3,7 @@ import SSH from '../views/SH.vue';
 
 export default [
   {
-    path: '/ssh',
+    path: '/ssh/:sessionName',
     name: 'ssh',
     component: SSH,
   },

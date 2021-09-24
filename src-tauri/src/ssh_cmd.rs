@@ -5,7 +5,7 @@ use std::ops::DerefMut;
 use std::sync::{Arc, Mutex};
 use std::{io::prelude::*};
 use std::net::TcpStream;
-use std::thread;
+use std::{env, thread};
 use crossbeam::channel::{Receiver, Sender, TryRecvError, unbounded};
 use uuid::Uuid;
 use serde::Deserialize;
@@ -24,6 +24,11 @@ struct Payload {
   message: String,
 }
 
+#[derive(serde::Serialize)]
+struct SSHMessage {
+  data: Vec<u8>,
+}
+
 fn read_channel(channel: &mut Channel, receiver: Receiver<String>, window: Window) {
     println!("stare read channel");
     let mut buf = [0; 4096];
@@ -32,11 +37,12 @@ fn read_channel(channel: &mut Channel, receiver: Receiver<String>, window: Windo
             Ok(size) => {
                 let s = String::from_utf8(buf[0..size].to_vec()).unwrap();
                 println!("size: {}, s len: {} {}", size, s.len(),s);
-                window.emit("ssh-data-from-backend", Payload { message: s.into() }).unwrap();
+                window.emit("ssh-data-from-backend", SSHMessage { data: buf[0..size].to_vec() }).unwrap();
             }
             Err(e) => {
                 if e.kind() != std::io::ErrorKind::WouldBlock {
                     println!("err {}", e);
+                    break;
                 }
             }
         }
@@ -71,6 +77,7 @@ fn read_channel(channel: &mut Channel, receiver: Receiver<String>, window: Windo
         }
         std::thread::sleep(std::time::Duration::from_millis(5));
     }
+    // window.emit("ssh-data-from-backend", Payload { message: "lose connection".into() }).unwrap();
 }
 
 #[derive(Deserialize)]
@@ -82,11 +89,14 @@ pub struct SSHInfo<'a> {
 }
 #[command]
 pub fn current_path(window: Window) -> String {
-    tauri::api::path::document_dir()
-    .unwrap()
-    .to_str()
-    .unwrap()
-    .to_string()
+    let path = env::current_dir().unwrap();
+    println!("The current directory is {}", path.display());
+    // tauri::api::path::document_dir()
+    // .unwrap()
+    // .to_str()
+    // .unwrap()
+    // .to_string()
+    path.display().to_string()
 }
 #[command]
 pub fn add_listen(window: Window) {
