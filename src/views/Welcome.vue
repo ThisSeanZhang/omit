@@ -9,7 +9,7 @@
     <input type="text" v-model="currentSSHInfo.passwd">
     <input type="button" value="插入" @click="save">
     <div v-for="sess in omitSessions" v-bind:key="sess">
-      <input type="button" value="连接" @click="connect(sess)">
+      <input type="button" :value="'连接' + sess" @click="connect(sess)">
     </div>
   </div>
 </div>
