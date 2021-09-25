@@ -4,7 +4,7 @@ import Welcome from '../views/Welcome.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: '/',
+    path: '/:sessionName?',
     name: 'Welcome',
     component: Welcome,
   },

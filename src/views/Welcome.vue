@@ -1,27 +1,91 @@
 <template>
 <div>
-  <div class="welcome-container">
-    {{currentSSHInfo}}
-    <input type="text" v-model="currentSSHInfo.name">
-    <input type="text" v-model="currentSSHInfo.ip">
-    <input type="text" v-model="currentSSHInfo.port">
-    <input type="text" v-model="currentSSHInfo.username">
-    <input type="text" v-model="currentSSHInfo.passwd">
-    <input type="button" value="插入" @click="save">
-    <div v-for="sess in omitSessions" v-bind:key="sess">
-      <input type="button" :value="'连接' + sess" @click="connect(sess)">
-    </div>
-  </div>
+  <n-space vertical size="large">
+    <n-layout has-sider position="absolute">
+      <n-layout-sider width="33%">
+        <n-space style="height: 100%; position: relative">
+          <n-layout position="absolute">
+            <n-layout-header position="absolute" style="padding: 5px">
+              <n-input v-model:value="queryStr" type="text" placeholder="筛选会话" clearable  />
+            </n-layout-header>
+            <n-layout-content
+              style="top: 44px; padding: 5px;"
+              position="absolute"
+              :native-scrollbar="false"
+            >
+              <OmitSession
+                v-for="sess in omitSessions"
+                v-bind:key="sess" :value="sess"/>
+              <!-- <OmitSession
+                v-for="sess in omitSessions"
+                v-bind:key="sess" :value="sess"/>
+              <OmitSession
+                v-for="sess in omitSessions"
+                v-bind:key="sess" :value="sess"/>
+              <OmitSession
+                v-for="sess in omitSessions"
+                v-bind:key="sess" :value="sess"/>
+              <OmitSession
+                v-for="sess in omitSessions"
+                v-bind:key="sess" :value="sess"/>
+              <OmitSession
+                v-for="sess in omitSessions"
+                v-bind:key="sess" :value="sess"/>
+              <OmitSession
+                v-for="sess in omitSessions"
+                v-bind:key="sess" :value="sess"/>
+              <OmitSession
+                v-for="sess in omitSessions"
+                v-bind:key="sess" :value="sess"/>
+              <OmitSession
+                v-for="sess in omitSessions"
+                v-bind:key="sess" :value="sess"/>
+              <OmitSession
+                v-for="sess in omitSessions"
+                v-bind:key="sess" :value="sess"/>
+              <OmitSession
+                v-for="sess in omitSessions"
+                v-bind:key="sess" :value="sess"/>
+              <OmitSession
+                v-for="sess in omitSessions"
+                v-bind:key="sess" :value="sess"/>
+              <OmitSession
+                v-for="sess in omitSessions"
+                v-bind:key="sess" :value="sess"/> -->
+            </n-layout-content>
+          </n-layout>
+        </n-space>
+      </n-layout-sider>
+        <n-layout-content
+          style="flex: 2"
+          :native-scrollbar='false'
+        >
+        <OmitSessionForm v-on:session_save_done="flashSessions" />
+        </n-layout-content>
+    </n-layout>
+  </n-space>
 </div>
 </template>
 <script lang="ts">
-import { Vue } from 'vue-class-component';
+import { Options, Vue } from 'vue-class-component';
 import { invoke } from '@tauri-apps/api/tauri';
 import SSHInfo from '@/lib/SSInfo';
+import OmitSession from '@/components/Session/OmitSession.vue';
+import OmitSessionForm from '@/components/Session/OmitSessionForm.vue';
 
+@Options({
+  components: {
+    OmitSession,
+    OmitSessionForm,
+  },
+})
 export default class Welcome extends Vue {
-  public myModel = {
-    myDate: '123456',
+  public queryStr = '';
+
+  data() {
+    return {
+      queryStr: this.queryStr,
+    };
   }
 
   public omitSessions = new Array<string>();
@@ -45,14 +109,15 @@ export default class Welcome extends Vue {
       this.omitSessions = sess;
     }).catch((e:string) => console.log(e));
   }
-  connect(sessionName: string): void {
-    this.$router.push({ name: 'ssh', params: { sessionName } });
+
+  input(value: string): void {
+    console.log(value);
   }
 }
 </script>
 <style lang="scss" scoped>
-.welcome-container {
-  width: 100%;
-  height: 100%;
-}
+// .welcome-container {
+//   width: 100%;
+//   height: 100%;
+// }
 </style>

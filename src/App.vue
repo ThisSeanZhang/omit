@@ -1,10 +1,30 @@
 <template>
-  <Title class="title" />
-  <router-view class="app_contents" />
+<n-config-provider :theme="theme" style="height: 100%;">
+  <!-- <n-space vertical size="large" > -->
+      <n-layout-header>
+        <Title class="title" />
+      </n-layout-header>
+
+      <!-- :native-scrollbar="false" -->
+      <router-view class="contents"/>
+      <!-- <n-layout position="absolute" style="top: 30px; bottom: 30px;">
+        <router-view />
+      </n-layout> -->
+      <!-- <n-layout-content
+        position="absolute"
+        style="top: 30px; bottom: 30px;"
+         >
+        <router-view/>
+      </n-layout-content> -->
+
+      <n-layout-footer style="height: 30px;">成府路</n-layout-footer>
+  <!-- </n-space> -->
+</n-config-provider>
 </template>
 
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
+import { darkTheme } from 'naive-ui';
 // import { invoke } from '@tauri-apps/api/tauri';
 import Title from '@/views/Title.vue';
 
@@ -22,30 +42,44 @@ export default class App extends Vue {
   //       this.message = value;
   //     });
   // }
+  public theme = darkTheme;
+  created(): void {
+    console.log(darkTheme);
+  }
 }
 </script>
 <style lang="scss">
-#app {
-  background-color: rgba(91, 190, 195, 0.5);
-}
 html, body , #app {
   // background: inherit;
-  margin: 0px;
-  overflow: hidden;
+  // margin: 0px;
+  // overflow: hidden;
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: column;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  position: page;
+  // display: flex;
+  // flex-direction: column;
 }
-.title {
-  height: 30px;
+.contents {
+  height: calc(100% - 60px);
+  position: relative;
+  overflow: hidden;
 }
-.app_contents {
-  flex: 1;
-  box-shadow: 0 0 1rem 0 rgba(0, 0, 0, .2);
-  background-color: rgba(255, 255, 255, .15);
-  backdrop-filter: blur(5px);
-}
+// .n-config-provider{
+//   height: 100%;
+// }
+// .title {
+//   height: 30px;
+// }
+// .app_contents {
+//   flex: 1;
+//   box-shadow: 0 0 1rem 0 rgba(0, 0, 0, .2);
+//   background-color: rgba(255, 255, 255, .15);
+//   backdrop-filter: blur(5px);
+// }
 /*控制整个滚动条*/
 ::-webkit-scrollbar {
     background-color: lightgray;

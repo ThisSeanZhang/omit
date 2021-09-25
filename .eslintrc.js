@@ -21,6 +21,7 @@ module.exports = {
     ],
     'class-methods-use-this': 'off',
     'lines-between-class-members': 'off',
+    'max-classes-per-file': 'off',
     // 'class-methods-use-this': ['error', {
     //   exceptMethods: [
     //     // react lifecycle methods, from the airbnb rule

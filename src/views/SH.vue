@@ -1,6 +1,8 @@
 <template>
-  {{sess}}
-  <div ref="terminal"></div>
+  <div>
+    {{sess}}
+    <div ref="terminal"></div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -88,3 +90,5 @@ export default class SH extends Vue {
   }
 }
 </script>
+<style lang="scss" scoped>
+</style>
