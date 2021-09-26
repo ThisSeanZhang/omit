@@ -55,6 +55,7 @@ export default class OmitSessions extends Vue.with(class {
   }
 
   reviewOmitSessionConfig():void {
+    console.log(`want to push session: ${this.value}`);
     this.$router.push({ name: 'Welcome', params: { sessionName: this.value } });
   }
 

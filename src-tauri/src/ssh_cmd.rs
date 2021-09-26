@@ -126,7 +126,7 @@ pub fn create_ssh(window: Window, ssh_state: State<SSHState>, SSHInfo { ip, port
         trx.send(event.payload().unwrap().to_string());
         // println!("got window event-name with payload {:?}", event.payload());
     });
-    
+    // window.unlisten(front_listen_id);
     thread::spawn(move || {
         read_channel(&mut channel, rev, window);
     });

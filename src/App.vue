@@ -17,7 +17,7 @@
         <router-view/>
       </n-layout-content> -->
 
-      <n-layout-footer style="height: 30px;">成府路</n-layout-footer>
+      <n-layout-footer style="height: 30px;"></n-layout-footer>
   <!-- </n-space> -->
 </n-config-provider>
 </template>

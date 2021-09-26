@@ -14,7 +14,10 @@
           <n-input placeholder="IP地址" v-model:value="omitSession.ip" />
         </n-form-item-gi>
         <n-form-item-gi :span="4" label="端口号" path="session.port">
-          <n-input placeholder="端口号" v-model:value="omitSession.port" />
+          <n-input-number :show-button="false"
+            placeholder="端口号"
+            v-model:value="omitSession.port"
+          />
         </n-form-item-gi>
         <n-form-item-gi :span="24" label="用户名" path="session.username">
           <n-input placeholder="用户名" v-model:value="omitSession.username" />
