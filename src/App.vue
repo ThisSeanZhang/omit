@@ -82,22 +82,26 @@ html, body , #app {
 // }
 /*控制整个滚动条*/
 ::-webkit-scrollbar {
-    background-color: lightgray;
-    width: 10px;
-    height: 10px;
+    background-color: rgba(255, 255, 255, 0.2);
+    width: 6px;
+    height: 6px;
     background-clip: padding-box;
 }
-/*滚动条两端方向按钮*/
-::-webkit-scrollbar-button {
-    background-color: pink;
+::-webkit-scrollbar:hover {
+    width: 20px;
+    height: 20px;
 }
+/*滚动条两端方向按钮*/
+// ::-webkit-scrollbar-button {
+//   background-color: pink;
+// }
 /*滚动条中间滑动部分*/
 ::-webkit-scrollbar-thumb {
-    background-color: blue;
-    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
 }
 /*滚动条右下角区域*/
-::-webkit-scrollbar-corner {
-    background-color: red;
-}
+// ::-webkit-scrollbar-corner {
+//   background-color: red;
+// }
 </style>

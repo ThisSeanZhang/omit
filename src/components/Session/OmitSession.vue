@@ -1,16 +1,16 @@
 <template>
-  <div class="session_card">
-    <div @click="plusOme">{{value}}</div>
+  <div class="session_card" @click="reviewOmitSessionConfig">
+    <div>{{value}}</div>
     <div class="card_btns">
-      <n-button class="card_btn" text @click="connect">
+      <n-button class="card_btn" text @click.stop="connect">
         <n-icon>
          <PlugDisconnected20Regular />
         </n-icon>
       </n-button>
 
       <n-popconfirm
-        @positive-click="handlePositiveClick"
-        @negative-click="handleNegativeClick"
+        @positive-click="clickOK"
+        @negative-click="clickNo"
         positive-text="NO!!!" negative-text="YES"
       >
         <!-- <template #icon>
@@ -19,7 +19,7 @@
           </n-icon>
         </template> -->
         <template #trigger>
-          <n-button class="card_btn" text>
+          <n-button class="card_btn" @click.stop text>
             <n-icon>
             <Delete20Regular />
             </n-icon>
@@ -52,6 +52,18 @@ export default class OmitSessions extends Vue.with(class {
 }) {
   connect(): void {
     this.$router.push({ name: 'ssh', params: { sessionName: this.value } });
+  }
+
+  reviewOmitSessionConfig():void {
+    this.$router.push({ name: 'Welcome', params: { sessionName: this.value } });
+  }
+
+  clickOK(): void {
+    console.log('ok');
+  }
+
+  clickNo(): void {
+    console.log('no');
   }
 }
 </script>

@@ -44,6 +44,28 @@ import OmitSession from '@/lib/OmitSession';
 export default class OmitSessions extends Vue {
   public omitSession: OmitSession = new OmitSession();
 
+  created(): void{
+    console.log(this.$route.params.sessionName);
+    this.$watch(
+      () => this.$route.params.sessionName,
+      (nSessionName: string, _:string) => {
+        // 对路由变化做出响应...
+        console.log(`nSessionName: ${nSessionName}`);
+        this.readSessionInfo(nSessionName);
+      },
+    );
+  }
+
+  readSessionInfo(sessionName: string) {
+    invoke<OmitSession>('read_session', {
+      sessionName: this.$route.params.sessionName,
+    }).then(sess => {
+      this.omitSession = sess;
+    }).catch((msg:string) => {
+      console.log(msg);
+    });
+  }
+
   save(): void {
     invoke<string>('save_session', { sess: this.omitSession })
       .then(msg => {

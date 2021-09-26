@@ -10,18 +10,12 @@ use crossbeam::channel::{Receiver, Sender, TryRecvError, unbounded};
 use uuid::Uuid;
 use serde::Deserialize;
 
-use tauri::{AppHandle, Window, WindowUrl, command, State};
-
+use tauri::{AppHandle, Window, WindowUrl, command, State, Manager};
 
 pub struct SSHState(pub Arc<Mutex<HashMap<String, SSHSessionManage>>>);
 
 pub struct SSHSessionManage {
     sess: Session,
-}
-
-#[derive(serde::Serialize)]
-struct Payload {
-  message: String,
 }
 
 #[derive(serde::Serialize)]
@@ -77,7 +71,7 @@ fn read_channel(channel: &mut Channel, receiver: Receiver<String>, window: Windo
         }
         std::thread::sleep(std::time::Duration::from_millis(5));
     }
-    // window.emit("ssh-data-from-backend", Payload { message: "lose connection".into() }).unwrap();
+    window.emit("ssh-data-from-backend", SSHMessage { data: "lose connection".into() }).unwrap();
 }
 
 #[derive(Deserialize)]
@@ -107,6 +101,12 @@ pub fn add_listen(window: Window) {
 #[command]
 pub fn create_ssh(window: Window, ssh_state: State<SSHState>, SSHInfo { ip, port, username, passwd }: SSHInfo) {
     println!("use ssh method");
+    let window_label = window.label().to_string();
+    {
+        if ssh_state.0.lock().unwrap().contains_key(&window_label) {
+            return;
+        }
+    }
     let tcp = TcpStream::connect(format!("{}:{}", ip, port)).unwrap();
     let mut sess = Session::new().unwrap();
     sess.set_tcp_stream(tcp);
@@ -126,7 +126,7 @@ pub fn create_ssh(window: Window, ssh_state: State<SSHState>, SSHInfo { ip, port
         trx.send(event.payload().unwrap().to_string());
         // println!("got window event-name with payload {:?}", event.payload());
     });
-    let window_label = window.label().to_string();
+    
     thread::spawn(move || {
         read_channel(&mut channel, rev, window);
     });
