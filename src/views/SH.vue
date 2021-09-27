@@ -1,7 +1,6 @@
 <template>
   <div>
-    {{sess}}
-    <div ref="terminal"></div>
+    <div style="height: 100%; background-color: rgb(0,0,0);" ref="terminal"></div>
   </div>
 </template>
 
@@ -13,6 +12,7 @@ import { invoke } from '@tauri-apps/api/tauri';
 import { Event } from '@tauri-apps/api/event';
 import { getCurrent } from '@tauri-apps/api/window';
 import { SerializeAddon } from 'xterm-addon-serialize';
+import { FitAddon } from 'xterm-addon-fit';
 import SSHInfo from '@/lib/SSInfo';
 
 export default class SH extends Vue {
@@ -38,7 +38,20 @@ export default class SH extends Vue {
       // rendererType: 'dom'
     });
     const serializeAddon = new SerializeAddon();
+    const fit = new FitAddon();
+    term.onResize((a:{cols: number, rows: number}) => {
+      console.log(`on resize: ${JSON.stringify(a)}`);
+      current.emit('ssh-resize-from-front', JSON.stringify({
+        SizeChange: {
+          width: a.cols,
+          height: a.rows,
+          width_px: null,
+          height_px: null,
+        },
+      }));
+    });
     term.loadAddon(serializeAddon);
+    term.loadAddon(fit);
     term.onData(data => {
       current.emit('ssh-data-from-frontend', data);
     });
@@ -74,6 +87,22 @@ export default class SH extends Vue {
       },
     });
     term.open(this.$refs.terminal);
+    // if (this.$refs.terminal.parentElement != null) {
+    //   this.$refs.terminal.parentElement.onresize((_: UIEvent): void => {
+    //     console.log('resize');
+    //   });
+    // }
+
+    // resizeObser(this.$refs.terminal.parentElement, () => {
+    //   fit.fit();
+    // });
+    const resizeObserver = new ResizeObserver(e => {
+      fit.fit();
+    });
+    if (this.$refs.terminal.parentElement != null) {
+      resizeObserver.observe(this.$refs.terminal.parentElement);
+    }
+    fit.fit();
   }
 
   mounted(): void {

@@ -1,16 +1,14 @@
 use ssh2::{Channel, Session};
-use std::borrow::BorrowMut;
 use std::collections::HashMap;
-use std::ops::DerefMut;
 use std::sync::{Arc, Mutex};
 use std::{io::prelude::*};
 use std::net::TcpStream;
 use std::{env, thread};
 use crossbeam::channel::{Receiver, Sender, TryRecvError, unbounded};
 use uuid::Uuid;
-use serde::Deserialize;
+use serde::{Serialize, Deserialize};
 
-use tauri::{AppHandle, Window, WindowUrl, command, State, Manager};
+use tauri::{AppHandle, Window, WindowUrl, command, State};
 
 pub struct SSHState(pub Arc<Mutex<HashMap<String, SSHSessionManage>>>);
 
@@ -18,12 +16,22 @@ pub struct SSHSessionManage {
     sess: Session,
 }
 
-#[derive(serde::Serialize)]
+#[derive(Serialize, Deserialize)]
 struct SSHMessage {
   data: Vec<u8>,
 }
+#[derive(Serialize, Deserialize, Debug)]
+enum ChannelAction {
+    Message(String),
+    SizeChange {
+        width: u32,
+        height: u32,
+        width_px: Option<u32>,
+        height_px: Option<u32>
+    }
+}
 
-fn read_channel(channel: &mut Channel, receiver: Receiver<String>, window: Window) {
+fn read_channel(channel: &mut Channel, action_get: Receiver<ChannelAction>, window: Window) {
     println!("stare read channel");
     let mut buf = [0; 4096];
     while !channel.eof() {
@@ -40,35 +48,57 @@ fn read_channel(channel: &mut Channel, receiver: Receiver<String>, window: Windo
                 }
             }
         }
-        if !receiver.is_empty() {
-            match receiver.try_recv() {
-                Ok(line) => {
-                    
-                    // let cmd_string = if line == "\n" {
-                    //     "\n".to_string()
-                    // } else {
-                    //     line + "\n"
-                    // };
-                    // println!("{:?}", line.bytes());
-                    // let cmd_string = line + "\n";
-                    channel.write(line.as_bytes()).unwrap();
-                    channel.flush().unwrap();
-                    // channel.write_fmt(format_args!("{}\n", line)).unwrap();
+        if !action_get.is_empty() {
+            match action_get.try_recv() {
+                Ok(action) => {
+                    match action {
+                        ChannelAction::Message(line) => {
+                            channel.write(line.as_bytes()).unwrap();
+                            channel.flush().unwrap();
+                        },
+                        ChannelAction::SizeChange{ width, height, width_px, height_px } => {
+                            channel.request_pty_size(width, height, width_px, height_px);
+                        },
+                        _ => println!("")
+                    }
                 }
-  
                 Err(TryRecvError::Empty) => {
                     println!("{}", "empty");
                 }
-  
                 Err(TryRecvError::Disconnected) => {
                     println!("{}", "disconnected");
                 }
-                // Err(e) => {
-                //     println!("{:?}", e);
-                // }
-                // _=> ()
             }
         }
+        // if !receiver.is_empty() {
+        //     match receiver.try_recv() {
+        //         Ok(line) => {
+                    
+        //             // let cmd_string = if line == "\n" {
+        //             //     "\n".to_string()
+        //             // } else {
+        //             //     line + "\n"
+        //             // };
+        //             // println!("{:?}", line.bytes());
+        //             // let cmd_string = line + "\n";
+        //             channel.write(line.as_bytes()).unwrap();
+        //             channel.flush().unwrap();
+        //             // channel.write_fmt(format_args!("{}\n", line)).unwrap();
+        //         }
+  
+        //         Err(TryRecvError::Empty) => {
+        //             println!("{}", "empty");
+        //         }
+  
+        //         Err(TryRecvError::Disconnected) => {
+        //             println!("{}", "disconnected");
+        //         }
+        //         // Err(e) => {
+        //         //     println!("{:?}", e);
+        //         // }
+        //         // _=> ()
+        //     }
+        // }
         std::thread::sleep(std::time::Duration::from_millis(5));
     }
     window.emit("ssh-data-from-backend", SSHMessage { data: "lose connection".into() }).unwrap();
@@ -121,14 +151,23 @@ pub fn create_ssh(window: Window, ssh_state: State<SSHState>, SSHInfo { ip, port
     channel.shell().unwrap();
     
     sess.set_blocking(false);
-    let (trx, rev):(Sender<String>, Receiver<String>) = unbounded();
+    // let (trx, rev):(Sender<String>, Receiver<String>) = unbounded();
+    let (action_send, action_get) = unbounded();
+    let line_send = action_send.clone();
     let front_listen_id = window.listen("ssh-data-from-frontend", move |event| {
-        trx.send(event.payload().unwrap().to_string());
+        // trx.send(event.payload().unwrap().to_string());
+        line_send.send(ChannelAction::Message(event.payload().unwrap().to_string()));
         // println!("got window event-name with payload {:?}", event.payload());
     });
     // window.unlisten(front_listen_id);
+    let resize_listen_id = window.listen("ssh-resize-from-front", move|event | {
+        if let Some(size_data) = event.payload() {
+            let pty_size : ChannelAction = serde_json::from_str(size_data).unwrap();
+            action_send.send(pty_size);
+        }
+    });
     thread::spawn(move || {
-        read_channel(&mut channel, rev, window);
+        read_channel(&mut channel, action_get, window);
     });
     // let my_uuid = Uuid::new_v4();
     ssh_state.0.lock().unwrap().insert(window_label, SSHSessionManage { 

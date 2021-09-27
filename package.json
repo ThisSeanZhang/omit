@@ -10,13 +10,13 @@
     "tauri:serve": "vue-cli-service tauri:serve"
   },
   "dependencies": {
-    "naive-ui": "^2.19.1",
-    "vfonts": "^0.1.0",
+    "@tauri-apps/api": "^1.0.0-beta.8",
     "@vicons/fa": "^0.11.0",
     "@vicons/fluent": "^0.11.0",
-    "@tauri-apps/api": "^1.0.0-beta.8",
     "core-js": "^3.6.5",
+    "naive-ui": "^2.19.1",
     "tauri": "^0.14.1",
+    "vfonts": "^0.1.0",
     "vue": "^3.0.0",
     "vue-class-component": "^8.0.0-0",
     "vue-router": "^4.0.0-0",
@@ -28,6 +28,7 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.18.0",
     "@typescript-eslint/parser": "^4.18.0",
+    "@types/resize-observer-browser": "^0.1.4",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-plugin-router": "~4.5.0",
