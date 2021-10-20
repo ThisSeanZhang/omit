@@ -162,8 +162,7 @@ pub fn create_ssh(window: Window, ssh_state: State<SSHState>, SSHInfo { ip, port
     // window.unlisten(front_listen_id);
     let resize_listen_id = window.listen("ssh-resize-from-front", move|event | {
         if let Some(size_data) = event.payload() {
-            let pty_size : ChannelAction = serde_json::from_str(size_data).unwrap();
-            action_send.send(pty_size);
+            action_send.send(serde_json::from_str(size_data).unwrap());
         }
     });
     thread::spawn(move || {
