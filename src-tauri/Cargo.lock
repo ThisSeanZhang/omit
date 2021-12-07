@@ -41,7 +41,6 @@ dependencies = [
  "ssh2",
  "tauri",
  "tauri-build",
- "tokio",
  "uuid",
 ]
 
