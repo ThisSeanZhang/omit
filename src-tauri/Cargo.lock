@@ -41,6 +41,7 @@ dependencies = [
  "ssh2",
  "tauri",
  "tauri-build",
+ "tokio",
  "uuid",
 ]
 
@@ -398,9 +399,9 @@ dependencies = [
 
 [[package]]
 name = "conpty"
-version = "0.1.1"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cf2142e88a43681d3093754a55ce2aa2121435cb4c931e1d5f171a5d8db8519f"
+checksum = "1b306bd4a84f598049516949dc545531512c7932f2de75024dc038238aa37b30"
 dependencies = [
  "windows",
 ]
@@ -3177,9 +3178,9 @@ checksum = "cda74da7e1a664f795bb1f8a87ec406fb89a02522cf6e50620d016add6dbbf5c"
 
 [[package]]
 name = "tokio"
-version = "1.11.0"
+version = "1.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b4efe6fc2395938c8155973d7be49fe8d03a843726e285e100a8a383cc0154ce"
+checksum = "70e992e41e0d2fb9f755b37446f20900f64446ef54874f40a60c78f021ac6144"
 dependencies = [
  "autocfg",
  "bytes",
