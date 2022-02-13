@@ -115,7 +115,7 @@ fn read_pty_output(process: Process, action_get: Receiver<ChannelAction>, window
         match output.read(&mut buf) {
             Ok(size) => {
                 println!("size: {}", size);
-                let s = String::from_utf8(buf[0..size].to_vec()).unwrap();
+                // let s = String::from_utf8(buf[0..size].to_vec()).unwrap();
                 // println!("size: {}", size);
                 // println!("size: {}, s len: {} {}", size, s.len(),s);
                 window.emit("ssh-data-from-backend", SSHMessage { data: buf[0..size].to_vec() }).unwrap();
@@ -180,7 +180,7 @@ pub fn add_listen(window: Window) {
     });
 }
 
-#[command]
+#[tauri::command]
 pub fn create_ssh(window: Window, ssh_state: State<'_, SSHState>, SSHInfo{ username, ip, port, ..}: SSHInfo<'_>) -> Result<(), String>{
     println!("use ssh method");
     let window_label = window.label().to_string();
