@@ -16,7 +16,7 @@ pub struct SSHSessionManage {
     sess: Session,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 struct SSHMessage {
   data: Vec<u8>,
 }
