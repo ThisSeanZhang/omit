@@ -2,21 +2,21 @@ use ssh2::{Channel, Session};
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 use std::{io::prelude::*};
-use std::net::TcpStream;
 use std::{env, thread};
 use crossbeam::channel::{Receiver, Sender, TryRecvError, unbounded};
 use uuid::Uuid;
 use serde::{Serialize, Deserialize};
 
-use tauri::{AppHandle, Window, WindowUrl, command, State};
+use conpty::{self, Process};
 
+use tauri::{AppHandle, Window, WindowUrl, command, State};
 pub struct SSHState(pub Arc<Mutex<HashMap<String, SSHSessionManage>>>);
 
 pub struct SSHSessionManage {
     sess: Session,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 struct SSHMessage {
   data: Vec<u8>,
 }
@@ -31,14 +31,93 @@ enum ChannelAction {
     }
 }
 
-fn read_channel(channel: &mut Channel, action_get: Receiver<ChannelAction>, window: Window) {
+// fn read_channel(channel: &mut Channel, action_get: Receiver<ChannelAction>, window: Window) {
+//     println!("stare read channel");
+//     let mut buf = [0; 4096];
+//     while !channel.eof() {
+//         match channel.read(&mut buf) {
+//             Ok(size) => {
+//                 let s = String::from_utf8(buf[0..size].to_vec()).unwrap();
+//                 println!("size: {}, s len: {} {}", size, s.len(),s);
+//                 window.emit("ssh-data-from-backend", SSHMessage { data: buf[0..size].to_vec() }).unwrap();
+//             }
+//             Err(e) => {
+//                 if e.kind() != std::io::ErrorKind::WouldBlock {
+//                     println!("err {}", e);
+//                     break;
+//                 }
+//             }
+//         }
+//         if !action_get.is_empty() {
+//             match action_get.try_recv() {
+//                 Ok(action) => {
+//                     match action {
+//                         ChannelAction::Message(line) => {
+//                             channel.write(line.as_bytes()).unwrap();
+//                             channel.flush().unwrap();
+//                         },
+//                         ChannelAction::SizeChange{ width, height, width_px, height_px } => {
+//                             channel.request_pty_size(width, height, width_px, height_px);
+//                         },
+//                         _ => println!("")
+//                     }
+//                 }
+//                 Err(TryRecvError::Empty) => {
+//                     println!("{}", "empty");
+//                 }
+//                 Err(TryRecvError::Disconnected) => {
+//                     println!("{}", "disconnected");
+//                 }
+//             }
+//         }
+//         // if !receiver.is_empty() {
+//         //     match receiver.try_recv() {
+//         //         Ok(line) => {
+                    
+//         //             // let cmd_string = if line == "\n" {
+//         //             //     "\n".to_string()
+//         //             // } else {
+//         //             //     line + "\n"
+//         //             // };
+//         //             // println!("{:?}", line.bytes());
+//         //             // let cmd_string = line + "\n";
+//         //             channel.write(line.as_bytes()).unwrap();
+//         //             channel.flush().unwrap();
+//         //             // channel.write_fmt(format_args!("{}\n", line)).unwrap();
+//         //         }
+  
+//         //         Err(TryRecvError::Empty) => {
+//         //             println!("{}", "empty");
+//         //         }
+  
+//         //         Err(TryRecvError::Disconnected) => {
+//         //             println!("{}", "disconnected");
+//         //         }
+//         //         // Err(e) => {
+//         //         //     println!("{:?}", e);
+//         //         // }
+//         //         // _=> ()
+//         //     }
+//         // }
+//         std::thread::sleep(std::time::Duration::from_millis(5));
+//     }
+//     window.emit("ssh-data-from-backend", SSHMessage { data: "lose connection".into() }).unwrap();
+// }
+
+// TODO use tokio select & async split read and write 
+fn read_pty_output(process: Process, action_get: Receiver<ChannelAction>, window: Window) {
     println!("stare read channel");
+    let mut output = process.output().unwrap();
+    let mut input = process.input().unwrap();
+    output.set_non_blocking_mode().unwrap();
     let mut buf = [0; 4096];
-    while !channel.eof() {
-        match channel.read(&mut buf) {
+    while process.is_alive() {
+        match output.read(&mut buf) {
             Ok(size) => {
-                let s = String::from_utf8(buf[0..size].to_vec()).unwrap();
-                println!("size: {}, s len: {} {}", size, s.len(),s);
+                println!("size: {}", size);
+                // let s = String::from_utf8(buf[0..size].to_vec()).unwrap();
+                // println!("size: {}", size);
+                // println!("size: {}, s len: {} {}", size, s.len(),s);
                 window.emit("ssh-data-from-backend", SSHMessage { data: buf[0..size].to_vec() }).unwrap();
             }
             Err(e) => {
@@ -53,11 +132,11 @@ fn read_channel(channel: &mut Channel, action_get: Receiver<ChannelAction>, wind
                 Ok(action) => {
                     match action {
                         ChannelAction::Message(line) => {
-                            channel.write(line.as_bytes()).unwrap();
-                            channel.flush().unwrap();
+                            input.write(line.as_bytes()).unwrap();
+                            input.flush().unwrap();
                         },
                         ChannelAction::SizeChange{ width, height, width_px, height_px } => {
-                            channel.request_pty_size(width, height, width_px, height_px);
+                            process.resize(width as i16, height as i16);
                         },
                         _ => println!("")
                     }
@@ -70,46 +149,18 @@ fn read_channel(channel: &mut Channel, action_get: Receiver<ChannelAction>, wind
                 }
             }
         }
-        // if !receiver.is_empty() {
-        //     match receiver.try_recv() {
-        //         Ok(line) => {
-                    
-        //             // let cmd_string = if line == "\n" {
-        //             //     "\n".to_string()
-        //             // } else {
-        //             //     line + "\n"
-        //             // };
-        //             // println!("{:?}", line.bytes());
-        //             // let cmd_string = line + "\n";
-        //             channel.write(line.as_bytes()).unwrap();
-        //             channel.flush().unwrap();
-        //             // channel.write_fmt(format_args!("{}\n", line)).unwrap();
-        //         }
-  
-        //         Err(TryRecvError::Empty) => {
-        //             println!("{}", "empty");
-        //         }
-  
-        //         Err(TryRecvError::Disconnected) => {
-        //             println!("{}", "disconnected");
-        //         }
-        //         // Err(e) => {
-        //         //     println!("{:?}", e);
-        //         // }
-        //         // _=> ()
-        //     }
-        // }
         std::thread::sleep(std::time::Duration::from_millis(5));
     }
+    println!("is_alive: {}", process.is_alive());
     window.emit("ssh-data-from-backend", SSHMessage { data: "lose connection".into() }).unwrap();
 }
 
 #[derive(Deserialize)]
 pub struct SSHInfo<'a> {
-    ip: &'a str,
-    port: u8,
-    username: &'a str,
-    passwd: &'a str,
+    pub ip: &'a str,
+    pub port: u8,
+    pub username: &'a str,
+    pub passwd: &'a str,
 }
 #[command]
 pub fn current_path(window: Window) -> String {
@@ -128,31 +179,18 @@ pub fn add_listen(window: Window) {
         println!("got window event-name with payload {:?}", event.payload());
     });
 }
-#[command]
-pub fn create_ssh(window: Window, ssh_state: State<SSHState>, SSHInfo { ip, port, username, passwd }: SSHInfo) {
+
+#[tauri::command]
+pub fn create_ssh(window: Window, ssh_state: State<'_, SSHState>, SSHInfo{ username, ip, port, ..}: SSHInfo<'_>) -> Result<(), String>{
     println!("use ssh method");
     let window_label = window.label().to_string();
     {
         if ssh_state.0.lock().unwrap().contains_key(&window_label) {
-            return;
+            return Ok(());
         }
     }
-    let tcp = TcpStream::connect(format!("{}:{}", ip, port)).unwrap();
-    let mut sess = Session::new().unwrap();
-    sess.set_tcp_stream(tcp);
-    sess.handshake().unwrap();
-    sess.userauth_password(username, passwd).unwrap();
-    let mut channel = sess.channel_session().unwrap();
-    channel.request_pty(
-        "xterm",
-         None,
-         Some((129, 33, 0, 0)),
-        ).unwrap();
-    channel.shell().unwrap();
+    let (action_send, mut action_get) = unbounded();
     
-    sess.set_blocking(false);
-    // let (trx, rev):(Sender<String>, Receiver<String>) = unbounded();
-    let (action_send, action_get) = unbounded();
     let line_send = action_send.clone();
     let front_listen_id = window.listen("ssh-data-from-frontend", move |event| {
         // trx.send(event.payload().unwrap().to_string());
@@ -165,13 +203,18 @@ pub fn create_ssh(window: Window, ssh_state: State<SSHState>, SSHInfo { ip, port
             action_send.send(serde_json::from_str(size_data).unwrap());
         }
     });
+    let denst_ssh = format!("ssh {}@{} -p {}", username, ip, port);
     thread::spawn(move || {
-        read_channel(&mut channel, action_get, window);
+        let ssh_proc = conpty::spawn(denst_ssh).unwrap();
+        ssh_proc.resize(129, 33);
+        read_pty_output(ssh_proc, action_get, window);
     });
     // let my_uuid = Uuid::new_v4();
-    ssh_state.0.lock().unwrap().insert(window_label, SSHSessionManage { 
-        sess,
-    });
+    // ssh_state.0.lock().unwrap().insert(window_label, SSHSessionManage { 
+    //     sess,
+    // });
+    
+  Ok(())
 }
 
 /*
@@ -191,90 +234,90 @@ pub async  fn new_window(app_handle: AppHandle, window: Window, ssh_state: State
   Ok(())
 }
 
-fn login_ssh2() {
-  let tcp = TcpStream::connect("ip").unwrap();
-  let mut sess = Session::new().unwrap();
-  sess.set_tcp_stream(tcp);
-  sess.handshake().unwrap();
-  sess.userauth_password("user", "pass").unwrap();
+// fn login_ssh2() {
+//   let tcp = TcpStream::connect("ip").unwrap();
+//   let mut sess = Session::new().unwrap();
+//   sess.set_tcp_stream(tcp);
+//   sess.handshake().unwrap();
+//   sess.userauth_password("user", "pass").unwrap();
 
-  let mut channel = sess.channel_session().unwrap();
+//   let mut channel = sess.channel_session().unwrap();
 
-  channel.request_pty(
-      "xterm",
-       None,
-       Some((80, 30, 0, 0)),
-      ).unwrap();
-  channel.shell().unwrap();
+//   channel.request_pty(
+//       "xterm",
+//        None,
+//        Some((80, 30, 0, 0)),
+//       ).unwrap();
+//   channel.shell().unwrap();
 
-  sess.set_blocking(false);
+//   sess.set_blocking(false);
   
-  let (trx, rev) = unbounded();
-  fn trim_newline(s: &mut String) {
-      if s.ends_with('\n') {
-          s.pop();
-          if s.ends_with('\r') {
-              s.pop();
-          }
-      }
-  }
-  thread::spawn(move || loop {
-      let stdin = std::io::stdin();
-      let mut line = String::new();
-      stdin.read_line(&mut line).unwrap();
-      trim_newline(&mut line);
-      trx.send(line).unwrap();
-  });
+//   let (trx, rev) = unbounded();
+//   fn trim_newline(s: &mut String) {
+//       if s.ends_with('\n') {
+//           s.pop();
+//           if s.ends_with('\r') {
+//               s.pop();
+//           }
+//       }
+//   }
+//   thread::spawn(move || loop {
+//       let stdin = std::io::stdin();
+//       let mut line = String::new();
+//       stdin.read_line(&mut line).unwrap();
+//       trim_newline(&mut line);
+//       trx.send(line).unwrap();
+//   });
 
-  let mut buf = [0; 4096];
-  while !channel.eof() {
-      // let bytes_available = channel.read_window().available;
-      // if bytes_available > 0 {
-      //     let mut buffer = vec![0; bytes_available as usize];
-      //     channel.read_exact(&mut buffer).unwrap();
-      //     println!("{}", String::from_utf8(buffer).unwrap());
-      // }
-      match channel.read(&mut buf) {
-          Ok(size) => {
-              let s = String::from_utf8(buf[0..size].to_vec()).unwrap();
-              println!("size: {}, s len: {} {}", size, s.len(),s);
-          }
-          Err(e) => {
-              if e.kind() != std::io::ErrorKind::WouldBlock {
-                  println!("err {}", e);
-              }
-          }
-      }
-      if !rev.is_empty() {
-          match rev.try_recv() {
-              Ok(line) => {
+//   let mut buf = [0; 4096];
+//   while !channel.eof() {
+//       // let bytes_available = channel.read_window().available;
+//       // if bytes_available > 0 {
+//       //     let mut buffer = vec![0; bytes_available as usize];
+//       //     channel.read_exact(&mut buffer).unwrap();
+//       //     println!("{}", String::from_utf8(buffer).unwrap());
+//       // }
+//       match channel.read(&mut buf) {
+//           Ok(size) => {
+//               let s = String::from_utf8(buf[0..size].to_vec()).unwrap();
+//               println!("size: {}, s len: {} {}", size, s.len(),s);
+//           }
+//           Err(e) => {
+//               if e.kind() != std::io::ErrorKind::WouldBlock {
+//                   println!("err {}", e);
+//               }
+//           }
+//       }
+//       if !rev.is_empty() {
+//           match rev.try_recv() {
+//               Ok(line) => {
                   
-                  // let cmd_string = if line == "\n" {
-                  //     "\n".to_string()
-                  // } else {
-                  //     line + "\n"
-                  // };
-                  println!("{:?}", line.bytes());
-                  let cmd_string = line + "\n";
-                  channel.write(cmd_string.as_bytes()).unwrap();
-                  channel.flush().unwrap();
-                  // channel.write_fmt(format_args!("{}\n", line)).unwrap();
-              }
+//                   // let cmd_string = if line == "\n" {
+//                   //     "\n".to_string()
+//                   // } else {
+//                   //     line + "\n"
+//                   // };
+//                   println!("{:?}", line.bytes());
+//                   let cmd_string = line + "\n";
+//                   channel.write(cmd_string.as_bytes()).unwrap();
+//                   channel.flush().unwrap();
+//                   // channel.write_fmt(format_args!("{}\n", line)).unwrap();
+//               }
 
-              Err(TryRecvError::Empty) => {
-                  println!("{}", "empty");
-              }
+//               Err(TryRecvError::Empty) => {
+//                   println!("{}", "empty");
+//               }
 
-              Err(TryRecvError::Disconnected) => {
-                  println!("{}", "disconnected");
-              }
-              // Err(e) => {
-              //     println!("{:?}", e);
-              // }
-              // _=> ()
-          }
-      }
-      std::thread::sleep(std::time::Duration::from_millis(50));
-      println!("blocking: {}", sess.is_blocking());
-  }
-}
+//               Err(TryRecvError::Disconnected) => {
+//                   println!("{}", "disconnected");
+//               }
+//               // Err(e) => {
+//               //     println!("{:?}", e);
+//               // }
+//               // _=> ()
+//           }
+//       }
+//       std::thread::sleep(std::time::Duration::from_millis(50));
+//       println!("blocking: {}", sess.is_blocking());
+//   }
+// }

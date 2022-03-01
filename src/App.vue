@@ -17,7 +17,7 @@
         <router-view/>
       </n-layout-content> -->
 
-      <n-layout-footer style="height: 30px;"></n-layout-footer>
+      <n-layout-footer style="height: 30px;"><footer-bar></footer-bar></n-layout-footer>
   <!-- </n-space> -->
 </n-config-provider>
 </template>
@@ -27,10 +27,12 @@ import { Vue, Options } from 'vue-class-component';
 import { darkTheme } from 'naive-ui';
 // import { invoke } from '@tauri-apps/api/tauri';
 import Title from '@/views/Title.vue';
+import FooterBar from '@/views/FooterBar.vue';
 
 @Options({
   components: {
     Title,
+    FooterBar,
   },
 })
 export default class App extends Vue {
