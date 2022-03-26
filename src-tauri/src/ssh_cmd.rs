@@ -8,6 +8,7 @@ use uuid::Uuid;
 use serde::{Serialize, Deserialize};
 
 use conpty::{self, Process};
+use crate::action::ChannelAction;
 
 use tauri::{AppHandle, Window, WindowUrl, command, State};
 pub struct SSHState(pub Arc<Mutex<HashMap<String, SSHSessionManage>>>);
@@ -19,16 +20,6 @@ pub struct SSHSessionManage {
 #[derive(Serialize, Deserialize, Clone)]
 struct SSHMessage {
   data: Vec<u8>,
-}
-#[derive(Serialize, Deserialize, Debug)]
-enum ChannelAction {
-    Message(String),
-    SizeChange {
-        width: u32,
-        height: u32,
-        width_px: Option<u32>,
-        height_px: Option<u32>
-    }
 }
 
 // fn read_channel(channel: &mut Channel, action_get: Receiver<ChannelAction>, window: Window) {
@@ -158,7 +149,7 @@ fn read_pty_output(process: Process, action_get: Receiver<ChannelAction>, window
 #[derive(Deserialize)]
 pub struct SSHInfo<'a> {
     pub ip: &'a str,
-    pub port: u8,
+    pub port: u32,
     pub username: &'a str,
     pub passwd: &'a str,
 }

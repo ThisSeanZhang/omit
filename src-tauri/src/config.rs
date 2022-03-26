@@ -1,7 +1,7 @@
 mod omit_session;
 
 use serde::{Deserialize, Serialize};
-use std::{convert::TryInto, env, fs::{self, OpenOptions}};
+use std::{convert::TryInto, env, fs::{self, OpenOptions}, collections::HashMap};
 use std::io::{Error, Write};
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
@@ -13,17 +13,23 @@ use crate::util;
 use self::omit_session::OmitSession;
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(default)]
 pub struct Config {
   pub session_fload: String,
+  pub command_fload: String,
 }
-pub struct ConfigState(pub Arc<Mutex<Config>>);
 
-fn default_config() -> Config {
-  let path = env::current_dir().unwrap().clone();
-  Config {
-    session_fload: path.join("session").as_path().to_str().unwrap().to_string(),
+impl Default for Config {
+  fn default() -> Self { 
+    let path = env::current_dir().unwrap().clone();
+    Config {
+      session_fload: path.join("session").as_path().to_str().unwrap().to_string(),
+      command_fload: path.join("commands").as_path().to_str().unwrap().to_string(),
+    }
   }
 }
+
+pub struct ConfigState(pub Arc<Mutex<Config>>);
 
 fn check_fload_and_create(path:&String) {
   let path = PathBuf::from(path);
@@ -41,14 +47,17 @@ fn check_fload_and_create(path:&String) {
 
 impl Config {
   fn new(config_json: Option<String>) ->  Config {
-    let mut default = default_config();
+    let mut default = Config::default();
     if let Some(json) = config_json {
       print!("read config json: {}", json);
       let read_config = serde_json::from_str(&json);
+      // let result:Result<HashMap<String, String>, Error> = serde_json::from_str(&json);
       if read_config.is_err() {
         panic!("config not match");
       }
-      return read_config.unwrap();
+      let config: Config = read_config.unwrap();
+      config.save();
+      return config;
     }
     default.save();
     default
@@ -59,6 +68,7 @@ impl Config {
     let file = util::read_raw_json(&env::current_dir().unwrap(), "config.json");
     let config = Config::new(file);
     check_fload_and_create(&config.session_fload);
+    check_fload_and_create(&config.command_fload);
     config
   }
 

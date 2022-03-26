@@ -2,8 +2,15 @@
   all(not(debug_assertions), target_os = "windows"),
   windows_subsystem = "windows"
 )]
-mod ssh_cmd;
 mod config;
+mod terminal;
+mod error;
+mod action;
+mod command;
+
+use command::read_snapshots;
+use terminal::create_pty;
+mod ssh_cmd;
 mod util;
 use std::{collections::HashMap, sync::{Arc, Mutex}};
 use config::{ ConfigState, Config, save_session, sessions, read_session};
@@ -30,6 +37,7 @@ fn main() {
   .manage(SSHState(Arc::new(Mutex::new(HashMap::new()))))
   .manage(ConfigState(Arc::new(Mutex::new(config))))
   .invoke_handler(tauri::generate_handler![
+    create_pty,
     send_data_from,
     create_ssh,
     new_window,
@@ -38,6 +46,7 @@ fn main() {
     save_session,
     sessions,
     read_session,
+    read_snapshots,
   ])
   .run(tauri::generate_context!())
   .expect("error while running tauri application");

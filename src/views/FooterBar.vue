@@ -4,14 +4,17 @@ aaaa
 </div>
 </template>
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
+import {
+  onMounted,
+  ref,
+} from 'vue';
 
-@Options({
-  components: {
+export default {
+  name: 'FooterBar',
+  setup() {
+    console.log('aaa');
   },
-})
-export default class FooterBar extends Vue {
-}
+};
 </script>
 
 <style lang="scss" scoped>

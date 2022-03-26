@@ -2,7 +2,7 @@
 <n-config-provider :theme="theme" style="height: 100%;">
   <!-- <n-space vertical size="large" > -->
       <n-layout-header>
-        <Title class="title" />
+        <HeadBar class="title" />
       </n-layout-header>
 
       <!-- :native-scrollbar="false" -->
@@ -26,12 +26,12 @@
 import { Vue, Options } from 'vue-class-component';
 import { darkTheme } from 'naive-ui';
 // import { invoke } from '@tauri-apps/api/tauri';
-import Title from '@/views/Title.vue';
+import HeadBar from '@/views/HeadBar.vue';
 import FooterBar from '@/views/FooterBar.vue';
 
 @Options({
   components: {
-    Title,
+    HeadBar,
     FooterBar,
   },
 })
