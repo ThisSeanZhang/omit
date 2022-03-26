@@ -1,18 +1,26 @@
-import CmdParam from './CmdParam';
-import CmdOption from './CmdOption';
+import Command from './Command';
+import SnapOption from './SnapOption';
+import SnapParam from './SnapParam';
 
 export default class Snapshot {
   title: string;
   command_name: string;
   brief_name: string;
-  option_value: Array<CmdOption>;
-  param_value: Array<CmdParam>;
+  option_value: Array<SnapOption>;
+  param_value: Array<SnapParam>;
 
   constructor() {
-    this.title = "";
-    this.brief_name = "";
-    this.param_value = new Array();
-    this.option_value = new Array();
-    this.command_name = "";
+    this.title = '';
+    this.command_name = '';
+    this.brief_name = '';
+    this.param_value = [];
+    this.option_value = [];
+  }
+
+  static fromCmd(cmd: Command): Snapshot {
+    const snap = new Snapshot();
+    snap.command_name = cmd.command_name;
+
+    return snap;
   }
 }

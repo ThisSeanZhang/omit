@@ -4,6 +4,7 @@ import {
   create,
   // component
   NButton,
+  NButtonGroup,
   NConfigProvider,
   NSpace,
   NLayout,
@@ -26,6 +27,12 @@ import {
   NThing,
   NPopover,
   NScrollbar,
+  NList,
+  NListItem,
+  NTag,
+  NAvatar,
+  NDrawer,
+  NDrawerContent,
 } from 'naive-ui';
 import App from './App.vue';
 import router from './router';
@@ -38,6 +45,7 @@ import 'vfonts/FiraCode.css';
 const naive = create({
   components: [
     NButton,
+    NButtonGroup,
     NConfigProvider,
     NSpace,
     NLayout,
@@ -60,6 +68,12 @@ const naive = create({
     NThing,
     NPopover,
     NScrollbar,
+    NList,
+    NListItem,
+    NTag,
+    NAvatar,
+    NDrawer,
+    NDrawerContent,
   ],
 });
 

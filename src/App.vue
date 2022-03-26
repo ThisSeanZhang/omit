@@ -6,7 +6,7 @@
       </n-layout-header>
 
       <!-- :native-scrollbar="false" -->
-      <router-view class="contents"/>
+      <router-view id="drawer-global" class="contents"/>
       <!-- <n-layout position="absolute" style="top: 30px; bottom: 30px;">
         <router-view />
       </n-layout> -->

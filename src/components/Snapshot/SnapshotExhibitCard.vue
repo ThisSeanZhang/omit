@@ -4,13 +4,13 @@
 
   <template #header-extra>
     <!-- 发送按钮 -->
-    <n-popover trigger="hover" placement="left">
+    <n-popover trigger="hover" placement="top-end">
       <span>发送</span>
       <template #trigger>
-        <n-button @click.stop="sendCmd(line)" text size="small">
-          <n-icon size="16">
-            <PaperPlane />
-          </n-icon>
+        <n-button @click.stop="sendCmd(line)" type="warning" text size="small">
+          <template #icon>
+            <n-icon size="16"><PaperPlane /></n-icon>
+          </template>
         </n-button>
       </template>
     </n-popover>

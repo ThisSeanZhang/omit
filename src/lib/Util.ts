@@ -7,7 +7,7 @@ export enum SnapExhibitModel {
   MULTLINE,
 }
 
-function buildHyphen(option: CmdOption) {
+function buildHyphen(option: { brief_name: string, full_name: string }) {
   if (option.brief_name === option.full_name) {
     return '--';
   }
@@ -19,8 +19,11 @@ function dealCommandExhibit(
 ): string[] {
   let allRows = [snapshot.command_name];
   const cmdOption = snapshot.option_value
-    .map(option => option.value.filter(p => p.selected).map(p => `${buildHyphen(option)}${option.brief_name} ${p.value}`))
-    .reduce((a1, a2) => a1.concat(a2), []);
+    // .map(option => option.value.filter(p => p.selected)
+    // .map(p => `${buildHyphen(option)}${option.brief_name} ${p.value}`))
+    .filter(option => option.selected)
+    .map(option => `${buildHyphen(option)}${option.brief_name} ${option.value}`);
+    // .reduce((a1, a2) => a1.concat(a2), []);
   // console.log(JSON.stringify(cmdOption));
   allRows = allRows.concat(cmdOption);
   allRows = allRows.concat(snapshot.param_value.map(p => p.value));
