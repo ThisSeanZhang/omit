@@ -107,5 +107,29 @@ pub fn read_snapshots() -> Result<Vec<Snapshot>, String> {
   let mut snap3 = Snapshot::default();
   snap3.title = "SFTP".to_string();
   snap3.command_name = "sftp".to_string();
-  Ok(vec![snap1, snap2, snap3])
+  
+  let mut snap4 = Snapshot::default();
+  snap4.title = "SFTP".to_string();
+  snap4.command_name = "sftp".to_string();
+  
+  let mut snap5 = Snapshot::default();
+  snap5.title = "SFTP".to_string();
+  snap5.command_name = "sftp".to_string();
+  
+  let mut snap6 = Snapshot::default();
+  snap6.title = "SFTP".to_string();
+  snap6.command_name = "sftp".to_string();
+  
+  let mut snap7 = Snapshot::default();
+  snap7.title = "SFTP".to_string();
+  snap7.command_name = "sftp".to_string();
+  
+  let mut snap8 = Snapshot::default();
+  snap8.title = "SFTP".to_string();
+  snap8.command_name = "sftp".to_string();
+  
+  let mut snap9 = Snapshot::default();
+  snap9.title = "SFTP".to_string();
+  snap9.command_name = "sftp".to_string();
+  Ok(vec![snap1, snap2, snap3, snap4, snap5, snap6, snap7, snap8, snap9])
 }

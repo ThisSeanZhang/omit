@@ -15,6 +15,7 @@ import {
   NCard,
   NInput,
   NInputNumber,
+  NInputGroup,
   NH2,
   NForm,
   NFormItem,
@@ -22,6 +23,9 @@ import {
   NGrid,
   NGi,
   NPopconfirm,
+  NThing,
+  NPopover,
+  NScrollbar,
 } from 'naive-ui';
 import App from './App.vue';
 import router from './router';
@@ -45,6 +49,7 @@ const naive = create({
     NCard,
     NInput,
     NInputNumber,
+    NInputGroup,
     NH2,
     NForm,
     NFormItem,
@@ -52,6 +57,9 @@ const naive = create({
     NGrid,
     NGi,
     NPopconfirm,
+    NThing,
+    NPopover,
+    NScrollbar,
   ],
 });
 

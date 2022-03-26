@@ -20,10 +20,12 @@ module.exports = {
       2,
       "as-needed"
     ],
-    'camelcase': ["error", {'properties': "never"}],
+    'camelcase': 'off',
     'class-methods-use-this': 'off',
     'lines-between-class-members': 'off',
     'max-classes-per-file': 'off',
+    'no-shadow': 'off',
+    '@typescript-eslint/no-shadow': ['error'],
     // 'class-methods-use-this': ['error', {
     //   exceptMethods: [
     //     // react lifecycle methods, from the airbnb rule

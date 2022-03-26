@@ -1,0 +1,34 @@
+import CmdOption from './CmdOption';
+// import CmdParam from './CmdParam';
+import Snapshot from './Snapshot';
+
+export enum SnapExhibitModel {
+  ONELINE,
+  MULTLINE,
+}
+
+function buildHyphen(option: CmdOption) {
+  if (option.brief_name === option.full_name) {
+    return '--';
+  }
+  return '-';
+}
+
+function dealCommandExhibit(
+  snapshot: Snapshot, model: SnapExhibitModel = SnapExhibitModel.ONELINE,
+): string[] {
+  let allRows = [snapshot.command_name];
+  const cmdOption = snapshot.option_value
+    .map(option => option.value.filter(p => p.selected).map(p => `${buildHyphen(option)}${option.brief_name} ${p.value}`))
+    .reduce((a1, a2) => a1.concat(a2), []);
+  // console.log(JSON.stringify(cmdOption));
+  allRows = allRows.concat(cmdOption);
+  allRows = allRows.concat(snapshot.param_value.map(p => p.value));
+  return model === SnapExhibitModel.ONELINE
+    ? [allRows.join(' ')]
+    : allRows.map((p, index) => (index === allRows.length - 1 ? p : `${p} \\`));
+}
+
+export {
+  dealCommandExhibit,
+};

@@ -1,12 +1,12 @@
 export default class CmdParam {
-  cpid: String;
-  cid: String;
+  cpid: string;
+  cid: string;
   sort: number;
-  param_name: String;
-  description: Map<String, String>;
+  param_name: string;
+  description: Map<string, string>;
   required: boolean;
-  param_type: String;
-  value: String;
+  param_type: string;
+  value: string;
 
   constructor() {
     this.cpid = "";
