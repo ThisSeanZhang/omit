@@ -20,6 +20,7 @@ module.exports = {
       2,
       "as-needed"
     ],
+    'camelcase': ["error", {'properties': "never"}],
     'class-methods-use-this': 'off',
     'lines-between-class-members': 'off',
     'max-classes-per-file': 'off',
