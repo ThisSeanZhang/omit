@@ -37,6 +37,28 @@ pub struct CmdOption {
   ignore: bool,
   // 是否能重复选择
   duplicate: bool,
+  selected: bool,
+}
+
+impl Default for CmdOption {
+  fn default() -> Self{
+    return CmdOption{
+      oid: "".to_string().to_string(),
+      cid: "".to_string(),
+      brief_name: "".to_string(),
+      full_name: "".to_string(),
+      description: HashMap::new(),
+      frequency: 0,
+      data_type: "".to_string(),
+      rules: Vec::new(),
+      value: Vec::new(),
+      // 使用的时候是否忽略类型
+      ignore: false,
+      // 是否能重复选择
+      duplicate: false,
+      selected: true,
+    };
+  }
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -101,9 +123,23 @@ pub fn read_snapshots() -> Result<Vec<Snapshot>, String> {
   let mut snap1 = Snapshot::default();
   snap1.title = "目录遍历".to_string();
   snap1.command_name = "ls".to_string();
+  let mut op1 = CmdOption::default();
+  op1.brief_name = "a".to_string();
+  op1.full_name = "a".to_string();
+  let mut op2 = CmdOption::default();
+  op2.brief_name = "l".to_string();
+  op2.full_name = "l".to_string();
+  snap1.option_value.push(op1);
+  snap1.option_value.push(op2);
+
   let mut snap2 = Snapshot::default();
   snap2.title = "SSH".to_string();
   snap2.command_name = "ssh".to_string();
+  let mut op3 = CmdOption::default();
+  op3.brief_name = "help".to_string();
+  op3.full_name = "help".to_string();
+  snap2.option_value.push(op3);
+
   let mut snap3 = Snapshot::default();
   snap3.title = "SFTP".to_string();
   snap3.command_name = "sftp".to_string();

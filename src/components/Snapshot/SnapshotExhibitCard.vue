@@ -1,28 +1,58 @@
 <template>
-<n-thing class="card" v-for="(line, index) in snapshot_str_arr" :key="index">
+<n-thing class="card">
   <template #header>{{snap.title}}</template>
 
   <template #header-extra>
     <!-- 发送按钮 -->
-    <n-popover trigger="hover" placement="top-end">
-      <span>发送</span>
-      <template #trigger>
-        <n-button @click.stop="sendCmd(line)" type="warning" text size="small">
-          <template #icon>
-            <n-icon size="16"><PaperPlane /></n-icon>
-          </template>
-        </n-button>
-      </template>
-    </n-popover>
+    <n-space>
+      <n-popover  v-if="exhibit_model === SnapExhibitModel.ONELINE"
+        trigger="hover" placement="top-end">
+        <span>多行模式</span>
+        <template #trigger>
+          <n-button @click.stop="exhibit_model = SnapExhibitModel.MULTLINE"
+            type="warning" text size="small">
+            <template #icon>
+              <n-icon size="16"><LineHorizontal520Filled /></n-icon>
+            </template>
+          </n-button>
+        </template>
+      </n-popover>
+      <n-popover v-else trigger="hover" placement="top-end">
+        <span>单行模式</span>
+        <template #trigger>
+          <n-button @click.stop="exhibit_model = SnapExhibitModel.ONELINE"
+            type="warning" text size="small">
+            <template #icon>
+              <n-icon size="16"><LineHorizontal120Filled /></n-icon>
+            </template>
+          </n-button>
+        </template>
+      </n-popover>
+      <n-popover trigger="hover" placement="top-end">
+        <span>发送</span>
+        <template #trigger>
+          <n-button @click.stop="sendCmd(snapshot_str_arr)" type="warning" text size="small">
+            <template #icon>
+              <n-icon size="16"><PaperPlane /></n-icon>
+            </template>
+          </n-button>
+        </template>
+      </n-popover>
+    </n-space>
   </template>
-
-  {{line}}
+  <div v-for="(line, index) in snapshot_str_arr" :key="index">
+    {{line}}
+  </div>
 </n-thing>
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
 import { getCurrent } from '@tauri-apps/api/window';
 import { PaperPlane } from '@vicons/fa';
+import {
+  LineHorizontal120Filled,
+  LineHorizontal520Filled,
+} from '@vicons/fluent';
 import Snapshot from '@/lib/Snapshot';
 import {
   SnapExhibitModel,
@@ -30,7 +60,10 @@ import {
 } from '@/lib/Util';
 
 export default defineComponent({
+  name: 'SnapshotExhibitCard',
   components: {
+    LineHorizontal120Filled,
+    LineHorizontal520Filled,
     PaperPlane,
   },
   props: {
@@ -53,6 +86,8 @@ export default defineComponent({
     }
 
     return {
+      SnapExhibitModel,
+      exhibit_model,
       sendCmd,
       snap,
       snapshot_str_arr,

@@ -1,5 +1,5 @@
 <template>
-<n-drawer :show="show"
+<n-drawer :show="value"
   @update:show="$emit('update:value', false)"
   to="#drawer-global"
   width="50%" placement="left">
@@ -39,7 +39,7 @@
         </n-button-group>
       </n-input-group>
     </n-space>
-    {{cops}}
+    <!-- {{cops}} -->
   </n-drawer-content>
 </n-drawer>
 </template>
@@ -83,7 +83,6 @@ export default defineComponent({
   setup(props: any) {
     // const a = getCurrentInstance();
     const selectValue = ref('');
-    const show = computed(() => props.value);
     const ops = ref(props.snap_options);
     console.log(props.cmd_options);
     const cops = computed(
@@ -114,7 +113,6 @@ export default defineComponent({
       ops,
       OptionType,
       dealClose,
-      show,
     };
   },
 });

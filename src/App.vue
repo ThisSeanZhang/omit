@@ -1,5 +1,6 @@
 <template>
 <n-config-provider :theme="theme" style="height: 100%;">
+<n-message-provider>
   <!-- <n-space vertical size="large" > -->
       <n-layout-header>
         <HeadBar class="title" />
@@ -19,6 +20,7 @@
 
       <n-layout-footer style="height: 30px;"><footer-bar></footer-bar></n-layout-footer>
   <!-- </n-space> -->
+</n-message-provider>
 </n-config-provider>
 </template>
 

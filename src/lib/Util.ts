@@ -25,8 +25,12 @@ function dealCommandExhibit(
     .map(option => `${buildHyphen(option)}${option.brief_name} ${option.value}`);
     // .reduce((a1, a2) => a1.concat(a2), []);
   // console.log(JSON.stringify(cmdOption));
+  const cmdParam = snapshot.param_value
+    .filter(option => option.selected)
+    .map(p => p.value)
+    .filter(p => p !== '');
   allRows = allRows.concat(cmdOption);
-  allRows = allRows.concat(snapshot.param_value.map(p => p.value));
+  allRows = allRows.concat(cmdParam);
   return model === SnapExhibitModel.ONELINE
     ? [allRows.join(' ')]
     : allRows.map((p, index) => (index === allRows.length - 1 ? p : `${p} \\`));

@@ -21,6 +21,7 @@ export default class Snapshot {
     const snap = new Snapshot();
     snap.command_name = cmd.command_name;
     snap.option_value = SnapOption.default();
+    snap.param_value = SnapParam.default();
     return snap;
   }
 }

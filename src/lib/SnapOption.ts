@@ -17,7 +17,7 @@ export default class SnapOption {
     this.full_name = '';
     this.value = '';
     this.ignore = false;
-    this.selected = false;
+    this.selected = true;
     this.option_type = OptionType.NONE;
   }
 
