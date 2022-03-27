@@ -1,17 +1,121 @@
 <template>
-<n-drawer v-model:show="active" :width="502" :placement="placement">
-  <n-drawer-content title="斯通纳">
-    《斯通纳》是美国作家约翰·威廉姆斯在 1965 年出版的小说。
+<n-drawer :show="show"
+  @update:show="$emit('update:value', false)"
+  to="#drawer-global"
+  width="50%" placement="left">
+  <n-drawer-content title="选项编辑" closable>
+    <n-space vertical>
+      <n-input-group>
+        <n-select
+          :value="selectValue"
+          :options="cops"
+          @update:value="handleSelectValue"
+          filterable />
+      </n-input-group>
+      <n-input-group v-for="(option, index) in ops" :key="index">
+        <n-input-group-label>{{option.full_name}}</n-input-group-label>
+        <n-input :disabled="option.option_type === OptionType.NONE" v-model:value="option.value" />
+        <!-- TODO 多种数据类的判断 -->
+        <n-button-group>
+          <n-button ghost
+            :disabled="index === 0"
+            @click="move(index, -1)">
+            <template #icon>
+              <n-icon><ArrowUp16Filled /></n-icon>
+            </template>
+          </n-button>
+          <n-button ghost
+            :disabled="index === ops.length - 1"
+            @click="move(index, 1)">
+            <template #icon>
+              <n-icon><ArrowDown16Filled /></n-icon>
+            </template>
+          </n-button>
+          <n-button round type="error" ghost @click="move(index)">
+            <template #icon>
+              <n-icon><DismissCircle20Regular /></n-icon>
+            </template>
+          </n-button>
+        </n-button-group>
+      </n-input-group>
+    </n-space>
+    {{cops}}
   </n-drawer-content>
 </n-drawer>
 </template>
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import {
+  defineComponent,
+  ref,
+  getCurrentInstance,
+  computed,
+} from 'vue';
+import {
+  DismissCircle20Regular,
+  ArrowUp16Filled,
+  ArrowDown16Filled,
+} from '@vicons/fluent';
+import SnapOption from '@/lib/SnapOption';
+import OptionType from '@/lib/OptionType';
+import CmdOption from '@/lib/CmdOption';
 
 export default defineComponent({
   name: 'SnapOptionDrawer',
-  setup() {
-   return {}; 
+  components: {
+    ArrowUp16Filled,
+    ArrowDown16Filled,
+    DismissCircle20Regular,
+  },
+  props: {
+    value: {
+      type: Boolean,
+      default: () => false,
+    },
+    snap_options: {
+      type: Array,
+      default: () => [],
+    },
+    cmd_options: {
+      type: Array,
+      default: () => [],
+    },
+  },
+  setup(props: any) {
+    // const a = getCurrentInstance();
+    const selectValue = ref('');
+    const show = computed(() => props.value);
+    const ops = ref(props.snap_options);
+    console.log(props.cmd_options);
+    const cops = computed(
+      () => props.cmd_options
+        .map((op: CmdOption) => ({ label: op.full_name, value: op })),
+    );
+    function dealClose() {
+      console.log('close');
+    }
+
+    function handleSelectValue(value: CmdOption) {
+      selectValue.value = '';
+      // ops.value.push(props.cmd_options[value]);
+      ops.value.push(SnapOption.fromCmdOption(value));
+    }
+
+    function move(source: number, step: number | undefined) {
+      const option = ops.value.splice(source, 1);
+      if (step !== undefined) {
+        ops.value.splice(source + step, 0, option[0]);
+      }
+    }
+    return {
+      selectValue,
+      handleSelectValue,
+      cops,
+      move,
+      ops,
+      OptionType,
+      dealClose,
+      show,
+    };
   },
 });
 </script>

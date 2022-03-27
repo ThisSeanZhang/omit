@@ -41,6 +41,7 @@ import {
   ArrowUp16Filled,
   ArrowDown16Filled,
 } from '@vicons/fluent';
+import SnapParam from '@/lib/SnapParam';
 
 export default defineComponent({
   name: 'SnapParamDrawer',
@@ -53,6 +54,10 @@ export default defineComponent({
     value: {
       type: Boolean,
       default: false,
+    },
+    params: {
+      type: Array,
+      default: () => [],
     },
   },
   setup(props: any) {

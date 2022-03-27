@@ -30,7 +30,7 @@
 <n-list style="padding: 0 10px;">
   <template #header>
     <n-input type="text"
-      v-model:value="query_key"
+      v-model:value="cmd_query_key"
       placeholder="filter"
       clearable
     />
@@ -90,7 +90,7 @@
       可选项
     </template>
     <template #suffix>
-      <n-button type="info" dashed>
+      <n-button type="info" dashed @click="show_option_drawer = true">
         <template #icon>
           <n-icon>
             <TextBulletListSquareEdit20Regular />
@@ -100,9 +100,32 @@
       </n-button>
     </template>
     <n-space align="center" item-style="display: flex;">
-      <n-tag closable @close="handleClose">
-        爱在西元前
-      </n-tag>
+      <!-- <n-tag v-for="(option, index) in snap.option_value"
+        :key="index" checkable v-model:checked="option.selected" >
+        {{option.full_name}}
+        <template #avatar>
+          <n-button type="warning" text size="small"
+            @click.stop="snap.option_value.splice(index, 1)">
+            <template #icon>
+              <n-icon size="16"><TextBulletListSquareEdit20Regular /></n-icon>
+            </template>
+          </n-button>
+        </template>
+      </n-tag> -->
+      <n-button v-for="(option, index) in snap.option_value" :key="index"
+        type="primary"
+        icon-placement="right" @click="option.selected = !option.selected"
+        :quaternary="!option.selected" :dashed="option.selected" >
+        {{`${option.full_name} `}}=>{{` ${option.value}`}}
+        <template #icon >
+          <n-button v-show="!option.selected" text size="small"
+            @click.stop="snap.option_value.splice(index, 1)">
+            <template #icon>
+              <n-icon size="16"><DismissCircle16Filled /></n-icon>
+            </template>
+          </n-button>
+        </template>
+      </n-button>
     </n-space>
   </n-list-item>
   <n-list-item>
@@ -132,21 +155,31 @@
       </n-button>
     </template>
   </n-list-item>
-  <SnapParamDrawer v-model:value="show_param_drawer" />
+  <SnapOptionDrawer
+    v-model:snap_options="snap.option_value"
+    :cmd_options="cmd.options"
+    v-model:value="show_option_drawer" />
+  <SnapParamDrawer v-model:params="snap.param_value" v-model:value="show_param_drawer" />
   </n-list>
 </template>
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import { TextBulletListSquareEdit20Regular } from '@vicons/fluent';
+import {
+  TextBulletListSquareEdit20Regular,
+  DismissCircle16Filled,
+} from '@vicons/fluent';
 import SnapParamDrawer from '@/components/Snapshot/SnapParamDrawer.vue';
+import SnapOptionDrawer from '@/components/Snapshot/SnapOptionDrawer.vue';
 import Command from '@/lib/Command';
 import Snapshot from '@/lib/Snapshot';
 
 export default defineComponent({
   name: 'SnapshotCreatePanel',
   components: {
+    DismissCircle16Filled,
     TextBulletListSquareEdit20Regular,
     SnapParamDrawer,
+    SnapOptionDrawer,
   },
   props: {
     command: {
@@ -159,14 +192,18 @@ export default defineComponent({
     const cmd = ref(props.command);
     const snap = ref(Snapshot.fromCmd(props.command));
     const check = ref(false);
+    const cmd_query_key = ref('');
 
     const show_param_drawer = ref(false);
+    const show_option_drawer = ref(false);
 
     function handleClose() {
       console.log('handle');
     }
     return {
+      cmd_query_key,
       show_param_drawer,
+      show_option_drawer,
       check,
       cmd,
       snap,

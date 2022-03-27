@@ -20,7 +20,7 @@ export default class Snapshot {
   static fromCmd(cmd: Command): Snapshot {
     const snap = new Snapshot();
     snap.command_name = cmd.command_name;
-
+    snap.option_value = SnapOption.default();
     return snap;
   }
 }
