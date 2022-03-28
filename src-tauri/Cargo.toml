@@ -12,18 +12,21 @@ rust-version = "1.57"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
-tauri-build = { version = "1.0.0-rc.1", features = [] }
+tauri-build = { version = "1.0.0-rc.3", features = [] }
 
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "1.0.0-rc.2", features = ["api-all"] }
+tauri = { version = "1.0.0-rc.4", features = ["api-all"] }
 ssh2 = "0.9.3"
 crossbeam = "0.8"
 mio = "0.7"
 uuid = "0.8"
 conpty = "0.3.0"
+# winpty-rs = "0.3"
 tauri-plugin-vibrancy = { git = "https://github.com/tauri-apps/tauri-plugin-vibrancy", features = ["tauri-impl"] } # or "tao-impl" for TAO projects.
+simplelog = "^0.11.2"
+log = "0.4"
 
 [features]
 default = [ "custom-protocol" ]
