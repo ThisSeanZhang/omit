@@ -4,7 +4,7 @@ use conpty::{self, Process};
 use crossbeam::channel::{Receiver, TryRecvError};
 use serde::{Serialize, Deserialize};
 use tauri::Window;
-use crate::{error::{Error, ErrorType}, action::{Porter, ChannelAction}};
+use crate::{error::{OmitError, OmitErrorType}, action::{Porter, ChannelAction}};
 
 pub struct Pty {
   process: Process,
@@ -12,8 +12,8 @@ pub struct Pty {
 }
 
 impl Pty {
-  pub fn new(size: (i16, i16)) -> Result<Pty, Error> {
-    let process = conpty::spawn("powershell.exe").map_err(Error::parse_pty_error)?;
+  pub fn new(size: (i16, i16)) -> Result<Pty, OmitError> {
+    let process = conpty::spawn("powershell.exe").map_err(OmitError::parse_pty_error)?;
     process.resize(size.0, size.1);
     Ok(Pty {
       process,
@@ -72,10 +72,10 @@ impl Pty {
   }
 }
 
-impl Error {
-  fn parse_pty_error(err: conpty::error::Error) -> Error {
-    Error {
-      t: ErrorType::Default,
+impl OmitError {
+  fn parse_pty_error(err: conpty::error::Error) -> OmitError {
+    OmitError {
+      t: OmitErrorType::Default,
       message: err.to_string()
     }
   }

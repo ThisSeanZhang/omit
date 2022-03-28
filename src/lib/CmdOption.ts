@@ -1,4 +1,4 @@
-import OptionType from './OptionType';
+import ValueType from './ValueType';
 
 interface OptionValue {
   selected: boolean,
@@ -15,7 +15,7 @@ export default class CmdOption {
   // 是否能重复选择
   duplicate: boolean;
   selected: boolean;
-  option_type: OptionType;
+  option_type: ValueType;
 
   constructor() {
     this.brief_name = '';
@@ -25,7 +25,7 @@ export default class CmdOption {
     this.ignore = false;
     this.duplicate = false;
     this.selected = false;
-    this.option_type = OptionType.NONE;
+    this.option_type = ValueType.NONE;
   }
 
   isMultip() {
@@ -36,17 +36,17 @@ export default class CmdOption {
     const op1 = new CmdOption();
     op1.brief_name = 'p';
     op1.full_name = 'port';
-    op1.option_type = OptionType.PAIR;
+    op1.option_type = ValueType.PAIR;
 
     const op2 = new CmdOption();
     op2.brief_name = 'd';
     op2.full_name = 'detach';
-    op2.option_type = OptionType.NONE;
+    op2.option_type = ValueType.NONE;
 
     const op3 = new CmdOption();
     op3.brief_name = 'v';
     op3.full_name = 'volume';
-    op3.option_type = OptionType.PAIR;
+    op3.option_type = ValueType.PAIR;
     return [op1, op2, op3];
   }
 }

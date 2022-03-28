@@ -1,5 +1,5 @@
 import CmdOption from './CmdOption';
-import OptionType from './OptionType';
+import ValueType from './ValueType';
 
 export default class SnapOption {
   brief_name: string;
@@ -10,7 +10,7 @@ export default class SnapOption {
 
   // 使用的时候是否忽略类型
   ignore: boolean;
-  option_type: OptionType;
+  option_type: ValueType;
 
   constructor() {
     this.brief_name = '';
@@ -18,7 +18,7 @@ export default class SnapOption {
     this.value = '';
     this.ignore = false;
     this.selected = true;
-    this.option_type = OptionType.NONE;
+    this.option_type = ValueType.NONE;
   }
 
   isMultip() {
@@ -37,12 +37,12 @@ export default class SnapOption {
     const op1 = new SnapOption();
     op1.brief_name = 'p';
     op1.full_name = 'port';
-    op1.option_type = OptionType.PAIR;
+    op1.option_type = ValueType.PAIR;
 
     const op2 = new SnapOption();
     op2.brief_name = 'd';
     op2.full_name = 'detach';
-    op2.option_type = OptionType.NONE;
+    op2.option_type = ValueType.NONE;
     return [op1, op2];
   }
 }

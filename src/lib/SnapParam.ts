@@ -1,11 +1,13 @@
+import ValueType from './ValueType';
+
 export default class SnapParam {
   selected: boolean;
-  param_type: string;
+  param_type: ValueType;
   value: string;
 
   constructor() {
     this.selected = true;
-    this.param_type = '';
+    this.param_type = ValueType.STRING;
     this.value = '';
   }
 

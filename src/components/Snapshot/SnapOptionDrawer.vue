@@ -14,7 +14,7 @@
       </n-input-group>
       <n-input-group v-for="(option, index) in ops" :key="index">
         <n-input-group-label>{{option.full_name}}</n-input-group-label>
-        <n-input :disabled="option.option_type === OptionType.NONE" v-model:value="option.value" />
+        <n-input :disabled="option.option_type === ValueType.NONE" v-model:value="option.value" />
         <!-- TODO 多种数据类的判断 -->
         <n-button-group>
           <n-button ghost
@@ -56,7 +56,7 @@ import {
   ArrowDown16Filled,
 } from '@vicons/fluent';
 import SnapOption from '@/lib/SnapOption';
-import OptionType from '@/lib/OptionType';
+import ValueType from '@/lib/ValueType';
 import CmdOption from '@/lib/CmdOption';
 
 export default defineComponent({
@@ -111,7 +111,7 @@ export default defineComponent({
       cops,
       move,
       ops,
-      OptionType,
+      ValueType,
       dealClose,
     };
   },

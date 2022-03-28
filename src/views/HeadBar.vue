@@ -47,7 +47,7 @@ export default {
       appWindow.minimize();
     }
     appWindow.listen('tauri://resize', () => {
-      appWindow.isMaximized().then(b => { max.value = b; });
+      appWindow.isMaximized().then((b: boolean) => { max.value = b; });
     });
 
     function toggleMaximize():void {

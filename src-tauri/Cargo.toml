@@ -28,3 +28,9 @@ tauri-plugin-vibrancy = { git = "https://github.com/tauri-apps/tauri-plugin-vibr
 [features]
 default = [ "custom-protocol" ]
 custom-protocol = [ "tauri/custom-protocol" ]
+
+# OPEN Release Debug
+# https://github.com/tauri-apps/tauri/discussions/3059
+[profile.release.package.wry]
+debug = true
+debug-assertions = true

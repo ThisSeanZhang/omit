@@ -23,4 +23,5 @@ pnpm-debug.log*
 *.sw?
 
 /src-tauri/session
+/src-tauri/data
 /src-tauri/config.json

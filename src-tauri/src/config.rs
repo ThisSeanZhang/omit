@@ -1,6 +1,6 @@
 mod omit_session;
 
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize, de::DeserializeOwned};
 use std::{convert::TryInto, env, fs::{self, OpenOptions}, collections::HashMap};
 use std::io::{Error, Write};
 use std::path::PathBuf;
@@ -9,14 +9,116 @@ use std::fs::File;
 use tauri::{AppHandle, State, Window, command};
 
 use crate::util;
+use crate::error::{ OmitError, OmitErrorType};
 
 use self::omit_session::OmitSession;
+
+pub enum ConfigType {
+  MAIN,
+  SNAPSHOT,
+}
+
+pub trait OmitConfig{
+    fn config_name(&self) -> &'static str;
+    fn base_path(&self) -> PathBuf;
+    fn auto_gen(&self) -> bool {
+      false
+    }
+    fn read<T>(&self) -> Result<T, OmitError>
+    where T : Serialize + DeserializeOwned + Default {
+      self.read_config(self.config_name())
+    }
+    fn read_config<T>(&self, config_name: &str) -> Result<T, OmitError>
+    where T : Serialize + DeserializeOwned + Default {
+      let config_json = self.read_str(config_name);
+      if let Some(json) = config_json {
+        print!("read config json: {}", json);
+        let read_config = serde_json::from_str(&json);
+        // let result:Result<HashMap<String, String>, Error> = serde_json::from_str(&json);
+        if read_config.is_err() {
+          return Err(OmitError::new(OmitErrorType::CONFIG, format!("json convert error")));
+        }
+        return Ok(read_config.unwrap());
+      }
+      if self.auto_gen() {
+        return Ok(T::default());
+      }
+      Err(OmitError::new(OmitErrorType::CONFIG, format!("json read error")))
+    }
+
+    fn save<T>(&self, config: &T) -> Result<(), OmitError> where T: Serialize {
+      self.save_config(self.config_name(), config)
+    }
+
+    fn save_config<T>(&self, config_name: &str, config: &T) -> Result<(), OmitError> where T: Serialize {
+      let config_path = self.base_path().join(config_name);
+      let file = OpenOptions::new().write(true).create(true).open(config_path);
+      let json_config = serde_json::to_string_pretty(config);
+      if json_config.is_err() {
+        return Err(OmitError::new(
+          OmitErrorType::CONFIG,
+          format!("save error reason: {}", json_config.unwrap_err())
+        ));
+      }
+      file.unwrap().write(json_config.unwrap().as_bytes());
+      Ok(())
+    }
+
+    fn read_str(&self, config_name: &str) -> Option<String> {
+      let mut file_path = self.base_path().join(config_name);
+      if !file_path.is_file() {
+        return None;
+      }
+      fs::read_to_string(file_path.as_path())
+      .map_or_else(|_| None, |json| Some(json))
+    }
+  
+    fn create_dir(&self, dir_name: &str) -> Result<(), OmitError> {
+      let file_path = self.base_path().join(dir_name);
+      if !file_path.exists() {
+        let result = fs::create_dir_all(&file_path);
+        if let Err(e) = result {
+          return Err(OmitError::new(OmitErrorType::CONFIG, format!("create dir: {} error: {}", dir_name, e)));
+        }
+      }
+      if !file_path.is_dir() {
+        return Err(OmitError::new(OmitErrorType::CONFIG, format!("specified path not folder")));
+      }
+      Ok(())
+    }
+}
+
+#[derive(Clone)]
+pub struct ConfigManager {
+  config_name: &'static str,
+  base_path: PathBuf,
+}
+
+impl OmitConfig for ConfigManager {
+  fn base_path(&self) -> PathBuf {
+    self.base_path.clone()
+  }
+
+  fn config_name(&self) -> &'static str {
+    self.config_name
+  }
+}
+
+impl ConfigManager {
+  pub fn new() -> ConfigManager {
+    // TODO 环境变量读取替换
+    ConfigManager {
+      config_name: "config.json",
+      base_path: env::current_dir().unwrap().clone()
+    }
+  }
+}
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(default)]
 pub struct Config {
   pub session_fload: String,
-  pub command_fload: String,
+  pub data_fload: String,
 }
 
 impl Default for Config {
@@ -24,7 +126,7 @@ impl Default for Config {
     let path = env::current_dir().unwrap().clone();
     Config {
       session_fload: path.join("session").as_path().to_str().unwrap().to_string(),
-      command_fload: path.join("commands").as_path().to_str().unwrap().to_string(),
+      data_fload: path.join("data").as_path().to_str().unwrap().to_string(),
     }
   }
 }
@@ -46,41 +148,16 @@ fn check_fload_and_create(path:&String) {
 }
 
 impl Config {
-  fn new(config_json: Option<String>) ->  Config {
-    let mut default = Config::default();
-    if let Some(json) = config_json {
-      print!("read config json: {}", json);
-      let read_config = serde_json::from_str(&json);
-      // let result:Result<HashMap<String, String>, Error> = serde_json::from_str(&json);
-      if read_config.is_err() {
-        panic!("config not match");
-      }
-      let config: Config = read_config.unwrap();
-      config.save();
-      return config;
-    }
-    default.save();
-    default
-  }
-
   pub fn init() -> Config {
-    let runtime_dir = env::current_dir().unwrap();
-    let file = util::read_raw_json(&env::current_dir().unwrap(), "config.json");
-    let config = Config::new(file);
-    check_fload_and_create(&config.session_fload);
-    check_fload_and_create(&config.command_fload);
+    let config_manager = ConfigManager::new();
+    let raw_config = config_manager.read_config("config.json");
+    let config = if raw_config.is_err() {
+      Config::default()
+    } else {
+      raw_config.unwrap()
+    };
+    config_manager.save(&config);
     config
-  }
-
-  fn save(&self) -> Result<String, String>{
-    let config_path = env::current_dir().unwrap().clone().join("config.json");
-    let file = OpenOptions::new().write(true).create(true).open(config_path);
-    let json_config = serde_json::to_string_pretty(&self);
-    if json_config.is_err() {
-      return Err(format!("save error reason: {}", json_config.unwrap_err()));
-    }
-    file.unwrap().write(json_config.unwrap().as_bytes());
-    Ok("save_sucess".into())
   }
 }
 
