@@ -25,3 +25,4 @@ pnpm-debug.log*
 /src-tauri/session
 /src-tauri/data
 /src-tauri/config.json
+src-tauri/snapshots.json

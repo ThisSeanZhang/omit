@@ -32,8 +32,9 @@ impl SnapConfig {
       base_path: std::env::current_dir().unwrap().clone(),
       snapshots: vec![],
     };
-    let snaps_raw = config.read_config("snapshots.json");
+    let snaps_raw = config.read();
     let snaps: Vec<Snapshot> = snaps_raw.unwrap();
+    config.save(&snaps);
     config
   }
 }
