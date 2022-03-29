@@ -75,7 +75,7 @@ impl Pty {
 impl OmitError {
   fn parse_pty_error(err: conpty::error::Error) -> OmitError {
     OmitError {
-      t: OmitErrorType::Default,
+      t: OmitErrorType::DEFAULT,
       message: err.to_string()
     }
   }

@@ -27,6 +27,7 @@ conpty = "0.3.0"
 tauri-plugin-vibrancy = { git = "https://github.com/tauri-apps/tauri-plugin-vibrancy", features = ["tauri-impl"] } # or "tao-impl" for TAO projects.
 simplelog = "^0.11.2"
 log = "0.4"
+rusqlite = { version = "0.27.0", features = ["bundled"] }
 
 [features]
 default = [ "custom-protocol" ]

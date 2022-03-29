@@ -10,7 +10,9 @@ mod snapshot;
 mod common;
 mod repository;
 mod command;
+mod data_source;
 
+use data_source::DataSource;
 use snapshot::{read_snapshots, SnapConfig};
 use terminal::create_pty;
 mod ssh_cmd;
@@ -22,6 +24,8 @@ use ssh_cmd::{create_ssh, new_window, add_listen, current_path, SSHState};
 // use tauri::Manager;
 
 fn main() {
+  let data_source = DataSource::new();
+  data_source.get_conn();
   let config = Config::init();
   println!("config file: {:?}", config);
   tauri::Builder::default()

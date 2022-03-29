@@ -1,6 +1,6 @@
 #[derive(Debug)]
 pub enum OmitErrorType {
-  Default,
+  DEFAULT,
   CONFIG,
   RepositoryError,
 }
@@ -18,4 +18,13 @@ impl OmitError {
         message,
       }
     }
+}
+
+impl OmitError {
+  pub fn parse_error(err: impl std::error::Error) -> OmitError {
+    OmitError {
+      t: OmitErrorType::DEFAULT,
+      message: err.to_string()
+    }
+  }
 }

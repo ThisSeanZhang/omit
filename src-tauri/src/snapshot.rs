@@ -115,6 +115,13 @@ pub struct Snapshot {
   desc: HashMap<String, String>,
   location: String,
 }
+static SNAP_TABLE: &str = "create table if not exists snap_option (
+  snap_id integer primary key,
+  title text not null,
+  create_time text not null,
+  data BLOB not null
+)";
+
 // 先测试 所以就有默认值  之后需要删除
 impl Default for Snapshot {
   fn default() -> Self {
