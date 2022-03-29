@@ -46,9 +46,9 @@ export default defineComponent({
     const snapshots_raw = ref(new Array<Snapshot>());
     // const query_key = ref('');
 
-    invoke<Array<Snapshot>>('read_snapshots')
+    invoke<string>('read_snapshots')
       .then(msg => {
-        snapshots_raw.value = msg;
+        snapshots_raw.value = JSON.parse(msg);
         console.log(msg);
       }).catch((msg:string) => console.log(msg));
 

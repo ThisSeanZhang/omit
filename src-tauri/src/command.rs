@@ -1,12 +1,42 @@
-use std::{collections::HashMap, time::SystemTime};
+use std::{collections::HashMap, time::SystemTime, path::PathBuf};
 
 use serde::{Deserialize, Serialize};
+use crate::config::OmitConfig;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct CmdReop {
   pub name: String,
   pub cmd_path: String,
   pub snap_path: String,
+}
+
+pub struct RepoConfig {
+  config_name: &'static str,
+  base_path: PathBuf,
+}
+
+impl OmitConfig for RepoConfig {
+  fn base_path(&self) -> PathBuf {
+    self.base_path.clone()
+  }
+  fn auto_gen(&self) -> bool {
+    false
+  }
+  fn config_name(&self) -> &'static str {
+    self.config_name
+  }
+}
+
+impl RepoConfig {
+  pub fn new(repo_dir: &str) -> RepoConfig {
+    let mut config = RepoConfig {
+      config_name: "repository.json",
+      base_path: std::env::current_dir().unwrap().clone().join("data"),
+    };
+    // snaps.push(Snapshot::default());
+    // config.save(&snaps);
+    config
+  }
 }
 
 pub struct Command {

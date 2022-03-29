@@ -36,7 +36,7 @@ pub trait OmitConfig{
         let read_config = serde_json::from_str(&json);
         // let result:Result<HashMap<String, String>, Error> = serde_json::from_str(&json);
         if read_config.is_err() {
-          return Err(OmitError::new(OmitErrorType::CONFIG, format!("json convert error")));
+          return Err(OmitError::new(OmitErrorType::CONFIG, format!("json convert error: {}", read_config.err().unwrap())));
         }
         return Ok(read_config.unwrap());
       }

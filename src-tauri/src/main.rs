@@ -24,7 +24,6 @@ use ssh_cmd::{create_ssh, new_window, add_listen, current_path, SSHState};
 fn main() {
   let config = Config::init();
   println!("config file: {:?}", config);
-  SnapConfig::new();
   tauri::Builder::default()
   // .setup(|app| {
   //   let window = app.get_window("main").unwrap();
@@ -38,6 +37,7 @@ fn main() {
   //   }
   //   Ok(())
   // })
+  .manage(SnapConfig::new())
   .manage(SSHState(Arc::new(Mutex::new(HashMap::new()))))
   .manage(ConfigState(Arc::new(Mutex::new(config))))
   .invoke_handler(tauri::generate_handler![

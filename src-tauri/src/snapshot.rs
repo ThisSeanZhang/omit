@@ -2,6 +2,7 @@ use std::sync::{Arc, Mutex};
 use std::{collections::HashMap, time::SystemTime};
 
 use serde::{ Serialize, Deserialize};
+use tauri::State;
 use std::path::PathBuf;
 
 use crate::common::ValueType;
@@ -27,15 +28,28 @@ impl OmitConfig for SnapConfig {
 
 impl SnapConfig {
   pub fn new() -> SnapConfig {
-    let config = SnapConfig {
+    let mut config = SnapConfig {
       config_name: "snapshots.json",
       base_path: std::env::current_dir().unwrap().clone(),
       snapshots: vec![],
     };
     let snaps_raw = config.read();
-    let snaps: Vec<Snapshot> = snaps_raw.unwrap();
-    config.save(&snaps);
+    config.snapshots = snaps_raw.unwrap();
+    // snaps.push(Snapshot::default());
+    // config.save(&snaps);
     config
+  }
+
+  pub fn get_snaps(&self) -> &Vec<Snapshot>{
+    &self.snapshots
+  }
+
+  pub fn get_snap_str(&self) -> String {
+    if let Ok(result) = serde_json::to_string_pretty(&self.snapshots) {
+      result
+    } else {
+      "".to_string()
+    }
   }
 }
 
@@ -128,7 +142,11 @@ impl Default for Snapshot {
 }
 
 #[tauri::command]
-pub fn read_snapshots() -> Result<Vec<Snapshot>, String> {
+pub fn read_snapshots(snap_config: State<'_, SnapConfig>) -> Result<String, String> {
+  Ok(snap_config.read_str(snap_config.config_name()).unwrap_or("".to_string()))
+}
+
+pub fn test_snapshots() -> Result<Vec<Snapshot>, String> {
   let mut snap1 = Snapshot::default();
   snap1.title = "目录遍历".to_string();
   snap1.command_name = "ls".to_string();
