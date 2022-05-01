@@ -156,7 +156,7 @@ impl Config {
     } else {
       raw_config.unwrap()
     };
-    config_manager.save(&config);
+    // config_manager.save(&config);
     config
   }
 }

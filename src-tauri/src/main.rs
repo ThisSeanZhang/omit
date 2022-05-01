@@ -18,7 +18,7 @@ mod util;
 use std::{collections::HashMap, sync::{Arc, Mutex}};
 use config::{ ConfigState, Config, save_session, sessions, read_session};
 // use std::env;
-use ssh_cmd::{create_ssh, new_window, add_listen, current_path, SSHState};
+use ssh_cmd::{create_ssh, add_listen, current_path, SSHState};
 
 use crate::repository::{
   repository_state_init,
@@ -44,7 +44,7 @@ fn main() {
   //   }
   //   Ok(())
   // })
-  .manage(repository_state_init(&config))
+  // .manage(repository_state_init(&config))
   .manage(SnapConfig::new())
   .manage(SSHState(Arc::new(Mutex::new(HashMap::new()))))
   .manage(ConfigState(Arc::new(Mutex::new(config))))
@@ -55,7 +55,7 @@ fn main() {
     create_pty,
     send_data_from,
     create_ssh,
-    new_window,
+    // new_window,
     add_listen,
     current_path,
     save_session,

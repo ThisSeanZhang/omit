@@ -45,6 +45,7 @@ pub fn read_raw_json(path: &PathBuf, file_name: &str) -> Option<String> {
 }
 
 pub fn list_dir(path: &PathBuf) -> Vec<OmitFileInfo> {
+  println!("read path: {:?}", path);
   let paths = fs::read_dir(path).unwrap();
   let mut files = vec![];
   for path_raw in paths {
