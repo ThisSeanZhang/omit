@@ -8,7 +8,7 @@ use serde::{ Serialize, Deserialize};
 use tauri::{AppHandle, State};
 
 use crate::command::Command;
-use crate::config::Config;
+use crate::config::{Config, self, ConfigState};
 use crate::error::{ OmitError, OmitErrorType };
 use crate::util::{self, OmitFileInfo};
 
@@ -54,7 +54,7 @@ impl Repository {
   }
 
   fn scan_commands(&mut self) {
-    for info in util::list_dir(&OsString::from(self.path.as_os_str())) {
+    for info in util::list_dir(&self.path) {
       if info.is_file() && !info.is_hide() {
         let file = util::read_raw_json(&self.path, &info.file_name);
         if let Ok(cmds) = Command::new(file) {
@@ -89,6 +89,38 @@ pub fn get_commands(app: AppHandle, repos:State<RepositoryState>) -> impl std::f
     } else {
       Err("error".into())
     }
+  } else {
+    Err("error".into())
+  };
+  std::future::ready(result)
+}
+
+#[tauri::command(async)]
+pub fn get_repo_dirs(app: AppHandle, config_status:State<ConfigState>) -> impl std::future::Future<Output = Result<Vec<String>, String>> {
+  let result = if let Ok(config) = config_status.0.lock() {
+    let mut dirs = vec![];
+    for info in util::list_dir(&PathBuf::from(&config.data_fload)) {
+      dirs.push(info.file_name);
+    }
+    Ok(dirs)
+  } else {
+    Err("error".into())
+  };
+  std::future::ready(result)
+}
+
+
+#[tauri::command(async)]
+pub fn read_repo_command(app: AppHandle, config_status:State<ConfigState>, repo_dir: String ) -> impl std::future::Future<Output = Result<HashMap<String, String>, String>> {
+  let result = if let Ok(config) = config_status.0.lock() {
+    let mut command_map = HashMap::new();
+    let mut path = PathBuf::from(&config.data_fload);
+    path.push(repo_dir);
+    for info in util::list_dir(&path) {
+      let data = util::read_raw_json(&path, &info.file_name).unwrap_or("[]".to_string());
+      command_map.insert(info.file_name, data);
+    }
+    Ok(command_map)
   } else {
     Err("error".into())
   };

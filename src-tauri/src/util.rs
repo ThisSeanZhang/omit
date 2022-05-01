@@ -44,7 +44,7 @@ pub fn read_raw_json(path: &PathBuf, file_name: &str) -> Option<String> {
   .map_or_else(|_| None, |json| Some(json))
 }
 
-pub fn list_dir(path: &OsString) -> Vec<OmitFileInfo> {
+pub fn list_dir(path: &PathBuf) -> Vec<OmitFileInfo> {
   let paths = fs::read_dir(path).unwrap();
   let mut files = vec![];
   for path_raw in paths {

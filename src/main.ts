@@ -83,5 +83,8 @@ const naive = create({
   ],
 });
 
-createApp(App).use(naive).use(store).use(router)
+createApp(App)
+  .use(store)
+  .use(naive)
+  .use(router)
   .mount('#app');

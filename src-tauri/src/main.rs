@@ -20,7 +20,12 @@ use config::{ ConfigState, Config, save_session, sessions, read_session};
 // use std::env;
 use ssh_cmd::{create_ssh, new_window, add_listen, current_path, SSHState};
 
-use crate::repository::{ repository_state_init, get_commands };
+use crate::repository::{
+  repository_state_init,
+  get_commands,
+  get_repo_dirs,
+  read_repo_command,
+};
 // use tauri::Manager;
 
 fn main() {
@@ -44,6 +49,8 @@ fn main() {
   .manage(SSHState(Arc::new(Mutex::new(HashMap::new()))))
   .manage(ConfigState(Arc::new(Mutex::new(config))))
   .invoke_handler(tauri::generate_handler![
+    read_repo_command,
+    get_repo_dirs,
     get_commands,
     create_pty,
     send_data_from,
