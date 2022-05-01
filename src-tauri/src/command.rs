@@ -1,7 +1,7 @@
 use std::{collections::HashMap, time::SystemTime, path::PathBuf};
 
 use serde::{Deserialize, Serialize};
-use crate::config::OmitConfig;
+use crate::{config::OmitConfig, error::{OmitError, OmitErrorType}};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct CmdReop {
@@ -38,21 +38,61 @@ impl RepoConfig {
     config
   }
 }
-
+#[derive(Deserialize, Serialize, Debug)]
+#[serde(default)]
 pub struct Command {
-  cid: String,
+  // cid: String,
   command_name: String,
   brief_desc: HashMap<String, String>,
   description: HashMap<String, String>,
-  version: String,
-  platform: String,
-  arg_num: u8,
-  frequency: u32,
+  // version: String,
+  platform: u8,
+  // arg_num: u8,
+  // frequency: u32,
   options: Vec<CmdOption>,
   params: Vec<CmdParam>
 }
 
+impl Default for Command {
+  fn default() -> Self {
+      Command {
+        // cid: "".to_string(),
+        command_name: "".to_string(),
+        brief_desc: HashMap::new(),
+        description: HashMap::new(),
+        // version: "".to_string(),
+        platform: 0,
+        // arg_num: 0,
+        // frequency: 0,
+        options: vec![],
+        params: vec![]
+      }
+  }
+}
+
+impl Command {
+  pub fn new(cmd_json: Option<String>) -> Result<Vec<Command>, OmitError> {
+    if let Some(json) = cmd_json {
+      print!("read cmd json: {}", json);
+      let repo_config = serde_json::from_str(&json);
+      // let result:Result<HashMap<String, String>, Error> = serde_json::from_str(&json);
+      if repo_config.is_err() {
+        return Err(OmitError::new(
+          OmitErrorType::CommandError,
+          format!("convert cmd error, str: {}", json)
+        ));
+      }
+      return Ok(repo_config.unwrap());
+  }
+    Err(OmitError::new(
+      OmitErrorType::CommandError,
+      format!("repo config is Empty")
+    ))
+  }
+}
+
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(default)]
 pub struct CmdOption {
   oid: String,
   cid: String,
@@ -71,7 +111,7 @@ pub struct CmdOption {
 }
 
 impl Default for CmdOption {
-  fn default() -> Self{
+  fn default() -> Self {
     return CmdOption{
       oid: "".to_string().to_string(),
       cid: "".to_string(),

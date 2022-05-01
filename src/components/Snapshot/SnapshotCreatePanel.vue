@@ -29,11 +29,12 @@
 </div> -->
 <n-list style="padding: 0 10px;">
   <template #header>
-    <n-input type="text"
+    <!-- <n-input type="text"
       v-model:value="cmd_query_key"
       placeholder="filter"
       clearable
-    />
+    /> -->
+    <CommandSearchBar />
     <n-thing style="margin-top: 10px;">
       <template #header>
         {{cmd.command_name}}
@@ -186,6 +187,8 @@ import {
   CameraAdd24Regular,
 } from '@vicons/fluent';
 import { useMessage } from 'naive-ui';
+import { invoke } from '@tauri-apps/api/tauri';
+import CommandSearchBar from '@/components/Command/CommandSearchBar.vue';
 import SnapParamDrawer from '@/components/Snapshot/SnapParamDrawer.vue';
 import SnapOptionDrawer from '@/components/Snapshot/SnapOptionDrawer.vue';
 import { SnapExhibitModel, dealCommandExhibit } from '@/lib/Util';
@@ -197,6 +200,7 @@ export default defineComponent({
   components: {
     DismissCircle16Filled,
     TextBulletListSquareEdit20Regular,
+    CommandSearchBar,
     SnapParamDrawer,
     SnapOptionDrawer,
     LineHorizontal120Filled,

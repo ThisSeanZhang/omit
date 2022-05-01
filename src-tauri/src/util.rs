@@ -1,6 +1,6 @@
 use std::fs;
 use std::path::PathBuf;
-
+use std::ffi::OsString;
 use serde::{Serialize, Deserialize};
 use serde_json::{ self, Error, Result};
 
@@ -10,6 +10,7 @@ pub enum OmitFileType {
   FILE,
 }
 pub struct OmitFileInfo {
+  pub file_name: String,
   pub file_path: PathBuf,
   file_type: OmitFileType,
 }
@@ -17,6 +18,19 @@ pub struct OmitFileInfo {
 impl OmitFileInfo {
     pub fn is_dir(&self) -> bool {
       self.file_type == OmitFileType::DIR
+    }
+
+    pub fn is_file(&self) -> bool {
+      self.file_type == OmitFileType::FILE
+    }
+
+    pub fn is_hide(&self) -> bool {
+      self.file_name.starts_with('.')
+      // if let Some(file_name) = self.file_name.to_str() {
+      //   file_name.starts_with('.')
+      // } else {
+      //   false
+      // }
     }
 }
 
@@ -30,7 +44,7 @@ pub fn read_raw_json(path: &PathBuf, file_name: &str) -> Option<String> {
   .map_or_else(|_| None, |json| Some(json))
 }
 
-pub fn list_dir(path: String) -> Vec<OmitFileInfo> {
+pub fn list_dir(path: &OsString) -> Vec<OmitFileInfo> {
   let paths = fs::read_dir(path).unwrap();
   let mut files = vec![];
   for path_raw in paths {
@@ -42,7 +56,11 @@ pub fn list_dir(path: String) -> Vec<OmitFileInfo> {
         } else {
           OmitFileType::FILE
         };
-        files.push(OmitFileInfo { file_path, file_type })
+        files.push(OmitFileInfo {
+          file_name: path.file_name().to_str().unwrap().to_string(),
+          file_path,
+          file_type
+        })
       }
     }
   }
