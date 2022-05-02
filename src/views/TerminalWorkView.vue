@@ -69,9 +69,9 @@
 // import { Retweet } from '@vicons/fa';
 import { defineComponent, ref, computed } from 'vue';
 import { CameraAdd24Regular, WindowConsole20Regular } from '@vicons/fluent';
-import VTerminal from './VTerminal.vue';
 import SnapshotPanel from '@/components/Snapshot/SnapshotPanel.vue';
 import SnapshotCreatePanel from '@/components/Snapshot/SnapshotCreatePanel.vue';
+import VTerminal from './VTerminal.vue';
 
 export default defineComponent({
   name: 'TerminalWorkView',
