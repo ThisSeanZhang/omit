@@ -36,6 +36,7 @@ import {
   NAvatar,
   NDrawer,
   NDrawerContent,
+  NModal,
 } from 'naive-ui';
 import App from './App.vue';
 import router from './router';
@@ -80,6 +81,7 @@ const naive = create({
     NAvatar,
     NDrawer,
     NDrawerContent,
+    NModal,
   ],
 });
 

@@ -78,7 +78,8 @@
               <n-icon size="20"><Copy20Regular /></n-icon>
             </template>
           </n-button>
-          <n-button type="warning" text size="medium">
+          <n-button type="warning" text size="medium"
+            @click="show_save_panel = true">
             <template #icon>
               <n-icon size="20"><CameraAdd24Regular /></n-icon>
             </template>
@@ -169,6 +170,9 @@
   <SnapParamDrawer
     v-model:snap_params="snap.param_value"
     v-model:value="show_param_drawer" />
+  <SnapshotSavePanel
+    v-bind:snap="snap"
+    v-model:value="show_save_panel" />
   </n-list>
 </template>
 <script lang="ts">
@@ -186,6 +190,7 @@ import { invoke } from '@tauri-apps/api/tauri';
 import CommandSearchBar from '@/components/Command/CommandSearchBar.vue';
 import SnapParamDrawer from '@/components/Snapshot/SnapParamDrawer.vue';
 import SnapOptionDrawer from '@/components/Snapshot/SnapOptionDrawer.vue';
+import SnapshotSavePanel from '@/components/Snapshot/SnapshotSavePanel.vue';
 import { SnapExhibitModel, dealCommandExhibit } from '@/lib/Util';
 import Command from '@/lib/Command';
 import Snapshot from '@/lib/Snapshot';
@@ -193,6 +198,7 @@ import Snapshot from '@/lib/Snapshot';
 export default defineComponent({
   name: 'SnapshotCreatePanel',
   components: {
+    SnapshotSavePanel,
     DismissCircle16Filled,
     TextBulletListSquareEdit20Regular,
     CommandSearchBar,
@@ -220,6 +226,7 @@ export default defineComponent({
 
     const show_param_drawer = ref(false);
     const show_option_drawer = ref(false);
+    const show_save_panel = ref(false);
 
     function handleClose() {
       console.log('handle');
@@ -239,6 +246,7 @@ export default defineComponent({
       snap.value = Snapshot.fromCmd(updateCmd);
     }
     return {
+      show_save_panel,
       handleUpdateCmd,
       copyCmd,
       SnapExhibitModel,

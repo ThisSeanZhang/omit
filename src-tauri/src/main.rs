@@ -11,7 +11,7 @@ mod common;
 mod repository;
 mod command;
 
-use snapshot::{read_snapshots, SnapConfig};
+use snapshot::{read_snapshots, save_snapshots, SnapConfig};
 use terminal::create_pty;
 mod ssh_cmd;
 mod util;
@@ -50,6 +50,7 @@ fn main() {
   .manage(ConfigState(Arc::new(Mutex::new(config))))
   .invoke_handler(tauri::generate_handler![
     read_repo_command,
+    save_snapshots,
     get_repo_dirs,
     get_commands,
     create_pty,

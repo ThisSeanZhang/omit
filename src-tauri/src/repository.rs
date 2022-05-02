@@ -100,7 +100,9 @@ pub fn get_repo_dirs(app: AppHandle, config_status:State<ConfigState>) -> impl s
   let result = if let Ok(config) = config_status.0.lock() {
     let mut dirs = vec![];
     for info in util::list_dir(&PathBuf::from(&config.repos_folder)) {
-      dirs.push(info.file_name);
+      if info.is_dir() {
+        dirs.push(info.file_name);
+      }
     }
     Ok(dirs)
   } else {

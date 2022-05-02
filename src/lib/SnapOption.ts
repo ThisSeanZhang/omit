@@ -1,5 +1,5 @@
 import CmdOption from './CmdOption';
-import ValueType from './ValueType';
+import ValueType, { fromValue } from './ValueType';
 
 export default class SnapOption {
   brief_name: string;
@@ -31,6 +31,17 @@ export default class SnapOption {
     op1.brief_name = op.brief_name;
     op1.option_type = op.option_type;
     return op1;
+  }
+
+  static fromObj(obj: any): SnapOption {
+    const sop = new SnapOption();
+    sop.brief_name = obj.brief_name;
+    sop.full_name = obj.full_name;
+    sop.value = obj.value;
+    sop.ignore = obj.ignore;
+    sop.selected = obj.selected;
+    sop.option_type = fromValue(obj.option_type);
+    return sop;
   }
 
   static default(): SnapOption[] {

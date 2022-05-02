@@ -50,10 +50,22 @@ pub fn read_raw_json(path: &PathBuf, file_name: &str) -> Option<String> {
   .map_or_else(|_| None, |json| Some(json))
 }
 
+pub fn read_file(path: &PathBuf, file_name: &str) -> Result<String, OmitError> {
+  let dest_path = path.clone().join(file_name);
+  println!("read path: {:?}", dest_path);
+  if !dest_path.is_file() {
+    return Err(OmitError::new(OmitErrorType::ReadFile, "File dont exist".to_string()));
+  }
+  match fs::read_to_string(dest_path) {
+    Ok(file_content) => Ok(file_content),
+    Err(e) => Err(OmitError::parse_io_error(e))
+  }
+}
+
 pub fn save_file(path: &PathBuf, file_name: &str, data: &str) -> Result<(), OmitError> {
   let dest_path = path.clone().join(file_name);
   let file_open = OpenOptions::new().write(true).create(true).open(dest_path);
-  return if let Ok(file) = file_open {
+  return if let Ok(mut file) = file_open {
     match file.write(data.as_bytes()) {
       Ok(length) => {
         println!("write length: {}", length);
@@ -61,11 +73,6 @@ pub fn save_file(path: &PathBuf, file_name: &str, data: &str) -> Result<(), Omit
       },
       Err(e) => Err(OmitError::parse_io_error(e))
     }
-    // if let Ok(write_result) = file.write(data.as_bytes()) {
-    //   Ok(())
-    // } else {
-    //   Err(OmitError::new(OmitErrorType::SaveError, "Write File Error".to_string()))
-    // }
   } else {
     Err(OmitError::new(OmitErrorType::SaveError, "Open File Error".to_string()))
   }

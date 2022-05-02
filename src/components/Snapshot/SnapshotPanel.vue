@@ -27,7 +27,8 @@ import { defineComponent, ref, computed } from 'vue';
 import { getCurrent } from '@tauri-apps/api/window';
 import { invoke } from '@tauri-apps/api/tauri';
 // import { TimesCircleRegular } from '@vicons/fa';
-import Snapshot from '@/lib/Snapshot';
+import { useStore } from '@/store/snapshot';
+// import Snapshot from '@/lib/Snapshot';
 import SnapshotExhibitCard from '@/components/Snapshot/SnapshotExhibitCard.vue';
 
 export default defineComponent({
@@ -43,16 +44,17 @@ export default defineComponent({
     },
   },
   setup(props: any) {
-    const snapshots_raw = ref(new Array<Snapshot>());
-    // const query_key = ref('');
+    const storage = useStore();
+    // const snapshots_raw = ref(new Array<Snapshot>());
+    // // const query_key = ref('');
 
-    invoke<string>('read_snapshots')
-      .then(msg => {
-        snapshots_raw.value = JSON.parse(msg);
-        console.log(msg);
-      }).catch((msg:string) => console.log(msg));
-
-    const snapshots = computed(() => snapshots_raw.value.filter(snap => (props.filter === '' ? true : snap.title.includes(props.filter))));
+    // invoke<string>('read_snapshots')
+    //   .then(msg => {
+    //     snapshots_raw.value = JSON.parse(msg);
+    //     console.log(msg);
+    //   }).catch((msg:string) => console.log(msg));
+    storage.FETCH_SNAPSHOTS();
+    const snapshots = computed(() => storage.snapshots.filter(snap => (props.filter === '' ? true : snap.title.includes(props.filter))));
     // const test = computed(() => query_key.value);
     return {
       // query_key,

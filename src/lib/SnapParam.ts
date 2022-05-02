@@ -1,4 +1,4 @@
-import ValueType from './ValueType';
+import ValueType, { fromValue } from './ValueType';
 
 export default class SnapParam {
   selected: boolean;
@@ -15,5 +15,13 @@ export default class SnapParam {
     const p1 = new SnapParam();
     const p2 = new SnapParam();
     return [p1, p2];
+  }
+
+  static fromObj(obj: any): SnapParam {
+    const sp = new SnapParam();
+    sp.value = obj.value;
+    sp.selected = obj.selected;
+    sp.param_type = fromValue(obj.param_type);
+    return sp;
   }
 }
