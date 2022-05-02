@@ -32,6 +32,10 @@ impl OmitFileInfo {
       //   false
       // }
     }
+
+    pub fn is_extend(&self, extend: &str) -> bool {
+      self.file_name.ends_with(&format!(".{}", extend))
+    }
 }
 
 pub fn read_raw_json(path: &PathBuf, file_name: &str) -> Option<String> {

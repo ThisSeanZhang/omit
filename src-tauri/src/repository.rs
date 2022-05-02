@@ -117,6 +117,7 @@ pub fn read_repo_command(app: AppHandle, config_status:State<ConfigState>, repo_
     let mut path = PathBuf::from(&config.repos_folder);
     path.push(repo_dir);
     for info in util::list_dir(&path) {
+      if info.is_hide() || !info.is_extend("json") { continue; }
       let data = util::read_raw_json(&path, &info.file_name).unwrap_or("[]".to_string());
       command_map.insert(info.file_name, data);
     }
