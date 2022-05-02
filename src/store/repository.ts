@@ -28,6 +28,7 @@ export const useStore = defineStore('repositpry', {
       try {
         const msg = await invoke<any>('read_repo_command', { repoDir: name });
         console.log(msg);
+        this.raw_repo.splice(0, this.raw_repo.length);
         this.raw_repo.push(new Repo(name, msg));
         console.log(this.raw_repo);
       } catch (e) {

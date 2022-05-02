@@ -29,12 +29,7 @@
 </div> -->
 <n-list style="padding: 0 10px;">
   <template #header>
-    <!-- <n-input type="text"
-      v-model:value="cmd_query_key"
-      placeholder="filter"
-      clearable
-    /> -->
-    <CommandSearchBar />
+    <CommandSearchBar v-on:selectCmd="handleUpdateCmd" />
     <n-thing style="margin-top: 10px;">
       <template #header>
         {{cmd.command_name}}
@@ -52,7 +47,7 @@
         </n-button>
       </template>
     <template #description>
-      {{cmd.description.get('CN')}}
+      {{cmd.description.get('zh-CN')}}
     </template>
     </n-thing>
   </template>
@@ -220,7 +215,6 @@ export default defineComponent({
     const cmd = ref(props.command);
     const snap = ref(Snapshot.fromCmd(props.command));
     const check = ref(false);
-    const cmd_query_key = ref('');
     const display_model = ref(SnapExhibitModel.ONELINE);
     const command_str = computed(() => dealCommandExhibit(snap.value, display_model.value));
 
@@ -240,12 +234,16 @@ export default defineComponent({
           message.info('复制失败', err);
         });
     }
+    function handleUpdateCmd(updateCmd) {
+      cmd.value = updateCmd;
+      snap.value = Snapshot.fromCmd(updateCmd);
+    }
     return {
+      handleUpdateCmd,
       copyCmd,
       SnapExhibitModel,
       display_model,
       command_str,
-      cmd_query_key,
       show_param_drawer,
       show_option_drawer,
       check,

@@ -49,6 +49,7 @@ import {
   ref,
   getCurrentInstance,
   computed,
+  watch,
 } from 'vue';
 import {
   DismissCircle20Regular,
@@ -84,7 +85,12 @@ export default defineComponent({
     // const a = getCurrentInstance();
     const selectValue = ref('');
     const ops = ref(props.snap_options);
-    console.log(props.cmd_options);
+    watch(
+      () => props.snap_options,
+      newOne => {
+        ops.value = newOne;
+      },
+    );
     const cops = computed(
       () => props.cmd_options
         .map((op: CmdOption) => ({ label: op.full_name, value: op })),

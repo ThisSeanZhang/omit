@@ -53,6 +53,7 @@ import {
   ref,
   getCurrentInstance,
   computed,
+  watch,
 } from 'vue';
 import {
   Add16Filled,
@@ -83,7 +84,12 @@ export default defineComponent({
   setup(props: any) {
     // const a = getCurrentInstance();
     const params = ref(props.snap_params);
-
+    watch(
+      () => props.snap_params,
+      newOne => {
+        params.value = newOne;
+      },
+    );
     function dealClose() {
       console.log('close');
     }
