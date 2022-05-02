@@ -15,7 +15,7 @@ use crate::util::{self, OmitFileInfo};
 pub struct RepositoryState(pub Arc<Mutex<Vec<Repository>>>);
 
 pub fn repository_state_init(config: &Config) -> RepositoryState {
-  RepositoryState(Arc::new(Mutex::new(deal_all_repository(&config.data_fload))))
+  RepositoryState(Arc::new(Mutex::new(deal_all_repository(&config.repos_folder))))
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -99,7 +99,7 @@ pub fn get_commands(app: AppHandle, repos:State<RepositoryState>) -> impl std::f
 pub fn get_repo_dirs(app: AppHandle, config_status:State<ConfigState>) -> impl std::future::Future<Output = Result<Vec<String>, String>> {
   let result = if let Ok(config) = config_status.0.lock() {
     let mut dirs = vec![];
-    for info in util::list_dir(&PathBuf::from(&config.data_fload)) {
+    for info in util::list_dir(&PathBuf::from(&config.repos_folder)) {
       dirs.push(info.file_name);
     }
     Ok(dirs)
@@ -114,7 +114,7 @@ pub fn get_repo_dirs(app: AppHandle, config_status:State<ConfigState>) -> impl s
 pub fn read_repo_command(app: AppHandle, config_status:State<ConfigState>, repo_dir: String ) -> impl std::future::Future<Output = Result<HashMap<String, String>, String>> {
   let result = if let Ok(config) = config_status.0.lock() {
     let mut command_map = HashMap::new();
-    let mut path = PathBuf::from(&config.data_fload);
+    let mut path = PathBuf::from(&config.repos_folder);
     path.push(repo_dir);
     for info in util::list_dir(&path) {
       let data = util::read_raw_json(&path, &info.file_name).unwrap_or("[]".to_string());

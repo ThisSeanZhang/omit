@@ -117,16 +117,16 @@ impl ConfigManager {
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(default)]
 pub struct Config {
-  pub session_fload: String,
-  pub data_fload: String,
+  pub session_folder: String,
+  pub repos_folder: String,
 }
 
 impl Default for Config {
   fn default() -> Self { 
     let path = env::current_dir().unwrap().clone();
     Config {
-      session_fload: path.join("session").as_path().to_str().unwrap().to_string(),
-      data_fload: path.join("data").as_path().to_str().unwrap().to_string(),
+      session_folder: path.join("session").as_path().to_str().unwrap().to_string(),
+      repos_folder: path.join("repos").as_path().to_str().unwrap().to_string(),
     }
   }
 }
@@ -163,8 +163,8 @@ impl Config {
 
 #[command(async)]
 pub fn save_session(app: AppHandle, config:State<ConfigState>, sess:OmitSession) -> impl std::future::Future<Output = Result<String, String>> {
-  let session_fload =  config.0.lock().unwrap().session_fload.clone();
-  let mut file_path = PathBuf::from(session_fload).join(sess.name.clone());
+  let session_folder =  config.0.lock().unwrap().session_folder.clone();
+  let mut file_path = PathBuf::from(session_folder).join(sess.name.clone());
   file_path.set_extension("json");
   println!("file path: {:?}", file_path);
   let file = File::create(file_path);
@@ -181,8 +181,8 @@ pub fn save_session(app: AppHandle, config:State<ConfigState>, sess:OmitSession)
 
 #[command(async)]
 pub fn sessions(app: AppHandle, config:State<ConfigState>) -> impl std::future::Future<Output = Result<Vec<String>, String>> {
-  let session_fload =  config.0.lock().unwrap().session_fload.clone();
-  let dirs = PathBuf::from(session_fload).read_dir();
+  let session_folder =  config.0.lock().unwrap().session_folder.clone();
+  let dirs = PathBuf::from(session_folder).read_dir();
   if let Err(e) = dirs {
     return std::future::ready(Err(e.to_string()));
   }
@@ -196,8 +196,8 @@ pub fn sessions(app: AppHandle, config:State<ConfigState>) -> impl std::future::
 }
 #[command]
 pub fn read_session(config:State<ConfigState>, session_name: String) -> Result<OmitSession, String> {
-  let session_fload =  config.0.lock().unwrap().session_fload.clone();
-  let sess_json = util::read_raw_json(&PathBuf::from(session_fload), format!("{}.json",session_name).as_str());
+  let session_folder =  config.0.lock().unwrap().session_folder.clone();
+  let sess_json = util::read_raw_json(&PathBuf::from(session_folder), format!("{}.json",session_name).as_str());
   if sess_json.is_none() {
     return Err("load session error".into());
   }
