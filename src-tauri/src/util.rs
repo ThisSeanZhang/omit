@@ -1,8 +1,10 @@
-use std::fs;
+use std::fs::{self, OpenOptions};
+use std::io::Write;
 use std::path::PathBuf;
 use std::ffi::OsString;
 use serde::{Serialize, Deserialize};
-use serde_json::{ self, Error, Result};
+
+use crate::error::{OmitError, OmitErrorType};
 
 #[derive(PartialEq)]
 pub enum OmitFileType {
@@ -48,6 +50,27 @@ pub fn read_raw_json(path: &PathBuf, file_name: &str) -> Option<String> {
   .map_or_else(|_| None, |json| Some(json))
 }
 
+pub fn save_file(path: &PathBuf, file_name: &str, data: &str) -> Result<(), OmitError> {
+  let dest_path = path.clone().join(file_name);
+  let file_open = OpenOptions::new().write(true).create(true).open(dest_path);
+  return if let Ok(file) = file_open {
+    match file.write(data.as_bytes()) {
+      Ok(length) => {
+        println!("write length: {}", length);
+        Ok(())
+      },
+      Err(e) => Err(OmitError::parse_io_error(e))
+    }
+    // if let Ok(write_result) = file.write(data.as_bytes()) {
+    //   Ok(())
+    // } else {
+    //   Err(OmitError::new(OmitErrorType::SaveError, "Write File Error".to_string()))
+    // }
+  } else {
+    Err(OmitError::new(OmitErrorType::SaveError, "Open File Error".to_string()))
+  }
+}
+
 pub fn list_dir(path: &PathBuf) -> Vec<OmitFileInfo> {
   println!("read path: {:?}", path);
   let paths = fs::read_dir(path).unwrap();
@@ -70,4 +93,13 @@ pub fn list_dir(path: &PathBuf) -> Vec<OmitFileInfo> {
     }
   }
   files
+}
+
+impl OmitError {
+  fn parse_io_error(err: std::io::Error) -> OmitError {
+    OmitError {
+      t: OmitErrorType::Default,
+      message: err.to_string()
+    }
+  }
 }

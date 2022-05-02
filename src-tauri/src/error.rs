@@ -1,6 +1,7 @@
 #[derive(Debug)]
 pub enum OmitErrorType {
   Default,
+  SaveError,
   CONFIG,
   RepositoryError,
   CommandError,

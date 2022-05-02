@@ -6,7 +6,8 @@ use tauri::State;
 use std::path::PathBuf;
 
 use crate::common::ValueType;
-use crate::config::OmitConfig;
+use crate::config::{OmitConfig, ConfigState};
+use crate::util;
 
 pub struct SnapConfig {
   config_name: &'static str,
@@ -144,6 +145,19 @@ impl Default for Snapshot {
 #[tauri::command]
 pub fn read_snapshots(snap_config: State<'_, SnapConfig>) -> Result<String, String> {
   Ok(snap_config.read_str(snap_config.config_name()).unwrap_or("".to_string()))
+}
+
+#[tauri::command]
+pub fn save_snapshots(config: State<ConfigState>, snaps: String) -> Result<String, String> {
+  let path = if let Ok(conf) = config.0.lock() {
+    conf.repos_folder.clone()
+  } else {
+    return Err("get config folder error".to_string());
+  };
+  match util::save_file(&PathBuf::from(path), "snapshot.json", &snaps) {
+    Ok(_) => Ok("success".to_string()),
+    Err(e) => Err(e.message),
+  }
 }
 
 pub fn test_snapshots() -> Result<Vec<Snapshot>, String> {
