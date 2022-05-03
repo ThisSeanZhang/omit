@@ -18,7 +18,7 @@
         <router-view/>
       </n-layout-content> -->
 
-      <n-layout-footer style="height: 30px;"><footer-bar></footer-bar></n-layout-footer>
+      <n-layout-footer style="height: 36px;"><footer-bar></footer-bar></n-layout-footer>
   <!-- </n-space> -->
 </n-message-provider>
 </n-config-provider>
@@ -68,7 +68,7 @@ html, body , #app {
   // flex-direction: column;
 }
 .contents {
-  height: calc(100% - 60px);
+  height: calc(100% - 66px);
   position: relative;
   overflow: hidden;
 }

@@ -7,11 +7,13 @@ mod terminal;
 mod error;
 mod action;
 mod snapshot;
+mod shortcut;
 mod common;
 mod repository;
 mod command;
 
 use snapshot::{read_snapshots, save_snapshots, SnapConfig};
+use shortcut::{read_shortcuts, save_shortcuts};
 use terminal::create_pty;
 mod ssh_cmd;
 mod util;
@@ -49,6 +51,8 @@ fn main() {
   .manage(SSHState(Arc::new(Mutex::new(HashMap::new()))))
   .manage(ConfigState(Arc::new(Mutex::new(config))))
   .invoke_handler(tauri::generate_handler![
+    read_shortcuts,
+    save_shortcuts,
     read_repo_command,
     save_snapshots,
     get_repo_dirs,

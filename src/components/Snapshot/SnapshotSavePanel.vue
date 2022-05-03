@@ -1,36 +1,45 @@
 <template>
   <n-modal
     :show="value"
-    class="custom-card"
     preset="card"
-    :style="bodyStyle"
-    title="卡片预设"
-    size="huge"
+    style="width: 50%;"
+    title="保存快照"
+    size="small"
     :bordered="false"
     :segmented="segmented"
     @update:show="$emit('update:value', false)"
   >
     <template #header-extra>
-      噢!
     </template>
-    {{snap}}
-    内容
+    <!-- {{snap}} -->
+    <n-input v-model:value="snapshot.title" type="text" placeholder="输入Title" />
+    <SnapshotExhibitCard :exhibit_btn="SnapCardExhibitModel.SAVE" :snapshot="snapshot" />
     <template #footer>
-      尾部<n-button @click="saveSnap">Default</n-button>
+      <n-space justify="end">
+        <!-- TODO when save the snap need validate snap title -->
+        <n-button type="success" @click="saveSnap">保存</n-button>
+      </n-space>
     </template>
   </n-modal>
 </template>
 <script lang="ts">
 import Snapshot from '@/lib/Snapshot';
 import {
+  SnapCardExhibitModel,
+} from '@/lib/Util';
+import {
   defineComponent,
   ref,
   watch,
 } from 'vue';
 import { useStore } from '@/store/snapshot';
+import SnapshotExhibitCard from '@/components/Snapshot/SnapshotExhibitCard.vue';
 
 export default defineComponent({
   name: 'SnapshotSavePanel',
+  components: {
+    SnapshotExhibitCard,
+  },
   props: {
     value: {
       type: Boolean,
@@ -57,6 +66,7 @@ export default defineComponent({
     return {
       saveSnap,
       snapshot,
+      SnapCardExhibitModel,
     };
   },
 });

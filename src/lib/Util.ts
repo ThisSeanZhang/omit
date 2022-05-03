@@ -7,6 +7,11 @@ export enum SnapExhibitModel {
   MULTLINE,
 }
 
+export enum SnapCardExhibitModel {
+  SAVE,
+  EXHIBIT_ON_SIDE,
+}
+
 function buildHyphen(option: { brief_name: string, full_name: string }) {
   if (option.brief_name === option.full_name) {
     return '--';

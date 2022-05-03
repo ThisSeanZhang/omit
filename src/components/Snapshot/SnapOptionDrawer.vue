@@ -2,7 +2,7 @@
 <n-drawer :show="value"
   @update:show="$emit('update:value', false)"
   to="#drawer-global"
-  width="50%" placement="left">
+  width="50%" placement="right">
   <n-drawer-content title="选项编辑" closable>
     <n-space vertical>
       <n-input-group>

@@ -13,20 +13,22 @@ export const useStore = defineStore('snap', {
     async FETCH_SNAPSHOTS(): Promise<void> {
       try {
         const msg = await invoke<string>('read_snapshots');
-        console.log(msg);
-        console.log(this.raw_snaps);
+        // console.log(msg);
+        // console.log(this.raw_snaps);
         this.raw_snaps.splice(0, this.raw_snaps.length);
-        console.log(JSON.parse(msg).map(Snapshot.fromObj));
+        // console.log(JSON.parse(msg).map(Snapshot.fromObj));
         JSON.parse(msg).map(Snapshot.fromObj).forEach(e => this.raw_snaps.push(e));
-        console.log(this.raw_snaps);
+        // console.log(this.raw_snaps);
       } catch (e) {
         console.log(e);
       }
     },
     async SAVE_SNAPSHOTS(snap: Snapshot): Promise<void> {
       try {
+        const save = this.raw_snaps.slice();
+        save.push(snap);
+        await invoke<string>('save_snapshots', { snaps: JSON.stringify(save, null, 2) });
         this.raw_snaps.push(snap);
-        await invoke<string>('save_snapshots', { snaps: JSON.stringify(this.raw_snaps, null, 2) });
       } catch (e) {
         console.log(e);
       }
