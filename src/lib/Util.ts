@@ -12,6 +12,14 @@ export enum SnapCardExhibitModel {
   EXHIBIT_ON_SIDE,
 }
 
+export enum PanelType {
+  TERMINAL,
+  SNAPSHORT,
+  COMMAOND,
+  SHORTCUT,
+  CONFIG,
+}
+
 function buildHyphen(option: { brief_name: string, full_name: string }) {
   if (option.brief_name === option.full_name) {
     return '--';

@@ -11,6 +11,7 @@
   >
     <template #header-extra>
     </template>
+    {{short}}
     <n-input v-model:value="short.title" type="text" placeholder="输入Title" />
     <template #footer>
       <n-space justify="end">

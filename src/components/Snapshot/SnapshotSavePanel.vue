@@ -50,7 +50,7 @@ export default defineComponent({
       default: () => new Snapshot(),
     },
   },
-  setup(props: any) {
+  setup(props: any, { emit }) {
     const storage = useStore();
     const snapshot = ref(props.snap);
     watch(
@@ -62,6 +62,7 @@ export default defineComponent({
 
     function saveSnap() {
       storage.SAVE_SNAPSHOTS(snapshot.value);
+      emit('update:value', false);
     }
     return {
       saveSnap,

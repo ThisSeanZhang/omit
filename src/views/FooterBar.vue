@@ -4,7 +4,7 @@ justify="space-between">
   <ShortcutBar />
 
   <n-button-group>
-    <n-button size="small" ghost>
+    <!-- <n-button size="small" ghost>
       <template #icon>
         <n-icon><log-in-icon /></n-icon>
       </template>
@@ -15,13 +15,17 @@ justify="space-between">
         <n-icon><log-in-icon /></n-icon>
       </template>
       一颗
-    </n-button>
-    <n-button size="small" ghost @click="shortcut_manager_panel = true">
+    </n-button> -->
+    <n-button size="small" ghost @click="shortcut_manager_panel = !shortcut_manager_panel">
       <template #icon>
-        <n-icon><log-in-icon /></n-icon>
+        <n-icon><NotepadEdit16Filled /></n-icon>
       </template>
-      苹果
     </n-button>
+    <!-- <n-button size="small" ghost @click="shortcut_manager_panel = !shortcut_manager_panel">
+      <template #icon>
+        <n-icon><TextBulletListAdd24Regular /></n-icon>
+      </template>
+    </n-button> -->
   </n-button-group>
 </n-space>
 <ShortcutManagePanel v-model:value="shortcut_manager_panel" />
@@ -31,6 +35,10 @@ import {
   onMounted,
   ref,
 } from 'vue';
+import {
+  NotepadEdit16Filled,
+  TextBulletListAdd24Regular,
+} from '@vicons/fluent';
 import ShortcutBar from '@/components/Shortcut/ShortcutBar.vue';
 import ShortcutManagePanel from '@/components/Shortcut/ShortcutManagePanel.vue';
 
@@ -39,6 +47,8 @@ export default {
   components: {
     ShortcutManagePanel,
     ShortcutBar,
+    NotepadEdit16Filled,
+    // TextBulletListAdd24Regular,
   },
   setup() {
     const shortcut_manager_panel = ref(false);

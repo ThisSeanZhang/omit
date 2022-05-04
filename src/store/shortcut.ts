@@ -33,6 +33,14 @@ export const useStore = defineStore('shortcut', {
         console.log(e);
       }
     },
+    async SAVE_ALL_SHORTCUR(): Promise<void> {
+      try {
+        console.log(this.raw_shortcut);
+        await invoke<string>('save_shortcuts', { snaps: JSON.stringify(this.raw_shortcut, null, 2) });
+      } catch (e) {
+        console.log(e);
+      }
+    },
   },
 });
 export default useStore;

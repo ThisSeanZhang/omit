@@ -20,7 +20,6 @@
       </n-button>
     </n-space>
   <!-- </n-space> -->
-  <ShortcutSavePanel v-model:value="shortcut_save_panel" />
 </template>
 <script lang="ts">
 import {
@@ -29,21 +28,17 @@ import {
   computed,
 } from 'vue';
 import { useStore } from '@/store/shortcut';
-import ShortcutSavePanel from '@/components/Shortcut/ShortcutSavePanel.vue';
 import Shortcut from '@/lib/Shortcut';
 
 export default defineComponent({
   name: 'ShortcutBar',
   components: {
-    ShortcutSavePanel,
   },
   setup() {
     const store = useStore();
     store.FETCH_SHORTCURS();
-    const shortcut_save_panel = ref(false);
     const shortcuts = computed(() => store.shortcuts);
     return {
-      shortcut_save_panel,
       shortcuts,
     };
   },
