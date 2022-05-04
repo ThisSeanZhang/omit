@@ -1,4 +1,4 @@
-import ValueType from './ValueType';
+import ValueType, { fromValue } from './ValueType';
 
 interface OptionValue {
   selected: boolean,
@@ -9,7 +9,7 @@ export default class CmdOption {
   brief_name: string;
   full_name: string;
   description: Map<string, string>;
-  value: Array<OptionValue>;
+  // value: Array<OptionValue>;
   // 使用的时候是否忽略类型
   ignore: boolean;
   // 是否能重复选择
@@ -21,7 +21,7 @@ export default class CmdOption {
     this.brief_name = '';
     this.full_name = '';
     this.description = new Map();
-    this.value = [];
+    // this.value = [];
     this.ignore = false;
     this.duplicate = false;
     this.selected = false;
@@ -30,6 +30,20 @@ export default class CmdOption {
 
   isMultip() {
     return this.option_type >= 2 ** 14;
+  }
+
+  static fromObj(options: any[]): CmdOption[] {
+    return options.map(each => {
+      const op = new CmdOption();
+      op.brief_name = each.brief_name;
+      op.full_name = each.full_name;
+      op.description = each.description;
+      op.ignore = each.ignore;
+      op.duplicate = each.duplicate;
+      op.selected = each.selected;
+      op.option_type = fromValue(each.option_type);
+      return op;
+    });
   }
 
   static default(): CmdOption[] {

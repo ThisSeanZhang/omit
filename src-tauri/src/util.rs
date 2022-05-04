@@ -1,8 +1,10 @@
-use std::fs;
+use std::fs::{self, OpenOptions};
+use std::io::Write;
 use std::path::PathBuf;
 use std::ffi::OsString;
 use serde::{Serialize, Deserialize};
-use serde_json::{ self, Error, Result};
+
+use crate::error::{OmitError, OmitErrorType};
 
 #[derive(PartialEq)]
 pub enum OmitFileType {
@@ -32,6 +34,10 @@ impl OmitFileInfo {
       //   false
       // }
     }
+
+    pub fn is_extend(&self, extend: &str) -> bool {
+      self.file_name.ends_with(&format!(".{}", extend))
+    }
 }
 
 pub fn read_raw_json(path: &PathBuf, file_name: &str) -> Option<String> {
@@ -44,7 +50,36 @@ pub fn read_raw_json(path: &PathBuf, file_name: &str) -> Option<String> {
   .map_or_else(|_| None, |json| Some(json))
 }
 
-pub fn list_dir(path: &OsString) -> Vec<OmitFileInfo> {
+pub fn read_file(path: &PathBuf, file_name: &str) -> Result<String, OmitError> {
+  let dest_path = path.clone().join(file_name);
+  println!("read path: {:?}", dest_path);
+  if !dest_path.is_file() {
+    return Err(OmitError::new(OmitErrorType::ReadFile, "File dont exist".to_string()));
+  }
+  match fs::read_to_string(dest_path) {
+    Ok(file_content) => Ok(file_content),
+    Err(e) => Err(OmitError::parse_io_error(e))
+  }
+}
+
+pub fn save_file(path: &PathBuf, file_name: &str, data: &str) -> Result<(), OmitError> {
+  let dest_path = path.clone().join(file_name);
+  let file_open = OpenOptions::new().write(true).create(true).open(dest_path);
+  return if let Ok(mut file) = file_open {
+    match file.write(data.as_bytes()) {
+      Ok(length) => {
+        println!("write length: {}", length);
+        Ok(())
+      },
+      Err(e) => Err(OmitError::parse_io_error(e))
+    }
+  } else {
+    Err(OmitError::new(OmitErrorType::SaveError, "Open File Error".to_string()))
+  }
+}
+
+pub fn list_dir(path: &PathBuf) -> Vec<OmitFileInfo> {
+  println!("read path: {:?}", path);
   let paths = fs::read_dir(path).unwrap();
   let mut files = vec![];
   for path_raw in paths {
@@ -65,4 +100,13 @@ pub fn list_dir(path: &OsString) -> Vec<OmitFileInfo> {
     }
   }
   files
+}
+
+impl OmitError {
+  fn parse_io_error(err: std::io::Error) -> OmitError {
+    OmitError {
+      t: OmitErrorType::Default,
+      message: err.to_string()
+    }
+  }
 }

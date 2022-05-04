@@ -9,13 +9,13 @@ export default class CmdParam {
   value: string;
 
   constructor() {
-    this.cpid = "";
-    this.cid = "";
+    this.cpid = '';
+    this.cid = '';
     this.sort = Number.MAX_VALUE;
-    this.param_name = "";
+    this.param_name = '';
     this.description = new Map();
     this.required = false;
-    this.param_type = "";
-    this.value = "";
+    this.param_type = '';
+    this.value = '';
   }
 }

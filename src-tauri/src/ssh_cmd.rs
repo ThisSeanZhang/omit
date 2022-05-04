@@ -211,19 +211,19 @@ pub fn create_ssh(window: Window, ssh_state: State<'_, SSHState>, SSHInfo{ usern
 /*
   创建新的窗口  以后多窗口使用
 */
-#[command]
-pub async  fn new_window(app_handle: AppHandle, window: Window, ssh_state: State<'_, SSHState>) -> Result<(), String> {
-  println!("request create window from: {}", window.label());
-//   {
-//     println!("sshState is None{:?}", ssh_state.0.lock().unwrap());
-//   }
-  let my_uuid = Uuid::new_v4();
-  app_handle
-    .create_window("main2_".to_string() + &my_uuid.to_simple().to_string(), WindowUrl::default(), |win, webview| (win, webview))
-    .expect("Error creating window");
-  println!("- done");
-  Ok(())
-}
+// #[command]
+// pub async  fn new_window(app_handle: AppHandle, window: Window, ssh_state: State<'_, SSHState>) -> Result<(), String> {
+//   println!("request create window from: {}", window.label());
+// //   {
+// //     println!("sshState is None{:?}", ssh_state.0.lock().unwrap());
+// //   }
+//   let my_uuid = Uuid::new_v4();
+//   app_handle
+//     .create_window("main2_".to_string() + &my_uuid.to_simple().to_string(), WindowUrl::default(), |win, webview| (win, webview))
+//     .expect("Error creating window");
+//   println!("- done");
+//   Ok(())
+// }
 
 // fn login_ssh2() {
 //   let tcp = TcpStream::connect("ip").unwrap();

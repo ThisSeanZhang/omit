@@ -2,7 +2,7 @@
 <n-drawer :show="value"
   @update:show="$emit('update:value', false)"
   to="#drawer-global"
-  width="50%" placement="left">
+  width="50%" placement="right">
   <n-drawer-content title="参数编辑" closable>
     <n-space vertical v-if="params.length === 0">
       <n-button block type="primary" @click="add(0)" dashed>
@@ -53,6 +53,7 @@ import {
   ref,
   getCurrentInstance,
   computed,
+  watch,
 } from 'vue';
 import {
   Add16Filled,
@@ -83,7 +84,12 @@ export default defineComponent({
   setup(props: any) {
     // const a = getCurrentInstance();
     const params = ref(props.snap_params);
-
+    watch(
+      () => props.snap_params,
+      newOne => {
+        params.value = newOne;
+      },
+    );
     function dealClose() {
       console.log('close');
     }
