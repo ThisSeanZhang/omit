@@ -46,6 +46,7 @@ import {
   onMounted,
   ref,
 } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import {
   CameraAdd24Regular,
   WindowConsole20Regular,
@@ -66,11 +67,13 @@ export default {
     // TextBulletListAdd24Regular,
   },
   setup() {
+    const router = useRouter();
     const shortcut_manager_panel = ref(false);
     const exhibit_terminal = ref(true);
 
     function workZomeControl(value: boolean) {
       exhibit_terminal.value = value;
+      router.push({ name: value ? 'TerminalWorkView' : 'SnapshotManageView' });
     }
     return {
       workZomeControl,

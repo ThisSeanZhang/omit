@@ -29,7 +29,7 @@
 import {
   defineComponent,
   ref,
-} from 'vue';SnapshotCreatePanel
+} from 'vue';
 import SnapshotPanel from '@/components/Snapshot/SnapshotPanel.vue';
 import SnapshotCreatePanel from '@/components/Snapshot/SnapshotCreatePanel.vue';
 
