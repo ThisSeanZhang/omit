@@ -16,9 +16,20 @@ justify="space-between">
       </template>
       一颗
     </n-button> -->
-    <n-button size="small" ghost @click="shortcut_manager_panel = !shortcut_manager_panel">
+    <n-button size="small" dashed @click="shortcut_manager_panel = !shortcut_manager_panel">
       <template #icon>
         <n-icon><NotepadEdit16Filled /></n-icon>
+      </template>
+    </n-button>
+    <n-button type="info" v-if="exhibit_terminal"
+    size="small" dashed @click="workZomeControl(false)">
+      <template #icon>
+        <n-icon><CameraAdd24Regular /></n-icon>
+      </template>
+    </n-button>
+    <n-button type="info" v-else size="small" dashed @click="workZomeControl(true)">
+      <template #icon>
+        <n-icon><WindowConsole20Regular /></n-icon>
       </template>
     </n-button>
     <!-- <n-button size="small" ghost @click="shortcut_manager_panel = !shortcut_manager_panel">
@@ -36,6 +47,8 @@ import {
   ref,
 } from 'vue';
 import {
+  CameraAdd24Regular,
+  WindowConsole20Regular,
   NotepadEdit16Filled,
   TextBulletListAdd24Regular,
 } from '@vicons/fluent';
@@ -45,6 +58,8 @@ import ShortcutManagePanel from '@/components/Shortcut/ShortcutManagePanel.vue';
 export default {
   name: 'FooterBar',
   components: {
+    CameraAdd24Regular,
+    WindowConsole20Regular,
     ShortcutManagePanel,
     ShortcutBar,
     NotepadEdit16Filled,
@@ -52,8 +67,15 @@ export default {
   },
   setup() {
     const shortcut_manager_panel = ref(false);
+    const exhibit_terminal = ref(true);
+
+    function workZomeControl(value: boolean) {
+      exhibit_terminal.value = value;
+    }
     return {
+      workZomeControl,
       shortcut_manager_panel,
+      exhibit_terminal,
     };
   },
 };

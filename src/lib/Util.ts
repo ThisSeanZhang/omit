@@ -49,6 +49,15 @@ function dealCommandExhibit(
     : allRows.map((p, index) => (index === allRows.length - 1 ? p : `${p} \\`));
 }
 
+/* eslint-disable */
+export function guid() {
+  return 'xxxx-xxxx-xxxx-4xxx-yxxx-xxxx-xxxx-xxxx'.replace(/[xy]/g, function (c) {
+    const r = Math.random() * 16 | 0;
+    const v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+/* eslint-enable */
 export {
   dealCommandExhibit,
 };
