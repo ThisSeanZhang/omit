@@ -18,7 +18,15 @@
     <template #header>
         选项编辑
       </template>
-  <n-list>
+    <n-space vertical v-if="shortcuts.length === 0">
+      <n-button block type="primary" @click="add(0)" dashed>
+        搞点快捷按钮
+        <template #icon>
+          <n-icon><Add16Filled /></n-icon>
+        </template>
+      </n-button>
+    </n-space>
+  <n-list v-else>
     <!-- <template #header>
     </template> -->
     <!-- <template #footer>
