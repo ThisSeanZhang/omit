@@ -172,11 +172,17 @@
     v-model:value="show_param_drawer" />
   <SnapshotSavePanel
     v-bind:snap="snap"
+    @reflash:snap="reflashSnap"
     v-model:value="show_save_panel" />
   </n-list>
 </template>
 <script lang="ts">
-import { computed, defineComponent, ref } from 'vue';
+import {
+  computed,
+  defineComponent,
+  ref,
+  watch,
+} from 'vue';
 import {
   TextBulletListSquareEdit20Regular,
   DismissCircle16Filled,
@@ -215,6 +221,10 @@ export default defineComponent({
       require: true,
       default: Command.default(),
     },
+    edit_snap: {
+      type: Snapshot,
+      default: () => null,
+    },
   },
   setup(props: any) {
     const message = useMessage();
@@ -241,11 +251,15 @@ export default defineComponent({
           message.info('复制失败', err);
         });
     }
-    function handleUpdateCmd(updateCmd) {
+    function handleUpdateCmd(updateCmd: Command) {
       cmd.value = updateCmd;
       snap.value = Snapshot.fromCmd(updateCmd);
     }
+    function reflashSnap() {
+      console.log('reflashSnap');
+    }
     return {
+      reflashSnap,
       show_save_panel,
       handleUpdateCmd,
       copyCmd,
