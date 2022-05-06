@@ -27,6 +27,16 @@ export default class Snapshot {
     this.option_value = [];
   }
 
+  clone() :Snapshot {
+    const snap = new Snapshot();
+    snap.title = this.title;
+    snap.command_name = this.command_name;
+    snap.description = this.description;
+    snap.option_value = this.option_value.map(sp => sp.clone());
+    snap.param_value = this.param_value.map(e => e.clone());
+    return snap;
+  }
+
   static fromCmd(cmd: Command): Snapshot {
     const snap = new Snapshot();
     snap.command_name = cmd.command_name;

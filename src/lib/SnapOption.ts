@@ -25,6 +25,17 @@ export default class SnapOption {
     return this.option_type >= 2 ** 14;
   }
 
+  clone():SnapOption {
+    const op1 = new SnapOption();
+    op1.full_name = this.full_name;
+    op1.brief_name = this.brief_name;
+    op1.value = this.value;
+    op1.ignore = this.ignore;
+    op1.selected = this.selected;
+    op1.option_type = this.option_type;
+    return op1;
+  }
+
   static fromCmdOption(op: CmdOption): SnapOption {
     const op1 = new SnapOption();
     op1.full_name = op.full_name;
