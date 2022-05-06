@@ -17,8 +17,13 @@
             />
           </n-layout-header>
           <n-layout-content position="absolute"
-            style="top: 34px;">
-            <SnapshotPanel :filter="query_key" />
+            style="top: 34px;width: 395px;">
+            <!-- <SnapshotPanel :filter="query_key" /> -->
+            <SnapshotExhibitCard
+            :exhibit_btn="SnapCardExhibitModel.MANAGER_PANEL"
+            v-for="snap in snapshots"
+            :key="snap.command_name"
+            :snapshot="snap"/>
           </n-layout-content>
         </n-layout>
       </div>
@@ -27,21 +32,32 @@
 </template>
 <script lang="ts">
 import {
+  computed,
   defineComponent,
   ref,
 } from 'vue';
-import SnapshotPanel from '@/components/Snapshot/SnapshotPanel.vue';
+import {
+  SnapCardExhibitModel,
+} from '@/lib/Util';
+import { useStore } from '@/store/snapshot';
+// import SnapshotPanel from '@/components/Snapshot/SnapshotPanel.vue';
 import SnapshotCreatePanel from '@/components/Snapshot/SnapshotCreatePanel.vue';
+import SnapshotExhibitCard from '@/components/Snapshot/SnapshotExhibitCard.vue';
 
 export default defineComponent({
   name: 'SnapshotCreateView',
   components: {
-    SnapshotPanel,
+    SnapshotExhibitCard,
     SnapshotCreatePanel,
   },
   setup() {
+    const storage = useStore();
     const query_key = ref('');
+    storage.FETCH_SNAPSHOTS();
+    const snapshots = computed(() => storage.snapshots.filter(snap => (query_key.value === '' ? true : snap.title.includes(query_key.value))));
     return {
+      SnapCardExhibitModel,
+      snapshots,
       query_key,
     };
   },

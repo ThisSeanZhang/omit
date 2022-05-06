@@ -33,6 +33,17 @@ export const useStore = defineStore('snap', {
         console.log(e);
       }
     },
+    async REMOVE_SNAPSHOTS(snap_id: string): Promise<void> {
+      try {
+        const delete_index = this.raw_snaps.findIndex(sp => sp.snap_id === snap_id);
+        if (delete_index < 0) return;
+        const save = this.raw_snaps.splice(delete_index, 1);
+        await invoke<string>('save_snapshots', { snaps: JSON.stringify(save, null, 2) });
+        this.raw_snaps.splice(delete_index, 1);
+      } catch (e) {
+        console.log(e);
+      }
+    },
   },
 });
 export default useStore;

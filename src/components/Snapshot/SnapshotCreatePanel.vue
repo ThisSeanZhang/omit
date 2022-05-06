@@ -191,7 +191,7 @@ import CommandSearchBar from '@/components/Command/CommandSearchBar.vue';
 import SnapParamDrawer from '@/components/Snapshot/SnapParamDrawer.vue';
 import SnapOptionDrawer from '@/components/Snapshot/SnapOptionDrawer.vue';
 import SnapshotSavePanel from '@/components/Snapshot/SnapshotSavePanel.vue';
-import { SnapExhibitModel, dealCommandExhibit } from '@/lib/Util';
+import { SnapExhibitModel } from '@/lib/Util';
 import Command from '@/lib/Command';
 import Snapshot from '@/lib/Snapshot';
 
@@ -222,7 +222,7 @@ export default defineComponent({
     const snap = ref(Snapshot.fromCmd(props.command));
     const check = ref(false);
     const display_model = ref(SnapExhibitModel.ONELINE);
-    const command_str = computed(() => dealCommandExhibit(snap.value, display_model.value));
+    const command_str = computed(() => snap.value.dealCommandExhibit(display_model.value));
 
     const show_param_drawer = ref(false);
     const show_option_drawer = ref(false);

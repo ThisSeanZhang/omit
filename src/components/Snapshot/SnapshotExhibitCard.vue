@@ -47,6 +47,30 @@
           </n-button>
         </template>
       </n-popover>
+      <!-- restore btn -->
+      <n-popover
+        v-if="btn_show.restore" trigger="hover" placement="top-end">
+        <span>重新编辑</span>
+        <template #trigger>
+          <n-button @click.stop="copyCmd()" type="warning" text size="small">
+            <template #icon>
+              <n-icon size="16"><Copy20Regular /></n-icon>
+            </template>
+          </n-button>
+        </template>
+      </n-popover>
+      <!-- restore btn -->
+      <n-popover
+        v-if="btn_show.restore" trigger="hover" placement="top-end">
+        <span>删除</span>
+        <template #trigger>
+          <n-button @click.stop="copyCmd()" type="warning" text size="small">
+            <template #icon>
+              <n-icon size="16"><Copy20Regular /></n-icon>
+            </template>
+          </n-button>
+        </template>
+      </n-popover>
     </n-space>
   </template>
   <div v-for="(line, index) in snapshot_str_arr" :key="index">
@@ -74,7 +98,6 @@ import Snapshot from '@/lib/Snapshot';
 import {
   SnapExhibitModel,
   SnapCardExhibitModel,
-  dealCommandExhibit,
 } from '@/lib/Util';
 
 export default defineComponent({
@@ -108,21 +131,23 @@ export default defineComponent({
           exhibit: true,
           copy: true,
           send: true,
-          restore: true,
+          restore: false,
+          delete: false,
         };
-      } else if (model === SnapCardExhibitModel.SAVE) {
+      } else if (model === SnapCardExhibitModel.MANAGER_PANEL) {
         btn_show.value = {
           exhibit: true,
           copy: true,
           send: false,
-          restore: false,
+          restore: true,
+          delete: true,
         };
       }
     }
     changeBtnConfig(props.exhibit_btn);
     watch(() => props.exhibit_btn, newOne => changeBtnConfig(newOne));
     const snapshot_str_arr = computed(
-      () => dealCommandExhibit(props.snapshot, exhibit_model.value),
+      () => props.snapshot.dealCommandExhibit(exhibit_model.value),
     );
 
     function sendCmd(data: string) {
