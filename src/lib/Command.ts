@@ -1,9 +1,10 @@
 import { SelectOption } from 'naive-ui';
+import { guid } from './Util';
 import CmdOption from './CmdOption';
 import CmdParam from './CmdParam';
 
 export default class Command {
-  cid: string;
+  command_id: string;
 
   command_name: string;
   brief_desc: Map<string, string>;
@@ -18,7 +19,7 @@ export default class Command {
   belong_repo: string;
 
   constructor() {
-    this.cid = '';
+    this.command_id = '';
     this.command_name = '';
     this.brief_desc = new Map();
     this.description = new Map();
@@ -46,7 +47,6 @@ export default class Command {
 
   static fromObj(obj: any):Command {
     const cmd = new Command();
-    cmd.cid = obj.cid;
     cmd.command_name = obj.command_name;
     cmd.brief_desc = new Map(Object.entries(obj.brief_desc));
     cmd.description = new Map(Object.entries(obj.description));
@@ -58,7 +58,12 @@ export default class Command {
     cmd.params = obj.params;
     cmd.belong_file = obj.belong_file;
     cmd.belong_repo = obj.belong_repo;
+    cmd.command_id = obj.command_id ?? cmd.getCommandId();
     return cmd;
+  }
+
+  getCommandId():string {
+    return `${this.belong_repo}/${this.belong_file}/${this.command_name}`.replace(/\s+/g, ' ');
   }
 
   toSelectOption(): SelectOption {
