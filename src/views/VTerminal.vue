@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="height: 100%;">
     <div style="height: 100%; background-color: rgb(0,0,0);" ref="terminal"></div>
   </div>
 </template>

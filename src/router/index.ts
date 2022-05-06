@@ -1,15 +1,18 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
 import TermRoute from './TermRoute';
 import CmdRoute from './CmdRoute';
-import Welcome from '../views/Welcome.vue';
 import TerminalWorkView from '../views/TerminalWorkView.vue';
-import VTerminal from '../views/VTerminal.vue';
+import SnapshotManageView from '../views/SnapshotManageView.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: '/:sessionName?',
+    path: '/',
     name: 'TerminalWorkView',
     component: TerminalWorkView,
+  }, {
+    path: '/snap-manage',
+    name: 'SnapshotManageView',
+    component: SnapshotManageView,
   },
   // {
   //   path: '/:sessionName?',

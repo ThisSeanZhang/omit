@@ -13,6 +13,7 @@
       <n-button size="tiny" type="info"
       style="width: 100px;"
       v-for="(shortcut, index) in shortcuts" :key="index"
+      @click="sendCmd(shortcut.value)"
       quaternary strong>
         <n-ellipsis style="max-width: 100px">
         {{shortcut.title}}
@@ -27,6 +28,7 @@ import {
   ref,
   computed,
 } from 'vue';
+import { getCurrent } from '@tauri-apps/api/window';
 import { useStore } from '@/store/shortcut';
 import Shortcut from '@/lib/Shortcut';
 
@@ -35,10 +37,15 @@ export default defineComponent({
   components: {
   },
   setup() {
+    const current = getCurrent();
     const store = useStore();
     store.FETCH_SHORTCURS();
     const shortcuts = computed(() => store.shortcuts);
+    function sendCmd(data: string) {
+      current.emit('ssh-data-from-frontend', `${data}`);
+    }
     return {
+      sendCmd,
       shortcuts,
     };
   },

@@ -1,8 +1,8 @@
 <template>
   <n-layout has-sider sider-placement="right">
     <n-layout-content content-style="padding-right: 20px;">
-      <VTerminal v-show="exhibit_terminal" style="height: 100%;"></VTerminal>
-      <SnapshotCreatePanel v-show="!exhibit_terminal" />
+      <Terminal></Terminal>
+      <!-- <SnapshotCreatePanel v-show="!exhibit_terminal" /> -->
     </n-layout-content>
     <n-layout-sider
       show-trigger="bar"
@@ -18,10 +18,10 @@
             />
           </n-layout-header>
           <n-layout-content position="absolute"
-            style="top: 34px;bottom: 44px;">
+            style="top: 34px">
             <SnapshotPanel :filter="query_key" />
           </n-layout-content>
-          <n-layout-footer position="absolute" style="height: 44px; padding: 5px">
+          <!-- <n-layout-footer position="absolute" style="height: 44px; padding: 5px">
             <n-space justify="end">
               <n-popover v-if="exhibit_terminal" placement="top-end" trigger="hover">
                 <template #trigger>
@@ -43,17 +43,8 @@
                 </template>
                 <span>返回终端</span>
               </n-popover>
-              <!-- <n-button type="success" dashed>
-                Success
-              </n-button>
-              <n-button type="warning" dashed>
-                Warning
-              </n-button>
-              <n-button round  type="error" dashed>
-                Error
-              </n-button> -->
             </n-space>
-          </n-layout-footer>
+          </n-layout-footer> -->
         </n-layout>
       </div>
     </n-layout-sider>
@@ -67,19 +58,19 @@
 // } from 'vue';
 
 // import { Retweet } from '@vicons/fa';
-import { defineComponent, ref, computed } from 'vue';
-import { CameraAdd24Regular, WindowConsole20Regular } from '@vicons/fluent';
+import { defineComponent, ref } from 'vue';
+// import { CameraAdd24Regular, WindowConsole20Regular } from '@vicons/fluent';
 import SnapshotPanel from '@/components/Snapshot/SnapshotPanel.vue';
 import SnapshotCreatePanel from '@/components/Snapshot/SnapshotCreatePanel.vue';
-import VTerminal from './VTerminal.vue';
+import Terminal from './Terminal.vue';
 
 export default defineComponent({
   name: 'TerminalWorkView',
   components: {
-    CameraAdd24Regular,
-    WindowConsole20Regular,
-    SnapshotCreatePanel,
-    VTerminal,
+    // CameraAdd24Regular,
+    // WindowConsole20Regular,
+    // SnapshotCreatePanel,
+    Terminal,
     SnapshotPanel,
   },
   setup() {

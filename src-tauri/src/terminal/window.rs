@@ -53,6 +53,9 @@ impl Pty {
                           ChannelAction::SizeChange{ width, height, width_px, height_px } => {
                             self.process.resize(width as i16, height as i16);
                           },
+                          // ChannelAction::EXIT => {
+
+                          // },
                           _ => println!("")
                       }
                   }
