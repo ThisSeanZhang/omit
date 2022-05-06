@@ -1,7 +1,7 @@
 <template>
   <n-layout has-sider sider-placement="right">
     <n-layout-content content-style="padding-right: 20px;">
-      <VTerminal></VTerminal>
+      <Terminal></Terminal>
       <!-- <SnapshotCreatePanel v-show="!exhibit_terminal" /> -->
     </n-layout-content>
     <n-layout-sider
@@ -62,7 +62,7 @@ import { defineComponent, ref } from 'vue';
 // import { CameraAdd24Regular, WindowConsole20Regular } from '@vicons/fluent';
 import SnapshotPanel from '@/components/Snapshot/SnapshotPanel.vue';
 import SnapshotCreatePanel from '@/components/Snapshot/SnapshotCreatePanel.vue';
-import VTerminal from './VTerminal.vue';
+import Terminal from './Terminal.vue';
 
 export default defineComponent({
   name: 'TerminalWorkView',
@@ -70,7 +70,7 @@ export default defineComponent({
     // CameraAdd24Regular,
     // WindowConsole20Regular,
     // SnapshotCreatePanel,
-    VTerminal,
+    Terminal,
     SnapshotPanel,
   },
   setup() {

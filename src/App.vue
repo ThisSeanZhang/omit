@@ -7,9 +7,7 @@
       </n-layout-header>
 
       <!-- :native-scrollbar="false" -->
-      <KeepAlive>
-        <router-view id="drawer-global" class="contents"/>
-      </KeepAlive>
+      <router-view id="drawer-global" class="contents"/>
       <!-- <n-layout position="absolute" style="top: 30px; bottom: 30px;">
         <router-view />
       </n-layout> -->

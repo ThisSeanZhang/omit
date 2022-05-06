@@ -9,7 +9,8 @@ pub enum ChannelAction {
         height: i32,
         width_px: Option<i32>,
         height_px: Option<i32>
-    }
+    },
+    EXIT,
 }
 
 #[derive(Serialize, Deserialize, Clone)]

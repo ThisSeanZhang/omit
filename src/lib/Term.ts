@@ -12,9 +12,9 @@ export default class Term {
   serializeAddon: SerializeAddon;
   fit: FitAddon;
   tauri_window: WebviewWindow;
+  resizeObserver: ResizeObserver;
 
   constructor() {
-    invoke('add_listen');
     this.uid = guid();
     this.term = new Terminal({
       cols: 129, // 9px
@@ -23,16 +23,30 @@ export default class Term {
     });
     this.serializeAddon = new SerializeAddon();
     this.fit = new FitAddon();
-    
+
     // emit an event that are only visible to the current window
     this.tauri_window = getCurrent();
 
     this.term.loadAddon(this.serializeAddon);
     this.term.loadAddon(this.fit);
+    this.term.onData(data => {
+      console.log(`send data${JSON.stringify(data)}`);
+      this.tauri_window.emit('ssh-data-from-frontend', data);
+    });
     this.tauri_window.listen('ssh-data-from-backend', (e: Event<{data: Uint8Array}>) => {
       this.term.write(e.payload.data, () => {
         console.log(this.serializeAddon.serialize());
       });
+    });
+    invoke('create_pty');
+    this.resizeObserver = new ResizeObserver(e => {
+      const notShrink = e.flatMap(value => [value.contentRect.width, value.contentRect.height])
+        .every(value => value !== 0);
+      if (notShrink) {
+        this.fit.fit();
+      }
+      e.forEach(entry => console.log(`${entry.contentRect.width} x ${entry.contentRect.height}`));
+      console.log(e.length);
     });
   }
 
@@ -49,5 +63,29 @@ export default class Term {
       }));
     });
   }
-  
+
+  exhibitOn(element: HTMLDivElement) {
+    this.term.open(element);
+    // this.resizeObserver = new ResizeObserver(e => {
+    //   const notShrink = e.flatMap(value => [value.contentRect.width, value.contentRect.height])
+    //     .every(value => value !== 0);
+    //   if (notShrink) {
+    //     this.fit.fit();
+    //   }
+    //   e.forEach(entry => console.log(
+    // `${entry.contentRect.width} x ${entry.contentRect.height}`));
+    //   console.log(e.length);
+    // });
+    if (element.parentElement != null) {
+      this.resizeObserver.observe(element.parentElement);
+    }
+    this.fit.fit();
+  }
+
+  dispose(element: HTMLDivElement) {
+    if (element.parentElement != null) {
+      this.resizeObserver.unobserve(element.parentElement);
+    }
+    // this.term.dispose();
+  }
 }
