@@ -1,7 +1,7 @@
 <template>
   <n-layout has-sider sider-placement="right">
     <n-layout-content content-style="padding-right: 20px;">
-      <SnapshotCreatePanel/>
+      <SnapshotCreatePanel :snap="edit_snap"/>
     </n-layout-content>
     <n-layout-sider
       show-trigger="bar"
@@ -22,7 +22,8 @@
             <SnapshotExhibitCard
             :exhibit_btn="SnapCardExhibitModel.MANAGER_PANEL"
             v-for="snap in snapshots"
-            :key="snap.command_name"
+            :key="snap.snap_id"
+            @revise:snap="reviseSnap"
             :snapshot="snap"/>
           </n-layout-content>
         </n-layout>
@@ -43,6 +44,7 @@ import { useStore } from '@/store/snapshot';
 // import SnapshotPanel from '@/components/Snapshot/SnapshotPanel.vue';
 import SnapshotCreatePanel from '@/components/Snapshot/SnapshotCreatePanel.vue';
 import SnapshotExhibitCard from '@/components/Snapshot/SnapshotExhibitCard.vue';
+import Snapshot from '@/lib/Snapshot';
 
 export default defineComponent({
   name: 'SnapshotCreateView',
@@ -54,8 +56,15 @@ export default defineComponent({
     const storage = useStore();
     const query_key = ref('');
     storage.FETCH_SNAPSHOTS();
+    const edit_snap = ref(null as unknown as Snapshot);
     const snapshots = computed(() => storage.snapshots.filter(snap => (query_key.value === '' ? true : snap.title.includes(query_key.value))));
+    function reviseSnap(snap: Snapshot) {
+      edit_snap.value = snap;
+      console.log(snap);
+    }
     return {
+      reviseSnap,
+      edit_snap,
       SnapCardExhibitModel,
       snapshots,
       query_key,

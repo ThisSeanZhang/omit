@@ -47,26 +47,27 @@
           </n-button>
         </template>
       </n-popover>
-      <!-- restore btn -->
+      <!-- revise btn -->
       <n-popover
-        v-if="btn_show.restore" trigger="hover" placement="top-end">
+        v-if="btn_show.revise" trigger="hover" placement="top-end">
         <span>重新编辑</span>
         <template #trigger>
-          <n-button @click.stop="copyCmd()" type="warning" text size="small">
+          <n-button @click.stop="$emit('revise:snap', snap.clone())"
+          type="warning" text size="small">
             <template #icon>
-              <n-icon size="16"><Copy20Regular /></n-icon>
+              <n-icon size="16"><ArrowHookUpLeft28Regular /></n-icon>
             </template>
           </n-button>
         </template>
       </n-popover>
-      <!-- restore btn -->
+      <!-- delete btn -->
       <n-popover
-        v-if="btn_show.restore" trigger="hover" placement="top-end">
+        v-if="btn_show.delete" trigger="hover" placement="top-end">
         <span>删除</span>
         <template #trigger>
-          <n-button @click.stop="copyCmd()" type="warning" text size="small">
+          <n-button @click.stop="removeSnap(snap.snap_id)" type="warning" text size="small">
             <template #icon>
-              <n-icon size="16"><Copy20Regular /></n-icon>
+              <n-icon size="16"><Delete28Regular /></n-icon>
             </template>
           </n-button>
         </template>
@@ -91,6 +92,8 @@ import { PaperPlane } from '@vicons/fa';
 import {
   LineHorizontal120Filled,
   LineHorizontal520Filled,
+  ArrowHookUpLeft28Regular,
+  Delete28Regular,
   Copy20Regular,
 } from '@vicons/fluent';
 import { useMessage } from 'naive-ui';
@@ -99,13 +102,16 @@ import {
   SnapExhibitModel,
   SnapCardExhibitModel,
 } from '@/lib/Util';
+import { useStore } from '@/store/snapshot';
 
 export default defineComponent({
   name: 'SnapshotExhibitCard',
   components: {
     Copy20Regular,
+    ArrowHookUpLeft28Regular,
     LineHorizontal120Filled,
     LineHorizontal520Filled,
+    Delete28Regular,
     PaperPlane,
   },
   props: {
@@ -120,6 +126,7 @@ export default defineComponent({
     },
   },
   setup(props: any) {
+    const snap_store = useStore();
     const message = useMessage();
     const current = getCurrent();
     const snap = ref(props.snapshot);
@@ -131,7 +138,7 @@ export default defineComponent({
           exhibit: true,
           copy: true,
           send: true,
-          restore: false,
+          revise: false,
           delete: false,
         };
       } else if (model === SnapCardExhibitModel.MANAGER_PANEL) {
@@ -139,7 +146,7 @@ export default defineComponent({
           exhibit: true,
           copy: true,
           send: false,
-          restore: true,
+          revise: true,
           delete: true,
         };
       }
@@ -173,6 +180,7 @@ export default defineComponent({
       copyCmd,
       snap,
       snapshot_str_arr,
+      removeSnap: snap_store.REMOVE_SNAPSHOTS,
     };
   },
 });
