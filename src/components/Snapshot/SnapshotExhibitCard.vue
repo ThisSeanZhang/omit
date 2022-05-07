@@ -72,6 +72,18 @@
           </n-button>
         </template>
       </n-popover>
+      <!-- more btn -->
+      <n-popover
+        v-if="btn_show.more" trigger="hover" placement="top-end">
+        <span>更多</span>
+        <template #trigger>
+          <n-button @click.stop="" type="warning" text size="small">
+            <template #icon>
+              <n-icon size="16"><MoreCircle20Regular /></n-icon>
+            </template>
+          </n-button>
+        </template>
+      </n-popover>
     </n-space>
   </template>
   <div v-for="(line, index) in snapshot_str_arr" :key="index">
@@ -93,6 +105,7 @@ import {
   LineHorizontal120Filled,
   LineHorizontal520Filled,
   ArrowHookUpLeft28Regular,
+  MoreCircle20Regular,
   Delete28Regular,
   Copy20Regular,
 } from '@vicons/fluent';
@@ -111,6 +124,7 @@ export default defineComponent({
     ArrowHookUpLeft28Regular,
     LineHorizontal120Filled,
     LineHorizontal520Filled,
+    MoreCircle20Regular,
     Delete28Regular,
     PaperPlane,
   },
@@ -140,6 +154,7 @@ export default defineComponent({
           send: true,
           revise: false,
           delete: false,
+          more: true,
         };
       } else if (model === SnapCardExhibitModel.MANAGER_PANEL) {
         btn_show.value = {
@@ -148,6 +163,7 @@ export default defineComponent({
           send: false,
           revise: true,
           delete: true,
+          more: false,
         };
       }
     }
