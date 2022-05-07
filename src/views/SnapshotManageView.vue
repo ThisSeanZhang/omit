@@ -1,15 +1,22 @@
 <template>
   <n-layout has-sider sider-placement="right">
-    <n-layout-content content-style="padding: 10px 20px 0px 10px;">
+    <n-layout-content
+    content-style="padding: 10px 20px 0px 10px;display: flex;flex-direction: column;">
       <CommandSearchBar v-on:selectCmd="handleUpdateCmd" />
       <SnapshotCreatePanel
       v-if="select_cmd !== null"
       :command="select_cmd" :edit_snap="edit_snap"/>
-      <n-result v-else status="404" title="404 资源不存在" description="生活总归带点荒谬">
-        <template #footer>
-          <n-button>找点乐子吧</n-button>
-        </template>
-      </n-result>
+      <div v-else style="flex: 1;display: flex;justify-content: center;align-items: center;">
+        <n-result title="空空如也" description="在上面的选择框选个命令">
+          <template #icon>
+            <!-- <div style="width: 300px">
+            </div> -->
+          </template>
+          <!-- <template #footer>
+            <n-button>找点乐子吧</n-button>
+          </template> -->
+        </n-result>
+      </div>
     </n-layout-content>
     <n-layout-sider
       show-trigger="bar"
