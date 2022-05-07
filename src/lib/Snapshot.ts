@@ -14,6 +14,7 @@ export default class Snapshot {
   snap_id: string;
   title: string;
   command_name: string;
+  command_id: string;
   description: string;
   option_value: Array<SnapOption>;
   param_value: Array<SnapParam>;
@@ -22,6 +23,7 @@ export default class Snapshot {
     this.snap_id = guid();
     this.title = '';
     this.command_name = '';
+    this.command_id = '';
     this.description = '';
     this.param_value = [];
     this.option_value = [];
@@ -29,8 +31,10 @@ export default class Snapshot {
 
   clone() :Snapshot {
     const snap = new Snapshot();
+    snap.snap_id = this.snap_id ?? guid();
     snap.title = this.title;
     snap.command_name = this.command_name;
+    snap.command_id = this.command_id;
     snap.description = this.description;
     snap.option_value = this.option_value.map(sp => sp.clone());
     snap.param_value = this.param_value.map(e => e.clone());
@@ -40,6 +44,7 @@ export default class Snapshot {
   static fromCmd(cmd: Command): Snapshot {
     const snap = new Snapshot();
     snap.command_name = cmd.command_name;
+    snap.command_id = cmd.command_id;
     snap.option_value = SnapOption.default();
     snap.param_value = SnapParam.default();
     return snap;
@@ -50,6 +55,7 @@ export default class Snapshot {
     snap.snap_id = obj.snap_id ?? guid();
     snap.title = obj.title;
     snap.command_name = obj.command_name;
+    snap.command_id = obj.command_id;
     snap.description = obj.description;
     snap.option_value = obj.option_value.map(SnapOption.fromObj);
     snap.param_value = obj.param_value.map(SnapParam.fromObj);

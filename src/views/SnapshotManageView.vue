@@ -1,7 +1,15 @@
 <template>
   <n-layout has-sider sider-placement="right">
-    <n-layout-content content-style="padding-right: 20px;">
-      <SnapshotCreatePanel :snap="edit_snap"/>
+    <n-layout-content content-style="padding: 10px 20px 0px 10px;">
+      <CommandSearchBar v-on:selectCmd="handleUpdateCmd" />
+      <SnapshotCreatePanel
+      v-if="select_cmd !== null"
+      :command="select_cmd" :edit_snap="edit_snap"/>
+      <n-result v-else status="404" title="404 资源不存在" description="生活总归带点荒谬">
+        <template #footer>
+          <n-button>找点乐子吧</n-button>
+        </template>
+      </n-result>
     </n-layout-content>
     <n-layout-sider
       show-trigger="bar"
@@ -44,11 +52,14 @@ import { useStore } from '@/store/snapshot';
 // import SnapshotPanel from '@/components/Snapshot/SnapshotPanel.vue';
 import SnapshotCreatePanel from '@/components/Snapshot/SnapshotCreatePanel.vue';
 import SnapshotExhibitCard from '@/components/Snapshot/SnapshotExhibitCard.vue';
+import CommandSearchBar from '@/components/Command/CommandSearchBar.vue';
 import Snapshot from '@/lib/Snapshot';
+import Command from '@/lib/Command';
 
 export default defineComponent({
   name: 'SnapshotCreateView',
   components: {
+    CommandSearchBar,
     SnapshotExhibitCard,
     SnapshotCreatePanel,
   },
@@ -56,14 +67,25 @@ export default defineComponent({
     const storage = useStore();
     const query_key = ref('');
     storage.FETCH_SNAPSHOTS();
-    const edit_snap = ref(null as unknown as Snapshot);
     const snapshots = computed(() => storage.snapshots.filter(snap => (query_key.value === '' ? true : snap.title.includes(query_key.value))));
+
+    const select_cmd = ref(null as unknown as Command);
+    const edit_snap = ref(null as unknown as Snapshot);
+
+    function handleUpdateCmd(updateCmd: Command) {
+      select_cmd.value = updateCmd;
+      edit_snap.value = Snapshot.fromCmd(updateCmd);
+    }
+
     function reviseSnap(snap: Snapshot) {
-      edit_snap.value = snap;
+      edit_snap.value = snap.clone();
       console.log(snap);
     }
+
     return {
+      handleUpdateCmd,
       reviseSnap,
+      select_cmd,
       edit_snap,
       SnapCardExhibitModel,
       snapshots,

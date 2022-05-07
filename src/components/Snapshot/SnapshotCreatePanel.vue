@@ -27,9 +27,8 @@
     </n-layout-footer>
   </n-layout>
 </div> -->
-<n-list style="padding: 0 10px;">
+<n-list style="margin-top: 0px;">
   <template #header>
-    <CommandSearchBar v-on:selectCmd="handleUpdateCmd" />
     <n-thing style="margin-top: 10px;">
       <template #header>
         {{cmd.command_name}}
@@ -192,8 +191,6 @@ import {
   CameraAdd24Regular,
 } from '@vicons/fluent';
 import { useMessage } from 'naive-ui';
-import { invoke } from '@tauri-apps/api/tauri';
-import CommandSearchBar from '@/components/Command/CommandSearchBar.vue';
 import SnapParamDrawer from '@/components/Snapshot/SnapParamDrawer.vue';
 import SnapOptionDrawer from '@/components/Snapshot/SnapOptionDrawer.vue';
 import SnapshotSavePanel from '@/components/Snapshot/SnapshotSavePanel.vue';
@@ -207,7 +204,6 @@ export default defineComponent({
     SnapshotSavePanel,
     DismissCircle16Filled,
     TextBulletListSquareEdit20Regular,
-    CommandSearchBar,
     SnapParamDrawer,
     SnapOptionDrawer,
     LineHorizontal120Filled,
@@ -228,8 +224,11 @@ export default defineComponent({
   },
   setup(props: any) {
     const message = useMessage();
-    const cmd = ref(props.command);
-    const snap = ref(Snapshot.fromCmd(props.command));
+    const cmd = computed(() => props.command);
+    const snap = ref(props.edit_snap);
+    watch(() => props.edit_snap, newOne => {
+      snap.value = newOne;
+    });
     const check = ref(false);
     const display_model = ref(SnapExhibitModel.ONELINE);
     const command_str = computed(() => snap.value.dealCommandExhibit(display_model.value));
@@ -251,17 +250,13 @@ export default defineComponent({
           message.info('复制失败', err);
         });
     }
-    function handleUpdateCmd(updateCmd: Command) {
-      cmd.value = updateCmd;
-      snap.value = Snapshot.fromCmd(updateCmd);
-    }
     function reflashSnap() {
+      snap.value = snap.value.clone();
       console.log('reflashSnap');
     }
     return {
       reflashSnap,
       show_save_panel,
-      handleUpdateCmd,
       copyCmd,
       SnapExhibitModel,
       display_model,
