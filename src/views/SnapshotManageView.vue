@@ -56,6 +56,7 @@ import {
   SnapCardExhibitModel,
 } from '@/lib/Util';
 import { useStore } from '@/store/snapshot';
+import { useStore as repoStore } from '@/store/repository';
 // import SnapshotPanel from '@/components/Snapshot/SnapshotPanel.vue';
 import SnapshotCreatePanel from '@/components/Snapshot/SnapshotCreatePanel.vue';
 import SnapshotExhibitCard from '@/components/Snapshot/SnapshotExhibitCard.vue';
@@ -72,6 +73,7 @@ export default defineComponent({
   },
   setup() {
     const storage = useStore();
+    const repos_store = repoStore();
     const query_key = ref('');
     storage.FETCH_SNAPSHOTS();
     const snapshots = computed(() => storage.snapshots.filter(snap => (query_key.value === '' ? true : snap.title.includes(query_key.value))));
@@ -86,6 +88,7 @@ export default defineComponent({
 
     function reviseSnap(snap: Snapshot) {
       edit_snap.value = snap.clone();
+      select_cmd.value = repos_store.FIND_CMD_USE(snap.command_id);
       console.log(snap);
     }
 

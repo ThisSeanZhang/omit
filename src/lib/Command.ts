@@ -42,7 +42,7 @@ export default class Command {
   }
 
   getLabel() :string {
-    return `${this.belong_file}/${this.command_name}`;
+    return `${this.command_name}`;
   }
 
   static fromObj(obj: any):Command {
@@ -63,13 +63,13 @@ export default class Command {
   }
 
   getCommandId():string {
-    return `${this.belong_repo}/${this.belong_file}/${this.command_name}`.replace(/\s+/g, ' ');
+    return `${this.belong_repo}|${this.command_name}`.replace(/\s+/g, ' ');
   }
 
   toSelectOption(): SelectOption {
     return {
       label: this.getLabel(),
-      value: `${this.belong_repo}/${this.belong_file}/${this.command_name}`,
+      value: `${this.belong_repo}|${this.belong_file}|${this.command_name}`,
     };
   }
 }
