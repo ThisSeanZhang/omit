@@ -42,7 +42,7 @@ export const useStore = defineStore('repositpry', {
       const repo = this.raw_repo.find(e => e.name === split_keys[0]);
       if (repo === undefined) return null as unknown as Command;
 
-      const cmd = repo.commands.find(e => e.command_name === split_keys[2]);
+      const cmd = repo.commands.find(e => e.command_name === split_keys[1]);
       if (cmd === undefined) return null as unknown as Command;
 
       return cmd;

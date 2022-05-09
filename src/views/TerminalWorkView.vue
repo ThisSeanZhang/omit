@@ -61,7 +61,7 @@
 import { defineComponent, ref } from 'vue';
 // import { CameraAdd24Regular, WindowConsole20Regular } from '@vicons/fluent';
 import SnapshotPanel from '@/components/Snapshot/SnapshotPanel.vue';
-import SnapshotCreatePanel from '@/components/Snapshot/SnapshotCreatePanel.vue';
+// import SnapshotCreatePanel from '@/components/Snapshot/SnapshotCreatePanel.vue';
 import Terminal from './Terminal.vue';
 
 export default defineComponent({

@@ -58,7 +58,6 @@ export default class Command {
     cmd.params = obj.params;
     cmd.belong_file = obj.belong_file;
     cmd.belong_repo = obj.belong_repo;
-    cmd.command_id = obj.command_id ?? cmd.getCommandId();
     return cmd;
   }
 

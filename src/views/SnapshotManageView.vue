@@ -89,6 +89,7 @@ export default defineComponent({
     function reviseSnap(snap: Snapshot) {
       edit_snap.value = snap.clone();
       select_cmd.value = repos_store.FIND_CMD_USE(snap.command_id);
+      console.log(select_cmd.value);
       console.log(snap);
     }
 
