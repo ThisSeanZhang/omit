@@ -4,8 +4,11 @@ export enum SnapExhibitModel {
 }
 
 export enum SnapCardExhibitModel {
+  SAVE,
+  MORE,
   MANAGER_PANEL,
   EXHIBIT_ON_SIDE,
+  CREATE_PANEL,
 }
 
 export enum PanelType {

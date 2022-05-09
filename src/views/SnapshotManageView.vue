@@ -32,7 +32,7 @@
             />
           </n-layout-header>
           <n-layout-content position="absolute"
-            style="top: 34px;width: 395px;">
+            style="top: 34px;padding-right: 5px;">
             <!-- <SnapshotPanel :filter="query_key" /> -->
             <SnapshotExhibitCard
             :exhibit_btn="SnapCardExhibitModel.MANAGER_PANEL"

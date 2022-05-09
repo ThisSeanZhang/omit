@@ -51,7 +51,7 @@
     </n-thing>
   </template>
   <template #footer>
-    <n-thing>
+    <!-- <n-thing>
       <template #header>
         指令预览
       </template>
@@ -86,7 +86,14 @@
         </n-space>
       </template>
       <div v-for="(line, index) in command_str" :key="index">{{line}}</div>
-    </n-thing>
+    </n-thing> -->
+    <SnapshotExhibitCard class="command-exhibit" @reflash:snap="reflashSnap"
+    @open:save="show_save_panel = true"
+    :snapshot="snap" :exhibit_btn="SnapCardExhibitModel.CREATE_PANEL">
+      <template #title>
+        指令预览
+      </template>
+    </SnapshotExhibitCard>
   </template>
   <n-list-item>
     <template #prefix>
@@ -119,7 +126,9 @@
         type="primary"
         icon-placement="right" @click="option.selected = !option.selected"
         :quaternary="!option.selected" :dashed="option.selected" >
+        <n-ellipsis style="max-width: 200px">
         {{`${option.full_name} `}}=>{{` ${option.value}`}}
+        </n-ellipsis>
         <template #icon >
           <n-button v-show="!option.selected" text size="small"
             @click.stop="snap.option_value.splice(index, 1)">
@@ -140,7 +149,9 @@
         type="primary"
         icon-placement="right" @click="param.selected = !param.selected"
         :quaternary="!param.selected" :dashed="param.selected" >
+        <n-ellipsis style="max-width: 200px">
         {{param.value}}
+        </n-ellipsis>
         <template #icon >
           <n-button v-show="!param.selected" text size="small"
             @click.stop="snap.param_value.splice(index, 1)">
@@ -194,22 +205,24 @@ import { useMessage } from 'naive-ui';
 import SnapParamDrawer from '@/components/Snapshot/SnapParamDrawer.vue';
 import SnapOptionDrawer from '@/components/Snapshot/SnapOptionDrawer.vue';
 import SnapshotSavePanel from '@/components/Snapshot/SnapshotSavePanel.vue';
-import { SnapExhibitModel } from '@/lib/Util';
+import SnapshotExhibitCard from '@/components/Snapshot/SnapshotExhibitCard.vue';
+import { SnapExhibitModel, SnapCardExhibitModel } from '@/lib/Util';
 import Command from '@/lib/Command';
 import Snapshot from '@/lib/Snapshot';
 
 export default defineComponent({
   name: 'SnapshotCreatePanel',
   components: {
+    SnapshotExhibitCard,
     SnapshotSavePanel,
     DismissCircle16Filled,
     TextBulletListSquareEdit20Regular,
     SnapParamDrawer,
     SnapOptionDrawer,
-    LineHorizontal120Filled,
-    LineHorizontal520Regular,
-    Copy20Regular,
-    CameraAdd24Regular,
+    // LineHorizontal120Filled,
+    // LineHorizontal520Regular,
+    // Copy20Regular,
+    // CameraAdd24Regular,
   },
   props: {
     command: {
@@ -255,6 +268,7 @@ export default defineComponent({
       console.log('reflashSnap');
     }
     return {
+      SnapCardExhibitModel,
       reflashSnap,
       show_save_panel,
       copyCmd,
@@ -271,5 +285,11 @@ export default defineComponent({
   },
 });
 </script>
-<style scoped>
+<style lang="scss" scoped>
+.command-exhibit {
+  max-width: 100%;
+  .n-thing-main {
+    max-width: 100%;
+  }
+}
 </style>

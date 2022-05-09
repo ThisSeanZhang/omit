@@ -41,10 +41,6 @@ export default class Command {
     return cmd;
   }
 
-  getLabel() :string {
-    return `${this.command_name}`;
-  }
-
   static fromObj(obj: any):Command {
     const cmd = new Command();
     cmd.command_name = obj.command_name;
@@ -61,6 +57,10 @@ export default class Command {
     return cmd;
   }
 
+  getLabel() :string {
+    return `${this.command_name}`;
+  }
+
   getCommandId():string {
     return `${this.belong_repo}|${this.command_name}`.replace(/\s+/g, ' ');
   }
@@ -68,7 +68,7 @@ export default class Command {
   toSelectOption(): SelectOption {
     return {
       label: this.getLabel(),
-      value: `${this.belong_repo}|${this.belong_file}|${this.command_name}`,
+      value: this.getCommandId(),
     };
   }
 }
