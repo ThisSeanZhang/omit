@@ -285,7 +285,7 @@ export default defineComponent({
   },
 });
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 .command-exhibit {
   max-width: 100%;
   .n-thing-main {
