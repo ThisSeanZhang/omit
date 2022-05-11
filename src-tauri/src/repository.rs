@@ -119,9 +119,20 @@ pub fn read_repo_command(app: AppHandle, config_status:State<ConfigState>, repo_
     let mut path = PathBuf::from(&config.repos_folder);
     path.push(repo_dir);
     for info in util::list_dir(&path) {
-      if info.is_hide() || !info.is_extend("json") { continue; }
-      let data = util::read_raw_json(&path, &info.file_name).unwrap_or("[]".to_string());
-      command_map.insert(info.file_name, data);
+      if info.is_hide() { continue; }
+      if info.is_dir() {
+        let mut inner_path = path.clone();
+        inner_path.push(&info.file_name);
+        println!("inner {:?}", inner_path);
+        for inner_info in util::list_dir(&inner_path) {
+          if inner_info.is_hide() || inner_info.is_dir() || !inner_info.is_extend("json") { continue; }
+          let data = util::read_raw_json(&inner_path, &inner_info.file_name).unwrap_or("[]".to_string());
+          command_map.insert(format!("{}/{}", info.file_name, inner_info.file_name), data);
+        }
+        continue;
+      }
+      // let data = util::read_raw_json(&path, &info.file_name).unwrap_or("[]".to_string());
+      // command_map.insert(info.file_name, data);
     }
     Ok(command_map)
   } else {

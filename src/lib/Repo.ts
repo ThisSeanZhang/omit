@@ -14,6 +14,8 @@ export default class Repo {
         const each = Command.fromObj(cmds[i]);
         each.belong_file = key;
         each.belong_repo = name;
+        each.command_id = each.getCommandId();
+        console.log(each);
         this.commands.push(each);
       }
     });

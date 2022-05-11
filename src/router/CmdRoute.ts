@@ -1,5 +1,5 @@
 import { RouteRecordRaw } from 'vue-router';
-import Manage from '../views/ManageCommand.vue';
+import Manage from '../views/ManageSession.vue';
 
 export default [
   {

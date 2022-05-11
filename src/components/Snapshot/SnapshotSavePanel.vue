@@ -6,7 +6,6 @@
     title="保存快照"
     size="small"
     :bordered="false"
-    :segmented="segmented"
     @update:show="$emit('update:value', false)"
   >
     <template #header-extra>
@@ -62,6 +61,8 @@ export default defineComponent({
 
     function saveSnap() {
       storage.SAVE_SNAPSHOTS(snapshot.value);
+      console.log(JSON.stringify(snapshot.value));
+      emit('reflash:snap', false);
       emit('update:value', false);
     }
     return {

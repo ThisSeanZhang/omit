@@ -1,6 +1,7 @@
 import { invoke } from '@tauri-apps/api/tauri';
 import { defineStore } from 'pinia';
 import Repo from '@/lib/Repo';
+import Command from '@/lib/Command';
 
 export const useStore = defineStore('repositpry', {
   state: () => ({
@@ -25,6 +26,7 @@ export const useStore = defineStore('repositpry', {
       }
     },
     async FETCH_REPO_CMDS(name: string): Promise<void> {
+      console.log(`read cmd: ${name}`);
       try {
         const msg = await invoke<any>('read_repo_command', { repoDir: name });
         console.log(msg);
@@ -34,6 +36,16 @@ export const useStore = defineStore('repositpry', {
       } catch (e) {
         console.log(e);
       }
+    },
+    FIND_CMD_USE(cmd_id: string): Command {
+      const split_keys = cmd_id.split('|');
+      const repo = this.raw_repo.find(e => e.name === split_keys[0]);
+      if (repo === undefined) return null as unknown as Command;
+
+      const cmd = repo.commands.find(e => e.command_name === split_keys[1]);
+      if (cmd === undefined) return null as unknown as Command;
+
+      return cmd;
     },
   },
 });

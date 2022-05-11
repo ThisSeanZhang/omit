@@ -56,14 +56,9 @@ export default defineComponent({
     // });
     const cmds = computed(() => repos.value.map(e => e.toSelectGroup()));
     function selectValue(value: string) {
+      console.log(value);
       cmd_query_key.value = '';
-      const split_keys = value.split('/');
-
-      const repo = repos.value.find(e => e.name === split_keys[0]);
-      if (repo === undefined) return;
-
-      const cmd = repo.commands.find(e => e.command_name === split_keys[2]);
-      if (cmd === undefined) return;
+      const cmd = store.FIND_CMD_USE(value);
       emit('selectCmd', cmd);
     }
     return {

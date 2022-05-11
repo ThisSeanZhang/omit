@@ -1,6 +1,10 @@
 <template>
-<n-thing class="card">
-  <template #header>{{snap.title}}</template>
+<n-thing :class="btn_show.border ? 'card' : ''">
+  <template #header>
+    <n-ellipsis style="max-width: 250px">
+    {{snap.title ?? '指令预览'}}
+    </n-ellipsis>
+  </template>
 
   <template #header-extra>
     <n-space>
@@ -47,6 +51,55 @@
           </n-button>
         </template>
       </n-popover>
+      <!-- revise btn -->
+      <n-popover
+        v-if="btn_show.revise" trigger="hover" placement="top-end">
+        <span>重新编辑</span>
+        <template #trigger>
+          <n-button @click.stop="$emit('revise:snap', snap.clone())"
+          type="warning" text size="small">
+            <template #icon>
+              <n-icon size="16"><ArrowHookUpLeft28Regular /></n-icon>
+            </template>
+          </n-button>
+        </template>
+      </n-popover>
+      <!-- delete btn -->
+      <n-popover
+        v-if="btn_show.delete" trigger="hover" placement="top-end">
+        <span>删除</span>
+        <template #trigger>
+          <n-button @click.stop="removeSnap(snap.snap_id)" type="warning" text size="small">
+            <template #icon>
+              <n-icon size="16"><Delete28Regular /></n-icon>
+            </template>
+          </n-button>
+        </template>
+      </n-popover>
+      <!-- more btn -->
+      <n-popover
+        v-if="btn_show.more" trigger="hover" placement="top-end">
+        <span>更多</span>
+        <template #trigger>
+          <n-button @click.stop="$emit('open:more', snap)" type="warning" text size="small">
+            <template #icon>
+              <n-icon size="16"><MoreCircle20Regular /></n-icon>
+            </template>
+          </n-button>
+        </template>
+      </n-popover>
+      <!-- more btn -->
+      <n-popover
+        v-if="btn_show.snap_create" trigger="hover" placement="top-end">
+        <span>创建快照</span>
+        <template #trigger>
+          <n-button @click.stop="$emit('open:save')" type="warning" text size="small">
+            <template #icon>
+              <n-icon size="16"><CameraAdd24Regular /></n-icon>
+            </template>
+          </n-button>
+        </template>
+      </n-popover>
     </n-space>
   </template>
   <div v-for="(line, index) in snapshot_str_arr" :key="index">
@@ -67,23 +120,31 @@ import { PaperPlane } from '@vicons/fa';
 import {
   LineHorizontal120Filled,
   LineHorizontal520Filled,
+  ArrowHookUpLeft28Regular,
+  MoreCircle20Regular,
+  Delete28Regular,
   Copy20Regular,
+  CameraAdd24Regular,
 } from '@vicons/fluent';
 import { useMessage } from 'naive-ui';
 import Snapshot from '@/lib/Snapshot';
 import {
   SnapExhibitModel,
   SnapCardExhibitModel,
-  dealCommandExhibit,
 } from '@/lib/Util';
+import { useStore } from '@/store/snapshot';
 
 export default defineComponent({
   name: 'SnapshotExhibitCard',
   components: {
     Copy20Regular,
+    ArrowHookUpLeft28Regular,
     LineHorizontal120Filled,
     LineHorizontal520Filled,
+    MoreCircle20Regular,
+    Delete28Regular,
     PaperPlane,
+    CameraAdd24Regular,
   },
   props: {
     snapshot: {
@@ -97,32 +158,63 @@ export default defineComponent({
     },
   },
   setup(props: any) {
+    const snap_store = useStore();
     const message = useMessage();
     const current = getCurrent();
-    const snap = ref(props.snapshot);
+    const snap = computed(() => props.snapshot);
     const exhibit_model = ref(SnapExhibitModel.ONELINE);
     const btn_show = ref({});
     function changeBtnConfig(model: SnapCardExhibitModel):void {
       if (model === SnapCardExhibitModel.EXHIBIT_ON_SIDE) {
         btn_show.value = {
+          border: true,
           exhibit: true,
           copy: true,
           send: true,
-          restore: true,
+          revise: false,
+          delete: false,
+          more: true,
+          snap_create: false,
         };
-      } else if (model === SnapCardExhibitModel.SAVE) {
+      } else if (model === SnapCardExhibitModel.MANAGER_PANEL) {
         btn_show.value = {
+          border: true,
           exhibit: true,
           copy: true,
           send: false,
-          restore: false,
+          revise: true,
+          delete: true,
+          more: false,
+          snap_create: false,
+        };
+      } else if (model === SnapCardExhibitModel.CREATE_PANEL) {
+        btn_show.value = {
+          border: false,
+          exhibit: true,
+          copy: true,
+          send: false,
+          revise: false,
+          delete: false,
+          more: false,
+          snap_create: true,
+        };
+      } else if (model === SnapCardExhibitModel.MORE) {
+        btn_show.value = {
+          border: false,
+          exhibit: true,
+          copy: true,
+          send: true,
+          revise: false,
+          delete: false,
+          more: false,
+          snap_create: false,
         };
       }
     }
     changeBtnConfig(props.exhibit_btn);
     watch(() => props.exhibit_btn, newOne => changeBtnConfig(newOne));
     const snapshot_str_arr = computed(
-      () => dealCommandExhibit(props.snapshot, exhibit_model.value),
+      () => props.snapshot.dealCommandExhibit(exhibit_model.value),
     );
 
     function sendCmd(data: string) {
@@ -148,6 +240,7 @@ export default defineComponent({
       copyCmd,
       snap,
       snapshot_str_arr,
+      removeSnap: snap_store.REMOVE_SNAPSHOTS,
     };
   },
 });

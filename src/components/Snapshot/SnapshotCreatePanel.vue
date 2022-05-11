@@ -27,9 +27,8 @@
     </n-layout-footer>
   </n-layout>
 </div> -->
-<n-list style="padding: 0 10px;">
+<n-list style="margin-top: 0px;">
   <template #header>
-    <CommandSearchBar v-on:selectCmd="handleUpdateCmd" />
     <n-thing style="margin-top: 10px;">
       <template #header>
         {{cmd.command_name}}
@@ -52,7 +51,7 @@
     </n-thing>
   </template>
   <template #footer>
-    <n-thing>
+    <!-- <n-thing>
       <template #header>
         指令预览
       </template>
@@ -87,7 +86,14 @@
         </n-space>
       </template>
       <div v-for="(line, index) in command_str" :key="index">{{line}}</div>
-    </n-thing>
+    </n-thing> -->
+    <SnapshotExhibitCard class="command-exhibit" @reflash:snap="reflashSnap"
+    @open:save="show_save_panel = true"
+    :snapshot="snap" :exhibit_btn="SnapCardExhibitModel.CREATE_PANEL">
+      <template #title>
+        指令预览
+      </template>
+    </SnapshotExhibitCard>
   </template>
   <n-list-item>
     <template #prefix>
@@ -120,7 +126,9 @@
         type="primary"
         icon-placement="right" @click="option.selected = !option.selected"
         :quaternary="!option.selected" :dashed="option.selected" >
+        <n-ellipsis style="max-width: 200px">
         {{`${option.full_name} `}}=>{{` ${option.value}`}}
+        </n-ellipsis>
         <template #icon >
           <n-button v-show="!option.selected" text size="small"
             @click.stop="snap.option_value.splice(index, 1)">
@@ -141,7 +149,9 @@
         type="primary"
         icon-placement="right" @click="param.selected = !param.selected"
         :quaternary="!param.selected" :dashed="param.selected" >
+        <n-ellipsis style="max-width: 200px">
         {{param.value}}
+        </n-ellipsis>
         <template #icon >
           <n-button v-show="!param.selected" text size="small"
             @click.stop="snap.param_value.splice(index, 1)">
@@ -172,11 +182,17 @@
     v-model:value="show_param_drawer" />
   <SnapshotSavePanel
     v-bind:snap="snap"
+    @reflash:snap="reflashSnap"
     v-model:value="show_save_panel" />
   </n-list>
 </template>
 <script lang="ts">
-import { computed, defineComponent, ref } from 'vue';
+import {
+  computed,
+  defineComponent,
+  ref,
+  watch,
+} from 'vue';
 import {
   TextBulletListSquareEdit20Regular,
   DismissCircle16Filled,
@@ -186,28 +202,27 @@ import {
   CameraAdd24Regular,
 } from '@vicons/fluent';
 import { useMessage } from 'naive-ui';
-import { invoke } from '@tauri-apps/api/tauri';
-import CommandSearchBar from '@/components/Command/CommandSearchBar.vue';
 import SnapParamDrawer from '@/components/Snapshot/SnapParamDrawer.vue';
 import SnapOptionDrawer from '@/components/Snapshot/SnapOptionDrawer.vue';
 import SnapshotSavePanel from '@/components/Snapshot/SnapshotSavePanel.vue';
-import { SnapExhibitModel, dealCommandExhibit } from '@/lib/Util';
+import SnapshotExhibitCard from '@/components/Snapshot/SnapshotExhibitCard.vue';
+import { SnapExhibitModel, SnapCardExhibitModel } from '@/lib/Util';
 import Command from '@/lib/Command';
 import Snapshot from '@/lib/Snapshot';
 
 export default defineComponent({
   name: 'SnapshotCreatePanel',
   components: {
+    SnapshotExhibitCard,
     SnapshotSavePanel,
     DismissCircle16Filled,
     TextBulletListSquareEdit20Regular,
-    CommandSearchBar,
     SnapParamDrawer,
     SnapOptionDrawer,
-    LineHorizontal120Filled,
-    LineHorizontal520Regular,
-    Copy20Regular,
-    CameraAdd24Regular,
+    // LineHorizontal120Filled,
+    // LineHorizontal520Regular,
+    // Copy20Regular,
+    // CameraAdd24Regular,
   },
   props: {
     command: {
@@ -215,14 +230,21 @@ export default defineComponent({
       require: true,
       default: Command.default(),
     },
+    edit_snap: {
+      type: Snapshot,
+      default: () => null,
+    },
   },
   setup(props: any) {
     const message = useMessage();
-    const cmd = ref(props.command);
-    const snap = ref(Snapshot.fromCmd(props.command));
+    const cmd = computed(() => props.command);
+    const snap = ref(props.edit_snap);
+    watch(() => props.edit_snap, newOne => {
+      snap.value = newOne;
+    });
     const check = ref(false);
     const display_model = ref(SnapExhibitModel.ONELINE);
-    const command_str = computed(() => dealCommandExhibit(snap.value, display_model.value));
+    const command_str = computed(() => snap.value.dealCommandExhibit(display_model.value));
 
     const show_param_drawer = ref(false);
     const show_option_drawer = ref(false);
@@ -241,13 +263,14 @@ export default defineComponent({
           message.info('复制失败', err);
         });
     }
-    function handleUpdateCmd(updateCmd) {
-      cmd.value = updateCmd;
-      snap.value = Snapshot.fromCmd(updateCmd);
+    function reflashSnap() {
+      snap.value = snap.value.clone();
+      console.log('reflashSnap');
     }
     return {
+      SnapCardExhibitModel,
+      reflashSnap,
       show_save_panel,
-      handleUpdateCmd,
       copyCmd,
       SnapExhibitModel,
       display_model,
@@ -262,5 +285,11 @@ export default defineComponent({
   },
 });
 </script>
-<style scoped>
+<style lang="scss">
+.command-exhibit {
+  max-width: 100%;
+  .n-thing-main {
+    max-width: 100%;
+  }
+}
 </style>

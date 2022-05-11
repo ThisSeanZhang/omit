@@ -6,7 +6,6 @@
     title="保存快捷按钮"
     size="small"
     :bordered="false"
-    :segmented="segmented"
     @update:show="$emit('update:value', false)"
   >
     <template #header-extra>

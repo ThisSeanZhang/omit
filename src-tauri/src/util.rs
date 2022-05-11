@@ -64,11 +64,11 @@ pub fn read_file(path: &PathBuf, file_name: &str) -> Result<String, OmitError> {
 
 pub fn save_file(path: &PathBuf, file_name: &str, data: &str) -> Result<(), OmitError> {
   let dest_path = path.clone().join(file_name);
-  let file_open = OpenOptions::new().write(true).create(true).open(dest_path);
+  let file_open = OpenOptions::new().write(true).truncate(true).create(true).open(dest_path);
   return if let Ok(mut file) = file_open {
-    match file.write(data.as_bytes()) {
+    match file.write_all(data.as_bytes()) {
       Ok(length) => {
-        println!("write length: {}", length);
+        println!("write length: {}", data.len());
         Ok(())
       },
       Err(e) => Err(OmitError::parse_io_error(e))
