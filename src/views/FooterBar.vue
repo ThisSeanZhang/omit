@@ -1,7 +1,7 @@
 <template>
 <n-space item-style="align-items: center;display: flex;" class="footer-bar"
 justify="space-between">
-  <ShortcutBar />
+  <ShortcutBar v-show="current_panel" />
 
   <n-button-group>
     <!-- <n-button size="small" ghost>
@@ -16,12 +16,12 @@ justify="space-between">
       </template>
       一颗
     </n-button> -->
-    <n-button size="small" dashed :focusable="false"
+    <!-- <n-button size="small" dashed :focusable="false"
     @click="routePush('CommandManageView')">
       <template #icon>
         <n-icon><WindowDevEdit20Filled /></n-icon>
       </template>
-    </n-button>
+    </n-button> -->
     <n-button size="small" dashed :focusable="false"
     @click="shortcut_manager_panel = !shortcut_manager_panel">
       <template #icon>
@@ -60,7 +60,7 @@ import {
   // NotepadEdit16Filled,
   TextBulletListSquareEdit24Regular,
   Settings24Regular,
-  WindowDevEdit20Filled,
+  // WindowDevEdit20Filled,
 } from '@vicons/fluent';
 import ShortcutBar from '@/components/Shortcut/ShortcutBar.vue';
 import ShortcutManagePanel from '@/components/Shortcut/ShortcutManagePanel.vue';
@@ -73,23 +73,24 @@ export default {
     ShortcutManagePanel,
     ShortcutBar,
     // NotepadEdit16Filled,
-    WindowDevEdit20Filled,
+    // WindowDevEdit20Filled,
     TextBulletListSquareEdit24Regular,
     Settings24Regular,
   },
   setup() {
     const router = useRouter();
     const shortcut_manager_panel = ref(false);
-    const exhibit_terminal = ref(true);
+    const current_panel = ref(false);
 
     function routePush(name: string) {
+      current_panel.value = name === 'TerminalWorkView';
       router.push({ name });
     }
 
     return {
       routePush,
       shortcut_manager_panel,
-      exhibit_terminal,
+      current_panel,
     };
   },
 };
