@@ -46,8 +46,9 @@ export default class Term {
         this.fit.fit();
       }
       e.forEach(entry => console.log(`${entry.contentRect.width} x ${entry.contentRect.height}`));
-      console.log(e.length);
+      // console.log(e.length);
     });
+    this.createListen();
   }
 
   createListen() {
