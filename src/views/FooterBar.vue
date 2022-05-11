@@ -1,7 +1,7 @@
 <template>
 <n-space item-style="align-items: center;display: flex;" class="footer-bar"
 justify="space-between">
-  <ShortcutBar />
+  <ShortcutBar v-show="current_panel" />
 
   <n-button-group>
     <!-- <n-button size="small" ghost>
@@ -16,34 +16,34 @@ justify="space-between">
       </template>
       一颗
     </n-button> -->
-    <n-button size="small" dashed :focusable="false"
+    <!-- <n-button size="small" dashed :focusable="false"
     @click="routePush('CommandManageView')">
       <template #icon>
         <n-icon><WindowDevEdit20Filled /></n-icon>
       </template>
-    </n-button>
+    </n-button> -->
     <n-button size="small" dashed :focusable="false"
     @click="shortcut_manager_panel = !shortcut_manager_panel">
       <template #icon>
-        <n-icon><NotepadEdit16Filled /></n-icon>
+        <n-icon><TextBulletListSquareEdit24Regular /></n-icon>
       </template>
     </n-button>
-    <n-button v-if="exhibit_terminal" :focusable="false"
-    size="small" dashed @click="workZomeControl(false)">
+    <n-button :focusable="false"
+    size="small" dashed @click="routePush('SnapshotManageView')">
       <template #icon>
         <n-icon><CameraAdd24Regular /></n-icon>
       </template>
     </n-button>
-    <n-button v-else size="small" :focusable="false" dashed @click="workZomeControl(true)">
+    <n-button size="small" :focusable="false" dashed @click="routePush('TerminalWorkView')">
       <template #icon>
         <n-icon><WindowConsole20Regular /></n-icon>
       </template>
     </n-button>
-    <!-- <n-button size="small" ghost @click="shortcut_manager_panel = !shortcut_manager_panel">
+    <n-button size="small" dashed>
       <template #icon>
-        <n-icon><TextBulletListAdd24Regular /></n-icon>
+        <n-icon><Settings24Regular /></n-icon>
       </template>
-    </n-button> -->
+    </n-button>
   </n-button-group>
 </n-space>
 <ShortcutManagePanel v-model:value="shortcut_manager_panel" />
@@ -57,9 +57,10 @@ import { useRouter, useRoute } from 'vue-router';
 import {
   CameraAdd24Regular,
   WindowConsole20Regular,
-  NotepadEdit16Filled,
-  TextBulletListAdd24Regular,
-  WindowDevEdit20Filled,
+  // NotepadEdit16Filled,
+  TextBulletListSquareEdit24Regular,
+  Settings24Regular,
+  // WindowDevEdit20Filled,
 } from '@vicons/fluent';
 import ShortcutBar from '@/components/Shortcut/ShortcutBar.vue';
 import ShortcutManagePanel from '@/components/Shortcut/ShortcutManagePanel.vue';
@@ -71,29 +72,25 @@ export default {
     WindowConsole20Regular,
     ShortcutManagePanel,
     ShortcutBar,
-    NotepadEdit16Filled,
-    WindowDevEdit20Filled,
-    // TextBulletListAdd24Regular,
+    // NotepadEdit16Filled,
+    // WindowDevEdit20Filled,
+    TextBulletListSquareEdit24Regular,
+    Settings24Regular,
   },
   setup() {
     const router = useRouter();
     const shortcut_manager_panel = ref(false);
-    const exhibit_terminal = ref(true);
+    const current_panel = ref(false);
 
     function routePush(name: string) {
+      current_panel.value = name === 'TerminalWorkView';
       router.push({ name });
-    }
-
-    function workZomeControl(value: boolean) {
-      exhibit_terminal.value = value;
-      routePush(value ? 'TerminalWorkView' : 'SnapshotManageView');
     }
 
     return {
       routePush,
-      workZomeControl,
       shortcut_manager_panel,
-      exhibit_terminal,
+      current_panel,
     };
   },
 };
