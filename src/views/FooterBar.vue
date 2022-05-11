@@ -25,25 +25,25 @@ justify="space-between">
     <n-button size="small" dashed :focusable="false"
     @click="shortcut_manager_panel = !shortcut_manager_panel">
       <template #icon>
-        <n-icon><NotepadEdit16Filled /></n-icon>
+        <n-icon><TextBulletListSquareEdit24Regular /></n-icon>
       </template>
     </n-button>
-    <n-button v-if="exhibit_terminal" :focusable="false"
-    size="small" dashed @click="workZomeControl(false)">
+    <n-button :focusable="false"
+    size="small" dashed @click="routePush('SnapshotManageView')">
       <template #icon>
         <n-icon><CameraAdd24Regular /></n-icon>
       </template>
     </n-button>
-    <n-button v-else size="small" :focusable="false" dashed @click="workZomeControl(true)">
+    <n-button size="small" :focusable="false" dashed @click="routePush('TerminalWorkView')">
       <template #icon>
         <n-icon><WindowConsole20Regular /></n-icon>
       </template>
     </n-button>
-    <!-- <n-button size="small" ghost @click="shortcut_manager_panel = !shortcut_manager_panel">
+    <n-button size="small" ghost>
       <template #icon>
-        <n-icon><TextBulletListAdd24Regular /></n-icon>
+        <n-icon><Settings24Regular /></n-icon>
       </template>
-    </n-button> -->
+    </n-button>
   </n-button-group>
 </n-space>
 <ShortcutManagePanel v-model:value="shortcut_manager_panel" />
@@ -57,8 +57,9 @@ import { useRouter, useRoute } from 'vue-router';
 import {
   CameraAdd24Regular,
   WindowConsole20Regular,
-  NotepadEdit16Filled,
-  TextBulletListAdd24Regular,
+  // NotepadEdit16Filled,
+  TextBulletListSquareEdit24Regular,
+  Settings24Regular,
   WindowDevEdit20Filled,
 } from '@vicons/fluent';
 import ShortcutBar from '@/components/Shortcut/ShortcutBar.vue';
@@ -71,9 +72,10 @@ export default {
     WindowConsole20Regular,
     ShortcutManagePanel,
     ShortcutBar,
-    NotepadEdit16Filled,
+    // NotepadEdit16Filled,
     WindowDevEdit20Filled,
-    // TextBulletListAdd24Regular,
+    TextBulletListSquareEdit24Regular,
+    Settings24Regular,
   },
   setup() {
     const router = useRouter();
@@ -84,14 +86,8 @@ export default {
       router.push({ name });
     }
 
-    function workZomeControl(value: boolean) {
-      exhibit_terminal.value = value;
-      routePush(value ? 'TerminalWorkView' : 'SnapshotManageView');
-    }
-
     return {
       routePush,
-      workZomeControl,
       shortcut_manager_panel,
       exhibit_terminal,
     };
