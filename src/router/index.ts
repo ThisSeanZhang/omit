@@ -1,9 +1,10 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
+import TerminalWorkView from '@/views/TerminalWorkView.vue';
+import SnapshotManageView from '@/views/SnapshotManageView.vue';
+import CommandCreateView from '@/views/CommandCreateView.vue';
+import CommandManageView from '@/views/CommandManageView.vue';
 import TermRoute from './TermRoute';
 import CmdRoute from './CmdRoute';
-import TerminalWorkView from '../views/TerminalWorkView.vue';
-import SnapshotManageView from '../views/SnapshotManageView.vue';
-import CommandCreateView from '../views/CommandCreateView.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -19,6 +20,10 @@ const routes: Array<RouteRecordRaw> = [
     path: '/CommandCreateView',
     name: 'CommandCreateView',
     component: CommandCreateView,
+  }, {
+    path: '/CommandManageView',
+    name: 'CommandManageView',
+    component: CommandManageView,
   },
   // {
   //   path: '/:sessionName?',

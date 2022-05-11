@@ -17,7 +17,7 @@ justify="space-between">
       一颗
     </n-button> -->
     <n-button size="small" dashed :focusable="false"
-    @click="routePush('CommandCreateView')">
+    @click="routePush('CommandManageView')">
       <template #icon>
         <n-icon><WindowDevEdit20Filled /></n-icon>
       </template>
