@@ -39,7 +39,7 @@ justify="space-between">
         <n-icon><WindowConsole20Regular /></n-icon>
       </template>
     </n-button>
-    <n-button size="small" ghost>
+    <n-button size="small" dashed>
       <template #icon>
         <n-icon><Settings24Regular /></n-icon>
       </template>
