@@ -33,7 +33,7 @@
       <template #header>
         {{cmd.command_name}}
       </template>
-        <template  #header-extra>
+        <!-- <template  #header-extra>
         <n-button type="warning" text size="small">
           <template #icon>
             <n-icon size="16"><TextBulletListSquareEdit20Regular /></n-icon>
@@ -44,7 +44,7 @@
             <n-icon size="16"><TextBulletListSquareEdit20Regular /></n-icon>
           </template>
         </n-button>
-      </template>
+      </template> -->
     <template #description>
       {{cmd.description.get('zh-CN')}}
     </template>
@@ -227,8 +227,6 @@ export default defineComponent({
   props: {
     command: {
       type: Command,
-      require: true,
-      default: Command.default(),
     },
     edit_snap: {
       type: Snapshot,

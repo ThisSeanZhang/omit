@@ -35,9 +35,9 @@ export default class Command {
 
   static default(): Command {
     const cmd = new Command();
-    cmd.command_name = 'docker run';
-    cmd.description.set('CN', 'test aaaa');
-    cmd.options = CmdOption.default();
+    // cmd.command_name = 'docker run';
+    // cmd.description.set('CN', 'test aaaa');
+    // cmd.options = CmdOption.default();
     return cmd;
   }
 

@@ -22,7 +22,7 @@ justify="space-between">
         <n-icon><WindowDevEdit20Filled /></n-icon>
       </template>
     </n-button> -->
-    <n-button size="small" dashed :focusable="false"
+    <n-button size="small" dashed :focusable="false"  v-if="current_panel"
     @click="shortcut_manager_panel = !shortcut_manager_panel">
       <template #icon>
         <n-icon><TextBulletListSquareEdit24Regular /></n-icon>
@@ -39,11 +39,11 @@ justify="space-between">
         <n-icon><WindowConsole20Regular /></n-icon>
       </template>
     </n-button>
-    <n-button size="small" dashed>
+    <!-- <n-button size="small" dashed>
       <template #icon>
         <n-icon><Settings24Regular /></n-icon>
       </template>
-    </n-button>
+    </n-button> -->
   </n-button-group>
 </n-space>
 <ShortcutManagePanel v-model:value="shortcut_manager_panel" />
@@ -59,7 +59,7 @@ import {
   WindowConsole20Regular,
   // NotepadEdit16Filled,
   TextBulletListSquareEdit24Regular,
-  Settings24Regular,
+  // Settings24Regular,
   // WindowDevEdit20Filled,
 } from '@vicons/fluent';
 import ShortcutBar from '@/components/Shortcut/ShortcutBar.vue';
@@ -75,7 +75,7 @@ export default {
     // NotepadEdit16Filled,
     // WindowDevEdit20Filled,
     TextBulletListSquareEdit24Regular,
-    Settings24Regular,
+    // Settings24Regular,
   },
   setup() {
     const router = useRouter();
@@ -84,6 +84,7 @@ export default {
 
     function routePush(name: string) {
       current_panel.value = name === 'TerminalWorkView';
+      console.log(current_panel.value);
       router.push({ name });
     }
 

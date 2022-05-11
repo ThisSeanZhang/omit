@@ -2,7 +2,7 @@
 <n-thing :class="btn_show.border ? 'card' : ''">
   <template #header>
     <n-ellipsis style="max-width: 250px">
-    {{snap.title ?? '指令预览'}}
+    {{snap.title === '' ?'指令预览' : snap.title}}
     </n-ellipsis>
   </template>
 
@@ -204,6 +204,17 @@ export default defineComponent({
           exhibit: true,
           copy: true,
           send: true,
+          revise: false,
+          delete: false,
+          more: false,
+          snap_create: false,
+        };
+      } else if (model === SnapCardExhibitModel.SAVE) {
+        btn_show.value = {
+          border: true,
+          exhibit: true,
+          copy: true,
+          send: false,
           revise: false,
           delete: false,
           more: false,
