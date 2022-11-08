@@ -5,8 +5,8 @@ use serde::{Serialize, Deserialize};
 pub enum ChannelAction {
     Message(String),
     SizeChange {
-        width: i32,
-        height: i32,
+        width: u32,
+        height: u32,
         width_px: Option<i32>,
         height_px: Option<i32>
     },

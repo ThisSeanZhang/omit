@@ -79,7 +79,7 @@ export default {
       // invoke('new_window');
       invoke('create_pty');
       if (terminal.value != null) {
-        term.open(terminal.value);
+        term.open(terminal.value as HTMLDivElement);
       }
       // if (this.$refs.terminal.parentElement != null) {
       //   this.$refs.terminal.parentElement.onresize((_: UIEvent): void => {
@@ -100,7 +100,7 @@ export default {
         console.log(e.length);
       });
       if (terminal.value != null && terminal.value.parentElement != null) {
-        resizeObserver.observe(terminal.value.parentElement);
+        resizeObserver.observe(terminal.value.parentElement as Element);
       }
       fit.fit();
     }

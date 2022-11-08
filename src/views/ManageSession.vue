@@ -67,41 +67,35 @@
 </div>
 </template>
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
-// import { invoke } from '@tauri-apps/api/tauri';
-@Options({
-  components: {
-  },
-})
-export default class ManageCommand extends Vue {
-  // public queryStr = '';
+import {
+  defineComponent,
+  ref,
+  computed,
+} from 'vue';
+import { invoke } from '@tauri-apps/api/tauri';
+export default defineComponent({
+  setup() {
+    const queryStr = ref('');
+    const omitSessions = ref([] as Array<string>);
+    function flashSessions(): void {
+      invoke<string[]>('sessions').then(sess => {
+        console.log(sess);
+        omitSessions.value = sess;
+      }).catch((e:string) => console.log(e));
+    }
+    return {
+      queryStr,
+      omitSessions,
+      flashSessions,
+    };
+  }
 
-  // data() {
-  //   return {
-  //     queryStr: this.queryStr,
-  //   };
-  // }
-
-  // public omitSessions = new Array<string>();
-  // created(): void {
-  //   this.flashSessions();
-  // }
-
-  // flashSessions(): void {
-  //   invoke<string[]>('sessions').then(sess => {
-  //     console.log(sess);
-  //     this.omitSessions = sess;
-  //   }).catch((e:string) => console.log(e));
-  // }
-
-  // input(value: string): void {
-  //   console.log(value);
-  // }
-}
+});
 </script>
-<style lang="scss" scoped>
-// .welcome-container {
+<style scoped>
+
+/* // .welcome-container {
 //   width: 100%;
 //   height: 100%;
-// }
+// } */
 </style>

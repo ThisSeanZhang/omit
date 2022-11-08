@@ -40,43 +40,55 @@
   </div>
 </template>
 <script lang="ts">
-import { Vue } from 'vue-class-component';
+import {
+  defineComponent,
+  ref,
+  watch,
+} from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import { invoke } from '@tauri-apps/api/tauri';
 import OmitSession from '@/lib/OmitSession';
 
-export default class OmitSessions extends Vue {
-  public omitSession: OmitSession = new OmitSession();
-
-  created(): void{
-    console.log(this.$route.params.sessionName);
-    this.$watch(
-      () => this.$route.params.sessionName,
+export default defineComponent({
+  name: "OmitSessions",
+  setup(props, { emit }) {
+    const route = useRoute()
+    const omitSession = ref(new OmitSession());
+    console.log(route.params.sessionName);
+    watch(
+      () => route.params.sessionName as string,
       (nSessionName: string, _:string) => {
         // 对路由变化做出响应...
         console.log(`nSessionName: ${nSessionName}`);
-        this.readSessionInfo(nSessionName);
+        readSessionInfo(nSessionName);
       },
     );
-  }
 
-  readSessionInfo(sessionName: string) {
-    invoke<OmitSession>('read_session', {
-      sessionName: this.$route.params.sessionName,
-    }).then(sess => {
-      this.omitSession = sess;
-    }).catch((msg:string) => {
-      console.log(msg);
-    });
-  }
-
-  save(): void {
-    invoke<string>('save_session', { sess: this.omitSession })
-      .then(msg => {
-        this.$emit('session_save_done');
+    function readSessionInfo(sessionName: string) {
+      invoke<OmitSession>('read_session', {
+        sessionName
+      }).then((sess: OmitSession) => {
+        omitSession.value = sess;
+      }).catch((msg:string) => {
         console.log(msg);
-      }).catch((msg:string) => console.log(msg));
+      });
+    }
+
+    function save(): void {
+      invoke<string>('save_session', { sess: omitSession.value })
+        .then(msg => {
+          emit('session_save_done');
+          console.log(msg);
+        }).catch((msg:string) => console.log(msg));
+    }
+
+    return {
+      omitSession,
+      readSessionInfo,
+      save
+    };
   }
-}
+});
 </script>
 <style lang="scss" scoped>
 .omit_form {

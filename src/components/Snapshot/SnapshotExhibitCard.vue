@@ -134,6 +134,17 @@ import {
 } from '@/lib/Util';
 import { useStore } from '@/store/snapshot';
 
+interface BtnShow {
+  border: Boolean,
+  exhibit: Boolean,
+  copy: Boolean,
+  send: Boolean,
+  revise: Boolean,
+  delete: Boolean,
+  more: Boolean,
+  snap_create: Boolean,
+}
+
 export default defineComponent({
   name: 'SnapshotExhibitCard',
   components: {
@@ -163,7 +174,7 @@ export default defineComponent({
     const current = getCurrent();
     const snap = computed(() => props.snapshot);
     const exhibit_model = ref(SnapExhibitModel.ONELINE);
-    const btn_show = ref({});
+    const btn_show = ref({} as BtnShow);
     function changeBtnConfig(model: SnapCardExhibitModel):void {
       if (model === SnapCardExhibitModel.EXHIBIT_ON_SIDE) {
         btn_show.value = {

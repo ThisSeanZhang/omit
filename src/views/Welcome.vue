@@ -67,53 +67,53 @@
 </div>
 </template>
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
+import {
+  defineComponent,
+  ref,
+} from 'vue';
 import { invoke } from '@tauri-apps/api/tauri';
 import SSHInfo from '@/lib/SSInfo';
 import OmitSession from '@/components/Session/OmitSession.vue';
 import OmitSessionForm from '@/components/Session/OmitSessionForm.vue';
 
-@Options({
+export default defineComponent({
+  name: 'Welcome',
   components: {
     OmitSession,
     OmitSessionForm,
   },
-})
-export default class Welcome extends Vue {
-  public queryStr = '';
+  setup() {
+    const queryStr = ref('');
+    const currentSSHInfo = ref(new SSHInfo());
+    const omitSessions = ref([] as Array<string>);
 
-  data() {
+    function flashSessions(): void {
+      invoke<string[]>('sessions').then((sess: any) => {
+        console.log(sess);
+        omitSessions.value = sess;
+      }).catch((e:string) => console.log(e));
+    }
+    function save(): void {
+      invoke<string>('save_session', { sess: currentSSHInfo })
+        .then((msg: string) => {
+          flashSessions();
+          console.log(msg);
+        }).catch((msg:string) => console.log(msg));
+    }
+
+    function input(value: string): void {
+      console.log(value);
+    }
+
+    flashSessions();
     return {
-      queryStr: this.queryStr,
+      queryStr,
+      currentSSHInfo,
+      omitSessions,
+      flashSessions,
     };
   }
-
-  public omitSessions = new Array<string>();
-
-  public currentSSHInfo: SSHInfo = new SSHInfo();
-  created(): void {
-    this.flashSessions();
-  }
-
-  save(): void {
-    invoke<string>('save_session', { sess: this.currentSSHInfo })
-      .then(msg => {
-        this.flashSessions();
-        console.log(msg);
-      }).catch((msg:string) => console.log(msg));
-  }
-
-  flashSessions(): void {
-    invoke<string[]>('sessions').then(sess => {
-      console.log(sess);
-      this.omitSessions = sess;
-    }).catch((e:string) => console.log(e));
-  }
-
-  input(value: string): void {
-    console.log(value);
-  }
-}
+});
 </script>
 <style lang="scss" scoped>
 // .welcome-container {

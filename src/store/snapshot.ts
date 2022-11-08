@@ -17,7 +17,7 @@ export const useStore = defineStore('snap', {
         // console.log(this.raw_snaps);
         this.raw_snaps.splice(0, this.raw_snaps.length);
         // console.log(JSON.parse(msg).map(Snapshot.fromObj));
-        JSON.parse(msg).map(Snapshot.fromObj).forEach(e => this.raw_snaps.push(e));
+        JSON.parse(msg).map(Snapshot.fromObj).forEach((e: Snapshot) => this.raw_snaps.push(e));
         // console.log(this.raw_snaps);
       } catch (e) {
         console.log(e);

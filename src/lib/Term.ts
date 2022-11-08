@@ -5,6 +5,7 @@ import { guid } from '@/lib/Util';
 import { Event } from '@tauri-apps/api/event';
 import { getCurrent, WebviewWindow } from '@tauri-apps/api/window';
 import { invoke } from '@tauri-apps/api/tauri';
+import OmitSession from './OmitSession';
 
 export default class Term {
   uid: string;
@@ -14,9 +15,10 @@ export default class Term {
   tauri_window: WebviewWindow;
   resizeObserver: ResizeObserver;
 
-  constructor() {
+  constructor(sess: OmitSession) {
     this.uid = guid();
     this.term = new Terminal({
+      allowProposedApi: true,
       cols: 129, // 9px
       rows: 33, // 17px
       // rendererType: 'dom'
@@ -30,15 +32,19 @@ export default class Term {
     this.term.loadAddon(this.serializeAddon);
     this.term.loadAddon(this.fit);
     this.term.onData(data => {
-      console.log(`send data${JSON.stringify(data)}`);
+      // console.log(`send data${JSON.stringify(data)}`);
       this.tauri_window.emit('ssh-data-from-frontend', data);
     });
     this.tauri_window.listen('ssh-data-from-backend', (e: Event<{data: Uint8Array}>) => {
       this.term.write(e.payload.data, () => {
-        console.log(this.serializeAddon.serialize());
+        // console.log(this.serializeAddon.serialize());
       });
     });
-    invoke('create_pty');
+    invoke('create_pty', {
+      SSHInfo: {
+        ...sess,
+      },
+    });
     this.resizeObserver = new ResizeObserver(e => {
       const notShrink = e.flatMap(value => [value.contentRect.width, value.contentRect.height])
         .every(value => value !== 0);

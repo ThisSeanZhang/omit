@@ -137,7 +137,7 @@ export default defineComponent({
     },
     snap: {
       type: Snapshot,
-      require: true,
+      require: false,
     },
   },
   setup(props: any) {

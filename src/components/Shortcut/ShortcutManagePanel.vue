@@ -59,7 +59,7 @@
               <n-icon><ArrowDown16Filled /></n-icon>
             </template>
           </n-button>
-          <n-button round type="error" ghost @click="move(index)">
+          <n-button round type="error" ghost @click="move(index, undefined)">
             <template #icon>
               <n-icon><DismissCircle20Regular /></n-icon>
             </template>

@@ -14,7 +14,7 @@
   <n-h2>平山道</n-h2>
 </n-layout>
 </template>
-<script>
+<script lang="ts">
 import Command from '@/lib/Command';
 import {
   defineComponent,

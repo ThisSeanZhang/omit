@@ -70,6 +70,7 @@ import SnapshotExhibitCard from '@/components/Snapshot/SnapshotExhibitCard.vue';
 import SnapshotMorePanel from '@/components/Snapshot/SnapshotMorePanel.vue';
 import { useStore } from '@/store/snapshot';
 import Terminal from './Terminal.vue';
+import Snapshot from '@/lib/Snapshot';
 
 export default defineComponent({
   name: 'TerminalWorkView',
@@ -84,7 +85,7 @@ export default defineComponent({
     const storage = useStore();
     const query_key = ref('');
     const show_more = ref(false);
-    const more_snap = ref(null);
+    const more_snap = ref<Snapshot>();
     // const exhibit_terminal = ref(true);
     const exhibit_terminal = ref(false);
     storage.FETCH_SNAPSHOTS();

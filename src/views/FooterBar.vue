@@ -50,6 +50,7 @@ justify="space-between">
 </template>
 <script lang="ts">
 import {
+  defineComponent,
   onMounted,
   ref,
 } from 'vue';
@@ -65,7 +66,7 @@ import {
 import ShortcutBar from '@/components/Shortcut/ShortcutBar.vue';
 import ShortcutManagePanel from '@/components/Shortcut/ShortcutManagePanel.vue';
 
-export default {
+export default defineComponent({
   name: 'FooterBar',
   components: {
     CameraAdd24Regular,
@@ -94,10 +95,10 @@ export default {
       current_panel,
     };
   },
-};
+});
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 .footer-bar{
   margin-top: 0px!important;
   padding: 0px 9px;

@@ -69,7 +69,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 .titlebar {
   height: 30px;
   user-select: none;
@@ -87,7 +87,7 @@ export default {
   width: 30px;
   height: 30px;
 }
-// .titlebar-button:hover {
+/* // .titlebar-button:hover {
 //   background: #5bbec3;
-// }
+// } */
 </style>

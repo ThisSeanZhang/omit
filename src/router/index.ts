@@ -3,12 +3,13 @@ import TerminalWorkView from '@/views/TerminalWorkView.vue';
 import SnapshotManageView from '@/views/SnapshotManageView.vue';
 import CommandCreateView from '@/views/CommandCreateView.vue';
 import CommandManageView from '@/views/CommandManageView.vue';
+import Welcome from '@/views/Welcome.vue';
 import TermRoute from './TermRoute';
 import CmdRoute from './CmdRoute';
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: '/',
+    path: '/terminal/:sessionName',
     name: 'TerminalWorkView',
     component: TerminalWorkView,
   }, {
@@ -25,11 +26,11 @@ const routes: Array<RouteRecordRaw> = [
     name: 'CommandManageView',
     component: CommandManageView,
   },
-  // {
-  //   path: '/:sessionName?',
-  //   name: 'Welcome',
-  //   component: Welcome,
-  // },
+  {
+    path: '/:sessionName?',
+    name: 'Welcome',
+    component: Welcome,
+  },
 ];
 
 routes.push(...TermRoute);

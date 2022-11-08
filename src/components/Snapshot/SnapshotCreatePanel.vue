@@ -237,7 +237,7 @@ export default defineComponent({
     const message = useMessage();
     const cmd = computed(() => props.command);
     const snap = ref(props.edit_snap);
-    watch(() => props.edit_snap, newOne => {
+    watch(() => props.edit_snap, (newOne: Snapshot) => {
       snap.value = newOne;
     });
     const check = ref(false);

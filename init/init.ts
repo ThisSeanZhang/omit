@@ -40,10 +40,9 @@ import {
   NEllipsis,
   NResult,
 } from 'naive-ui'
-import './style.css'
-import App from './App.vue'
-import router from './router';
-import store from './store';
+import App from '/init/Init.vue'
+// import router from './router';
+// import store from './store';
 
 // 通用字体
 import 'vfonts/Lato.css';
@@ -92,7 +91,7 @@ const naive = create({
 });
 
 createApp(App)
-  .use(store)
-  .use(naive)
-  .use(router)
+  // .use(store)
+  // .use(naive)
+  // .use(router)
   .mount('#app');

@@ -32,41 +32,57 @@
   </div>
 </template>
 <script lang="ts">
-import { Options, prop, Vue } from 'vue-class-component';
+import {
+  defineComponent,
+  ref,
+  computed,
+} from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import {
   Delete20Regular,
   PlugDisconnected20Regular,
 } from '@vicons/fluent';
 // import SSHInfo from '@/lib/SSInfo';
 
-@Options({
+export default defineComponent({
+  name: 'OmitSessions',
   components: {
     Delete20Regular,
     PlugDisconnected20Regular,
   },
-})
-export default class OmitSessions extends Vue.with(class {
-  value: string[] = prop({
-    required: true,
-  });
-}) {
-  connect(): void {
-    this.$router.push({ name: 'ssh', params: { sessionName: this.value } });
-  }
+  props: {
+    value: {
+      type: String,
+      require: true,
+      default: () => '',
+    },
+  },
+  setup(props: { value: string; }) {
+    const router = useRouter();
+    function connect(): void {
+      router.push({ name: 'TerminalWorkView', params: { sessionName: props.value } });
+    }
 
-  reviewOmitSessionConfig():void {
-    console.log(`want to push session: ${this.value}`);
-    this.$router.push({ name: 'Welcome', params: { sessionName: this.value } });
-  }
+    function reviewOmitSessionConfig():void {
+      console.log(`want to push session: ${props.value}`);
+      router.push({ name: 'Welcome', params: { sessionName: props.value } });
+    }
 
-  clickOK(): void {
-    console.log('ok');
-  }
+    function clickOK(): void {
+      console.log('ok');
+    }
 
-  clickNo(): void {
-    console.log('no');
-  }
-}
+    function clickNo(): void {
+      console.log('no');
+    }
+    return {
+      connect,
+      reviewOmitSessionConfig,
+      clickOK,
+      clickNo,
+    };
+  },
+});
 </script>
 
 <style lang="scss" scoped>

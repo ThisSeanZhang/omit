@@ -17,7 +17,7 @@ export const useStore = defineStore('shortcut', {
         console.log(this.raw_shortcut);
         this.raw_shortcut.splice(0, this.raw_shortcut.length);
         console.log(JSON.parse(msg).map(Shortcut.fromObj));
-        JSON.parse(msg).map(Shortcut.fromObj).forEach(e => this.raw_shortcut.push(e));
+        JSON.parse(msg).map(Shortcut.fromObj).forEach((e: Shortcut) => this.raw_shortcut.push(e));
         console.log(this.raw_shortcut);
       } catch (e) {
         console.log(e);
