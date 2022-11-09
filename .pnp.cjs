@@ -28,7 +28,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         [null, {\
           "packageLocation": "./",\
           "packageDependencies": [\
-            ["@tauri-apps/api", "npm:1.1.0"],\
+            ["@tauri-apps/api", "npm:1.2.0"],\
             ["@tauri-apps/cli", "npm:1.1.1"],\
             ["@types/node", "npm:18.11.9"],\
             ["@types/vue", "npm:2.0.0"],\
@@ -203,10 +203,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@tauri-apps/api", [\
-        ["npm:1.1.0", {\
-          "packageLocation": "./.yarn/cache/@tauri-apps-api-npm-1.1.0-b8d44a9ba7-0e8cc6b619.zip/node_modules/@tauri-apps/api/",\
+        ["npm:1.2.0", {\
+          "packageLocation": "./.yarn/cache/@tauri-apps-api-npm-1.2.0-71fff21a2b-15b0b805d9.zip/node_modules/@tauri-apps/api/",\
           "packageDependencies": [\
-            ["@tauri-apps/api", "npm:1.1.0"]\
+            ["@tauri-apps/api", "npm:1.2.0"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -1862,7 +1862,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./",\
           "packageDependencies": [\
             ["omit", "workspace:."],\
-            ["@tauri-apps/api", "npm:1.1.0"],\
+            ["@tauri-apps/api", "npm:1.2.0"],\
             ["@tauri-apps/cli", "npm:1.1.1"],\
             ["@types/node", "npm:18.11.9"],\
             ["@types/vue", "npm:2.0.0"],\
