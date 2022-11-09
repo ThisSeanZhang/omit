@@ -25,6 +25,7 @@ import {
   NFormItem,
   NFormItemGi,
   NGrid,
+  NGridItem,
   NGi,
   NPopconfirm,
   NThing,
@@ -39,6 +40,8 @@ import {
   NModal,
   NEllipsis,
   NResult,
+  NStep,
+  NSteps,
 } from 'naive-ui'
 import './style.css'
 import App from './App.vue'
@@ -74,6 +77,7 @@ const naive = create({
     NFormItem,
     NFormItemGi,
     NGrid,
+    NGridItem,
     NGi,
     NPopconfirm,
     NThing,
@@ -88,6 +92,8 @@ const naive = create({
     NModal,
     NEllipsis,
     NResult,
+    NStep,
+    NSteps
   ],
 });
 

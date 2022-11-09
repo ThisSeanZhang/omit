@@ -5,6 +5,7 @@
 
 mod action;
 mod shell;
+mod check_list;
 mod config;
 // mod terminal;
 mod error;
@@ -17,7 +18,16 @@ mod command;
 mod util;
 
 use shell::create_pty;
-use config::{ ConfigState, Config, save_session, sessions, read_session};
+use config::{
+  ConfigState, Config,
+  save_session,
+  sessions,
+  read_session,
+  exists,
+  create_file,
+  read_file,
+  list_dir_all,
+};
 use snapshot::{read_snapshots, save_snapshots, SnapConfig};
 use shortcut::{read_shortcuts, save_shortcuts};
 use crate::repository::{
@@ -35,6 +45,10 @@ fn main() {
 
   tauri::Builder::default()
     .invoke_handler(tauri::generate_handler![
+      exists,
+      create_file,
+      read_file,
+      list_dir_all,
       create_pty,
       read_shortcuts,
       save_shortcuts,

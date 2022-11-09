@@ -13,45 +13,10 @@
               position="absolute"
               :native-scrollbar="false"
             >
-              <OmitSession
-                v-for="sess in omitSessions"
-                v-bind:key="sess" :value="sess"/>
-              <!-- <OmitSession
-                v-for="sess in omitSessions"
-                v-bind:key="sess" :value="sess"/>
-              <OmitSession
-                v-for="sess in omitSessions"
-                v-bind:key="sess" :value="sess"/>
-              <OmitSession
-                v-for="sess in omitSessions"
-                v-bind:key="sess" :value="sess"/>
-              <OmitSession
-                v-for="sess in omitSessions"
-                v-bind:key="sess" :value="sess"/>
-              <OmitSession
-                v-for="sess in omitSessions"
-                v-bind:key="sess" :value="sess"/>
-              <OmitSession
-                v-for="sess in omitSessions"
-                v-bind:key="sess" :value="sess"/>
-              <OmitSession
-                v-for="sess in omitSessions"
-                v-bind:key="sess" :value="sess"/>
-              <OmitSession
-                v-for="sess in omitSessions"
-                v-bind:key="sess" :value="sess"/>
-              <OmitSession
-                v-for="sess in omitSessions"
-                v-bind:key="sess" :value="sess"/>
-              <OmitSession
-                v-for="sess in omitSessions"
-                v-bind:key="sess" :value="sess"/>
-              <OmitSession
-                v-for="sess in omitSessions"
-                v-bind:key="sess" :value="sess"/>
-              <OmitSession
-                v-for="sess in omitSessions"
-                v-bind:key="sess" :value="sess"/> -->
+              <OmitSessionItem
+                v-for="sess in exhibitSession"
+                @choise="(e) => currentChoice = e"
+                v-bind:key="sess.name" :session="sess"/>
             </n-layout-content>
           </n-layout>
         </n-space>
@@ -60,7 +25,7 @@
           style="flex: 2"
           :native-scrollbar='false'
         >
-        <OmitSessionForm v-on:session_save_done="flashSessions" />
+        <OmitSessionForm :session="currentChoice" @edit_finish="editFinish" />
         </n-layout-content>
     </n-layout>
   </n-space>
@@ -68,49 +33,49 @@
 </template>
 <script lang="ts">
 import {
+  computed,
   defineComponent,
+  onMounted,
   ref,
 } from 'vue';
-import { invoke } from '@tauri-apps/api/tauri';
-import SSHInfo from '@/lib/SSInfo';
-import OmitSession from '@/components/Session/OmitSession.vue';
+import { sessionStore } from '@/store/session';
+import OmitSessionItem from '@/components/Session/OmitSessionItem.vue';
 import OmitSessionForm from '@/components/Session/OmitSessionForm.vue';
+import OmitSession from '@/lib/OmitSession';
 
 export default defineComponent({
   name: 'Welcome',
   components: {
-    OmitSession,
+    OmitSessionItem,
     OmitSessionForm,
   },
   setup() {
+    const store = sessionStore();
+    const fetch_wait = store.FETCH_SESSIONS();
     const queryStr = ref('');
-    const currentSSHInfo = ref(new SSHInfo());
-    const omitSessions = ref([] as Array<string>);
 
-    function flashSessions(): void {
-      invoke<string[]>('sessions').then((sess: any) => {
-        console.log(sess);
-        omitSessions.value = sess;
-      }).catch((e:string) => console.log(e));
-    }
-    function save(): void {
-      invoke<string>('save_session', { sess: currentSSHInfo })
-        .then((msg: string) => {
-          flashSessions();
-          console.log(msg);
-        }).catch((msg:string) => console.log(msg));
-    }
+    const exhibitSession = computed(() => {
+      let result = store.sessions;
+      if (queryStr.value !== '') {
+        result = result.filter(sess => sess.name.includes(queryStr.value))
+      }
+      return result;
+    });
 
-    function input(value: string): void {
-      console.log(value);
+    const currentChoice = ref(new OmitSession());
+    
+    function editFinish() {
+      currentChoice.value = new OmitSession();
     }
+    onMounted(async () => {
+      await fetch_wait;
+    });
 
-    flashSessions();
     return {
       queryStr,
-      currentSSHInfo,
-      omitSessions,
-      flashSessions,
+      editFinish,
+      currentChoice,
+      exhibitSession,
     };
   }
 });

@@ -39,56 +39,34 @@
     </n-form>
   </div>
 </template>
-<script lang="ts">
+<script setup lang="ts">
 import {
   defineComponent,
   ref,
   watch,
 } from 'vue';
+import { sessionStore } from '@/store/session';
 import { useRouter, useRoute } from 'vue-router';
 import { invoke } from '@tauri-apps/api/tauri';
 import OmitSession from '@/lib/OmitSession';
 
-export default defineComponent({
-  name: "OmitSessions",
-  setup(props, { emit }) {
-    const route = useRoute()
-    const omitSession = ref(new OmitSession());
-    console.log(route.params.sessionName);
-    watch(
-      () => route.params.sessionName as string,
-      (nSessionName: string, _:string) => {
-        // 对路由变化做出响应...
-        console.log(`nSessionName: ${nSessionName}`);
-        readSessionInfo(nSessionName);
-      },
-    );
+const store = sessionStore();
+const props = defineProps({
+  session: OmitSession,
+})
+const emit = defineEmits<{
+  (e: 'edit_finish'): void
+}>()
 
-    function readSessionInfo(sessionName: string) {
-      invoke<OmitSession>('read_session', {
-        sessionName
-      }).then((sess: OmitSession) => {
-        omitSession.value = sess;
-      }).catch((msg:string) => {
-        console.log(msg);
-      });
-    }
-
-    function save(): void {
-      invoke<string>('save_session', { sess: omitSession.value })
-        .then(msg => {
-          emit('session_save_done');
-          console.log(msg);
-        }).catch((msg:string) => console.log(msg));
-    }
-
-    return {
-      omitSession,
-      readSessionInfo,
-      save
-    };
-  }
-});
+const omitSession = ref<OmitSession>(new OmitSession());
+watch(() => props.session, (_) => {
+  if (props.session !== undefined)
+  omitSession.value = props.session;
+})
+function save(): void {
+  store.SAVE_SESSION(omitSession.value);
+  emit('edit_finish');
+}
 </script>
 <style lang="scss" scoped>
 .omit_form {

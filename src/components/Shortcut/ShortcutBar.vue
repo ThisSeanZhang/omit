@@ -29,7 +29,7 @@ import {
   computed,
 } from 'vue';
 import { getCurrent } from '@tauri-apps/api/window';
-import { useStore } from '@/store/shortcut';
+import { shortcutStore } from '@/store/shortcut';
 import Shortcut from '@/lib/Shortcut';
 
 export default defineComponent({
@@ -38,7 +38,7 @@ export default defineComponent({
   },
   setup() {
     const current = getCurrent();
-    const store = useStore();
+    const store = shortcutStore();
     store.FETCH_SHORTCURS();
     const shortcuts = computed(() => store.shortcuts);
     function sendCmd(data: string) {

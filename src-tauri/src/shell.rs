@@ -207,6 +207,7 @@ impl Session {
         let sh = Client {};
         let mut session = client::connect(config, addr, sh).await?;
         let _auth_res = session
+        .authenticate_password("test", "test")
             // .authenticate_publickey(user, Arc::new(key_pair))
             .await?;
         println!("is_closed {}", session.is_closed());

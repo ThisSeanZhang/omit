@@ -99,7 +99,7 @@ import {
   ref,
 } from 'vue';
 import Shortcut from '@/lib/Shortcut';
-import { useStore } from '@/store/shortcut';
+import { shortcutStore } from '@/store/shortcut';
 import {
   Add16Filled,
   DismissCircle20Regular,
@@ -125,7 +125,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const storage = useStore();
+    const storage = shortcutStore();
 
     storage.FETCH_SHORTCURS();
     const shortcuts = ref(storage.shortcuts);

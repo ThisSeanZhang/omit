@@ -12,4 +12,14 @@ export default class OmitSession {
     this.username = '';
     this.passwd = '';
   }
+
+  static fromObj(obj: any): OmitSession {
+    const result = new OmitSession();
+    result.name = obj.name;
+    result.ip = obj.ip;
+    result.port = obj.port;
+    result.username = obj.username;
+    result.passwd = obj.passwd;
+    return result;
+  }
 }

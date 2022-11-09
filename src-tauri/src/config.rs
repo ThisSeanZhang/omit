@@ -207,3 +207,67 @@ pub fn read_session(config:State<ConfigState>, session_name: String) -> Result<O
   }
   Ok(session.unwrap())
 }
+
+#[command]
+pub fn exists(dir_path: &str, file_name: Option<&str>) -> Result<bool, String> {
+  let mut path = PathBuf::from(dir_path);
+  if let Some(file) = file_name {
+    path.push(file);
+  }
+  if path.exists() {
+    return Ok(true)
+  } else {
+    return Ok(false)
+  }
+}
+
+#[command]
+pub fn create_file(dir_path: &str, file_name: Option<&str>, data:Option<&str>) -> Result<(), String> {
+  let mut path = PathBuf::from(dir_path);
+  if !path.exists() {
+    if let Err(e) = fs::create_dir_all(&path) {
+      return Err("path create error".into());
+    }
+  }
+  if let Some(file_name) = file_name {
+    path.push(file_name);
+    let file = File::create(path);
+    if let Some(file_data) = data {
+      match file {
+          Ok(mut file) => {
+            file.write_all(file_data.as_bytes()).map_err(|e| e.to_string())?;
+          },
+          Err(e) => {
+            return Err(e.to_string())
+          }
+      }
+    }
+  }
+  Ok(())
+}
+
+#[command]
+pub fn read_file(file_path: &str) -> Result<String, String> {
+  let file_path = PathBuf::from(file_path);
+  if !file_path.is_file() {
+    return Err("file don't exists".into());
+  }
+  fs::read_to_string(file_path).map_err(|e| e.to_string())
+}
+
+#[command]
+pub fn list_dir_all(dir_path: &str) -> Result<Vec<String>, String> {
+  let dir_path = PathBuf::from(dir_path);
+  if dir_path.is_file() {
+    return Err("you need config a dir".into());
+  }
+  let dirs = dir_path.read_dir().map_err(|e| e.to_string())?;
+  let result = dirs.filter_map(|path| path.ok())
+  // .map(|entry| {
+  //   println!("file name: {:?}", entry.file_name());
+  //   entry.path().file_stem().unwrap().to_str().unwrap().to_string()
+  // })
+  .map(|entry| entry.file_name().to_string_lossy().to_string())
+  .collect::<Vec<String>>();
+  Ok(result)
+}

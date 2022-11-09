@@ -1,46 +1,56 @@
 import { invoke } from '@tauri-apps/api/tauri';
 import { defineStore } from 'pinia';
 import Shortcut from '@/lib/Shortcut';
+import { useStore as configStore } from './config'
+import { computed, ref } from 'vue';
 
-export const useStore = defineStore('shortcut', {
-  state: () => ({
-    raw_shortcut: [] as Shortcut[],
-  }),
-  getters: {
-    shortcuts: state => state.raw_shortcut,
-  },
-  actions: {
-    async FETCH_SHORTCURS(): Promise<void> {
-      try {
-        const msg = await invoke<string>('read_shortcuts');
-        console.log(msg);
-        console.log(this.raw_shortcut);
-        this.raw_shortcut.splice(0, this.raw_shortcut.length);
-        console.log(JSON.parse(msg).map(Shortcut.fromObj));
-        JSON.parse(msg).map(Shortcut.fromObj).forEach((e: Shortcut) => this.raw_shortcut.push(e));
-        console.log(this.raw_shortcut);
-      } catch (e) {
-        console.log(e);
-      }
-    },
-    async SAVE_SHORTCUR(snap: Shortcut): Promise<void> {
-      try {
-        const save = this.raw_shortcut.slice();
-        save.push(snap);
-        await invoke<string>('save_shortcuts', { snaps: JSON.stringify(save, null, 2) });
-        this.raw_shortcut.push(snap);
-      } catch (e) {
-        console.log(e);
-      }
-    },
-    async SAVE_ALL_SHORTCUR(): Promise<void> {
-      try {
-        console.log(this.raw_shortcut);
-        await invoke<string>('save_shortcuts', { snaps: JSON.stringify(this.raw_shortcut, null, 2) });
-      } catch (e) {
-        console.log(e);
-      }
-    },
-  },
+const SHORTCUT_FILE = '_shortcuts.json';
+
+export const shortcutStore = defineStore('shortcut', () => {
+  const raw_shortcut = ref<Shortcut[]>([]);
+  const config = configStore();
+
+  const shortcuts = computed(() => raw_shortcut.value);
+
+  async function FETCH_SHORTCURS(): Promise<void> {
+    let setting_data = await invoke<string>('read_file', {
+      filePath: config.userRepoPath,
+      fileName: SHORTCUT_FILE
+    });
+    raw_shortcut.value = JSON.parse(setting_data).map(Shortcut.fromObj);
+  }
+
+  async function SAVE_SHORTCUR(snap: Shortcut): Promise<void> {
+    try {
+      const save = raw_shortcut.value.slice();
+      save.push(snap);
+      await invoke<string>('create_file', {
+        dirPath: config.userRepoPath,
+        fileName: SHORTCUT_FILE,
+        data: JSON.stringify(save, null, 2)
+      });
+      raw_shortcut.value.push(snap);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+  async function SAVE_ALL_SHORTCUR(): Promise<void> {
+    try {
+      await invoke<string>('create_file', {
+        dirPath: config.userRepoPath,
+        fileName: SHORTCUT_FILE,
+        data: JSON.stringify(raw_shortcut.value, null, 2)
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  return {
+    shortcuts,
+    FETCH_SHORTCURS,
+    SAVE_SHORTCUR,
+    SAVE_ALL_SHORTCUR,
+  }
 });
-export default useStore;
+export default shortcutStore;

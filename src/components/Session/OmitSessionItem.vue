@@ -1,6 +1,6 @@
 <template>
   <div class="session_card" @click="reviewOmitSessionConfig">
-    <div>{{value}}</div>
+    <div>{{props.session?.name}}</div>
     <div class="card_btns">
       <n-button class="card_btn" text @click.stop="connect">
         <n-icon>
@@ -31,7 +31,7 @@
     </div>
   </div>
 </template>
-<script lang="ts">
+<script setup lang="ts">
 import {
   defineComponent,
   ref,
@@ -42,47 +42,35 @@ import {
   Delete20Regular,
   PlugDisconnected20Regular,
 } from '@vicons/fluent';
+import OmitSession from '@/lib/OmitSession';
 // import SSHInfo from '@/lib/SSInfo';
+const props = defineProps({
+  session: OmitSession,
+})
+const emit = defineEmits<{
+  (e: 'choise', session: OmitSession): void
+}>()
 
-export default defineComponent({
-  name: 'OmitSessions',
-  components: {
-    Delete20Regular,
-    PlugDisconnected20Regular,
-  },
-  props: {
-    value: {
-      type: String,
-      require: true,
-      default: () => '',
-    },
-  },
-  setup(props: { value: string; }) {
-    const router = useRouter();
-    function connect(): void {
-      router.push({ name: 'TerminalWorkView', params: { sessionName: props.value } });
-    }
+const router = useRouter();
+function connect(): void {
+  router.push({ name: 'TerminalWorkView', params: { sessionName: props.session?.name } });
+}
 
-    function reviewOmitSessionConfig():void {
-      console.log(`want to push session: ${props.value}`);
-      router.push({ name: 'Welcome', params: { sessionName: props.value } });
-    }
+function reviewOmitSessionConfig():void {
+  console.log(`want to push session: ${props.session?.name}`);
+  if (props.session !== undefined) {
+    console.log(`choise : ${props.session}`)
+    emit('choise', props.session)
+  } 
+}
 
-    function clickOK(): void {
-      console.log('ok');
-    }
+function clickOK(): void {
+  console.log('ok');
+}
 
-    function clickNo(): void {
-      console.log('no');
-    }
-    return {
-      connect,
-      reviewOmitSessionConfig,
-      clickOK,
-      clickNo,
-    };
-  },
-});
+function clickNo(): void {
+  console.log('no');
+}
 </script>
 
 <style lang="scss" scoped>

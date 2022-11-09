@@ -22,7 +22,7 @@
 </template>
 <script lang="ts">
 import Shortcut from '@/lib/Shortcut';
-import { useStore } from '@/store/shortcut';
+import { shortcutStore } from '@/store/shortcut';
 import {
   defineComponent,
   ref,
@@ -42,7 +42,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const storage = useStore();
+    const storage = shortcutStore();
     const short = ref(props.shortcut);
     // when reopen the modal refresh the shortcut
     watch(() => props.value, () => { short.value = props.shortcut; });
