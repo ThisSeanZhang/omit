@@ -59,7 +59,7 @@
   </n-layout>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import {
   computed,
   defineComponent,
@@ -71,32 +71,13 @@ import SnapshotMorePanel from '@/components/Snapshot/SnapshotMorePanel.vue';
 import { useStore } from '@/store/snapshot';
 import Terminal from './Terminal.vue';
 import Snapshot from '@/lib/Snapshot';
+const storage = useStore();
+const query_key = ref('');
+const show_more = ref(false);
+const more_snap = ref<Snapshot>();
+// const exhibit_terminal = ref(true);
+const exhibit_terminal = ref(false);
+storage.FETCH_SNAPSHOTS();
+const snapshots = computed(() => storage.snapshots.filter(snap => (query_key.value === '' ? true : snap.title.includes(query_key.value))));
 
-export default defineComponent({
-  name: 'TerminalWorkView',
-  components: {
-    // CameraAdd24Regular,
-    // WindowConsole20Regular,
-    Terminal,
-    SnapshotExhibitCard,
-    SnapshotMorePanel,
-  },
-  setup() {
-    const storage = useStore();
-    const query_key = ref('');
-    const show_more = ref(false);
-    const more_snap = ref<Snapshot>();
-    // const exhibit_terminal = ref(true);
-    const exhibit_terminal = ref(false);
-    storage.FETCH_SNAPSHOTS();
-    const snapshots = computed(() => storage.snapshots.filter(snap => (query_key.value === '' ? true : snap.title.includes(query_key.value))));
-    return {
-      more_snap,
-      show_more,
-      snapshots,
-      exhibit_terminal,
-      query_key,
-    };
-  },
-});
 </script>

@@ -66,31 +66,27 @@ pub async fn create_pty(window: Window, SSHInfo{ username, ip, port, passwd}: SS
             });
         }
     });
+    let config = client::Config {
+        connection_timeout: Some(Duration::from_secs(5)),
+        ..<_>::default()
+      };
+      let config = Arc::new(config);
+      let mut session = client::connect(config, address,  Client {}).await.map_err(|e| e.to_string())?;
+      let _auth_res = session
+    //   .authenticate_none(username)
+      .authenticate_password(username, passwd)
+        // .authenticate_publickey(user, Arc::new(key_pair))
+      .await.map_err(|e| e.to_string())?;
+      let mut channel = session.channel_open_session().await.map_err(|e| e.to_string())?;
+      println!("open channel");
+      channel.request_pty(false, "xterm-256color", 129, 33, 0,0, &[
+        (Pty::ECHO, 1),
+        (Pty::ECHOCTL, 0),
+        (Pty::TTY_OP_ISPEED, 14400),
+        (Pty::TTY_OP_OSPEED, 14400),
+        (Pty::TTY_OP_END, 1)]).await.unwrap();
+      channel.request_shell(true).await.unwrap();
     tokio::spawn(async move {
-        let config = client::Config {
-            connection_timeout: Some(Duration::from_secs(5)),
-            ..<_>::default()
-          };
-          let config = Arc::new(config);
-          let mut session = client::connect(config, address,  Client {}).await.unwrap();
-          let _auth_res = session
-        //   .authenticate_none(username)
-          .authenticate_password(username, passwd)
-            // .authenticate_publickey(user, Arc::new(key_pair))
-          .await.unwrap();
-          let mut channel = session.channel_open_session().await.unwrap();
-          println!("open channel");
-          channel.request_pty(false, "xterm-256color", 129, 33, 0,0, &[
-            (Pty::ECHO, 1),
-            (Pty::ECHOCTL, 0),
-            (Pty::TTY_OP_ISPEED, 14400),
-            (Pty::TTY_OP_OSPEED, 14400),
-            (Pty::TTY_OP_END, 1)]).await.unwrap();
-          // let mut  session = Arc::new(session);
-          // let (ch, sender) = ChannelStream::new(channel.id(), session);
-          // channel.s(want_reply, command)
-          channel.request_shell(true).await.unwrap();
-        //   channel.data(&b"ls -la\n c   "[..]).await.unwrap();
           while !session.is_closed() {
             tokio::select!{
                 Some(msg) = channel.wait() => {

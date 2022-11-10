@@ -15,13 +15,18 @@ export default class Term {
   tauri_window: WebviewWindow;
   resizeObserver: ResizeObserver;
 
-  constructor(sess: OmitSession) {
+  errorMessage: String | undefined;
+
+  constructor() {
     this.uid = guid();
     this.term = new Terminal({
       allowProposedApi: true,
       cols: 129, // 9px
       rows: 33, // 17px
       // rendererType: 'dom'
+      theme: {
+        background: '#101014'
+      }
     });
     this.serializeAddon = new SerializeAddon();
     this.fit = new FitAddon();
@@ -40,11 +45,11 @@ export default class Term {
         // console.log(this.serializeAddon.serialize());
       });
     });
-    invoke('create_pty', {
-      SSHInfo: {
-        ...sess,
-      },
-    });
+    // invoke('create_pty', {
+    //   SSHInfo: {
+    //     ...sess,
+    //   },
+    // });
     this.resizeObserver = new ResizeObserver(e => {
       const notShrink = e.flatMap(value => [value.contentRect.width, value.contentRect.height])
         .every(value => value !== 0);
@@ -55,6 +60,14 @@ export default class Term {
       // console.log(e.length);
     });
     this.createListen();
+  }
+
+  connect(sess: OmitSession): Promise<void> {
+    return invoke('create_pty', {
+      SSHInfo: {
+        ...sess,
+      },
+    });
   }
 
   createListen() {
@@ -94,5 +107,9 @@ export default class Term {
       this.resizeObserver.unobserve(element.parentElement);
     }
     // this.term.dispose();
+  }
+
+  is_error() : Boolean {
+    return this.errorMessage !== undefined;
   }
 }

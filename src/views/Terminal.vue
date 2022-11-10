@@ -1,9 +1,27 @@
 <template>
-  <div style="height: 100%;overflow: hidden;">
-    <div style="height: 100%; background-color: rgb(0,0,0);" ref="terminal_dom"></div>
+<div v-show="showTerminal" style="height: 100%;overflow: hidden;">
+  <div  style="height: 100%; " ref="terminal_dom">
+    <n-space style="height: 100%" justify="center" align="center" v-show="spin">
+      <n-spin size="small" />
+    </n-space>
   </div>
+</div>
+<n-space style="height: 100%" justify="center" align="center" v-if="!showTerminal">
+  <n-empty style="height: 100%;overflow: hidden;"  :description="errorMessge" >
+    <template #icon>
+      <n-icon>
+        <LinkDismiss20Filled />
+      </n-icon>
+    </template>
+    <template #extra>
+      <n-button size="small" @click="goToSessionPage">
+        重新选择
+      </n-button>
+    </template>
+  </n-empty>
+</n-space>
 </template>
-<script lang="ts">
+<script setup lang="ts">
 import 'xterm/css/xterm.css';
 import {
   computed,
@@ -12,42 +30,83 @@ import {
   onMounted,
   ref,
   watch,
+  WatchStopHandle,
 } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useStore } from '@/store/terminal';
 import Term from '@/lib/Term';
+import { LinkDismiss20Filled } from '@vicons/fluent';
 
-export default defineComponent({
-  name: 'Terminal',
-  setup() {
-    const route = useRoute();
-    const terminalStore = useStore();
-    const terminal_dom = ref<HTMLDivElement>();
-    const term_id = terminalStore.CREAT_ONE(route.params.sessionName as string);
-    console.log(` create in VUE${term_id}`);
-    const terminal = ref<Term>();
+const route = useRoute();
+const router = useRouter();
+const terminalStore = useStore();
+const terminal_dom = ref<HTMLDivElement>();
 
-    onMounted(async () =>  {
-      terminal.value = await term_id;
-      console.log('onMounted');
-      console.log(terminal_dom.value);
-      terminal.value.exhibitOn(terminal_dom.value as HTMLDivElement);
-      watch(() => terminalStore.current_term, (newOne, oldOne) => {
-        oldOne?.dispose(terminal_dom.value as HTMLDivElement);
-        if (terminal_dom.value !== undefined) {
-          newOne?.exhibitOn(terminal_dom.value as HTMLDivElement);
-        }
-      });
-    });
+const errorMessge = ref<string>();
+const showTerminal = computed(() => errorMessge.value === undefined);
 
-    onBeforeUnmount(() => {
-      console.log('onBeforeUnmount');
-      terminal.value?.dispose(terminal_dom.value as HTMLDivElement);
-    });
+const termPromise = route.params.sessionName === undefined
+  ? terminalStore.EXHIBIT_TREM(route.params.termId as string)
+  : terminalStore.CREAT_TREM(route.params.sessionName as string);
 
-    return {
-      terminal_dom,
-    };
-  },
+const terminal = ref<Term>();
+
+let spin = ref(true);
+
+function resolveAfter2Seconds() {
+  console.log("starting slow promise");
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve("slow");
+      console.log("slow promise is done");
+    }, 10000);
+  });
+}
+onMounted(async () =>  {
+  console.log('onMounted');
+  errorMessge.value == undefined;
+  spin.value = true;
+  // await resolveAfter2Seconds();
+  try {
+    terminal.value = await termPromise;
+    // console.log(terminal_dom.value);
+    terminal.value.exhibitOn(terminal_dom.value as HTMLDivElement);
+  } catch (error) {
+    if (error instanceof Error) {
+      errorMessge.value = error.message;
+      // router.go(-1);
+    } else {
+      errorMessge.value = `${error}`;
+      console.log(error);
+    }
+  }
+  spin.value = false;
+  // await resolveAfter2Seconds();
+  // watch(() => terminalStore.current_term, (newOne, oldOne) => {
+  //   oldOne?.dispose(terminal_dom.value as HTMLDivElement);
+  //   if (terminal_dom.value !== undefined) {
+  //     newOne?.exhibitOn(terminal_dom.value as HTMLDivElement);
+  //   }
+  // });
 });
+
+onBeforeUnmount(() => {
+  console.log('onBeforeUnmount');
+  terminal.value?.dispose(terminal_dom.value as HTMLDivElement);
+  spin.value = true;
+});
+
+function goToSessionPage() {
+  router.push({ name: 'Welcome'});
+}
 </script>
+<style scoped>
+.n-spin-container {
+  height: 100%;
+}
+
+
+.n-spin-container > .n-spin-content {
+  height: 100%;
+}
+</style>

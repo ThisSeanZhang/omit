@@ -10,7 +10,7 @@ import CmdRoute from './CmdRoute';
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: '/terminal/:sessionName',
+    path: '/terminal/:sessionName?',
     name: 'TerminalWorkView',
     component: TerminalWorkView,
   }, {

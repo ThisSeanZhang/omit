@@ -20,9 +20,9 @@ export const sessionStore = defineStore('session', () => {
         (async () => await invoke<string>('read_file', { filePath: `${config.sessionsPath}${sep}${file_name}` }))()
       )
     );
-    result.map(session_data => JSON.parse(session_data))
-      .map(OmitSession.fromObj)
-      .forEach(session => raw_sessions.value.push(session));
+    raw_sessions.value = result
+      .map(session_data => JSON.parse(session_data))
+      .map(OmitSession.fromObj);
   }
 
   async function SAVE_SESSION(session: OmitSession): Promise<void> {
@@ -36,10 +36,16 @@ export const sessionStore = defineStore('session', () => {
     raw_sessions.value.push(session);
   }
 
+  function FIND_SESSION_INFO(name: String): OmitSession | undefined {
+    let found = raw_sessions.value.find(sess => sess.name === name);
+    return found;
+  }
+
   return {
     sessions,
     FETCH_SESSIONS,
     SAVE_SESSION,
+    FIND_SESSION_INFO,
   }
 });
 export default sessionStore;
