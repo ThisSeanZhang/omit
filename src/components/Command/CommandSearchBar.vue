@@ -15,7 +15,7 @@ import {
   watch,
 } from 'vue';
 // import { invoke } from '@tauri-apps/api/tauri';
-import { useStore } from '@/store/repository';
+import { repoStore } from '@/store/repository';
 // import Command from '@/lib/Command';
 
 export default defineComponent({
@@ -24,7 +24,7 @@ export default defineComponent({
   components: {
   },
   setup(props, { emit }) {
-    const store = useStore();
+    const store = repoStore();
     const cmd_query_key = ref('');
     const raw_cmds = ref([]);
     // const cmds = computed(() => (
@@ -38,8 +38,7 @@ export default defineComponent({
     //     console.log(msg);
     //     raw_cmds.value = JSON.parse(msg)[0].commands;
     //   }).catch((msg:string) => console.log(msg));
-    store.FETCH_REPOS()
-      .then(list => list.map(store.FETCH_REPO_CMDS));
+    store.FETCH_REPOS();
     const repos = computed(() => store.repos);
     console.log(repos.value);
     // const cmds = computed(() => {
@@ -54,7 +53,11 @@ export default defineComponent({
     //   console.log(result);
     //   return result;
     // });
-    const cmds = computed(() => repos.value.map(e => e.toSelectGroup()));
+    const cmds = computed(() => 
+      repos.value
+        .map(e => e.toSelectGroup())
+        .filter(group => group.children !== undefined && group.children.length > 0)
+    );
     function selectValue(value: string) {
       console.log(value);
       cmd_query_key.value = '';

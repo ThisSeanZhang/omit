@@ -63,7 +63,7 @@ function resolveAfter2Seconds() {
   });
 }
 onMounted(async () =>  {
-  console.log('onMounted');
+  // console.log('onMounted');
   errorMessge.value == undefined;
   spin.value = true;
   // await resolveAfter2Seconds();
@@ -91,12 +91,13 @@ onMounted(async () =>  {
 });
 
 onBeforeUnmount(() => {
-  console.log('onBeforeUnmount');
+  // console.log('onBeforeUnmount');
   terminal.value?.dispose(terminal_dom.value as HTMLDivElement);
   spin.value = true;
 });
 
 function goToSessionPage() {
+  // TODO need change to replace
   router.push({ name: 'Welcome'});
 }
 </script>

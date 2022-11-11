@@ -27,6 +27,7 @@ use config::{
   create_file,
   read_file,
   list_dir_all,
+  list_dir_only_folder,
 };
 use snapshot::{read_snapshots, save_snapshots, SnapConfig};
 use shortcut::{read_shortcuts, save_shortcuts};
@@ -49,6 +50,7 @@ fn main() {
       create_file,
       read_file,
       list_dir_all,
+      list_dir_only_folder,
       create_pty,
       read_shortcuts,
       save_shortcuts,

@@ -53,6 +53,7 @@ const emit = defineEmits<{
 
 const router = useRouter();
 function connect(): void {
+  // TODO need change to replace
   router.push({ name: 'TerminalWorkView', params: { sessionName: props.session?.name } });
 }
 

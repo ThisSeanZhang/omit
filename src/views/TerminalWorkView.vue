@@ -68,10 +68,10 @@ import {
 // import { CameraAdd24Regular, WindowConsole20Regular } from '@vicons/fluent';
 import SnapshotExhibitCard from '@/components/Snapshot/SnapshotExhibitCard.vue';
 import SnapshotMorePanel from '@/components/Snapshot/SnapshotMorePanel.vue';
-import { useStore } from '@/store/snapshot';
+import { snapStore } from '@/store/snapshot';
 import Terminal from './Terminal.vue';
 import Snapshot from '@/lib/Snapshot';
-const storage = useStore();
+const storage = snapStore();
 const query_key = ref('');
 const show_more = ref(false);
 const more_snap = ref<Snapshot>();

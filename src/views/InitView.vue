@@ -101,18 +101,19 @@ const current = ref<number>(1);
 const config = ref<Config>();
 // const currentStatus = ref<string>('process');
   
+console.log(store.needToInit)
 onMounted(async () => {
-  let has_setting = await store.CHECK_SETTING_FILE();
-  if (has_setting) {
-    router.push({ name: 'Welcome'});
-  }
-  config.value = store.getConfigClone;
+  config.value = store.GET_CONFIG_FORK();
 });
 
 async function confirmConfig() {
-  if (config.value != undefined) {
+  try {
+    if (config.value != undefined) {
     await store.REWRITE_CONFIG(config.value);
     router.push({ name: 'Welcome'});
+  }
+  } catch (error) {
+    // TODO need send a message to user
   }
 }
 

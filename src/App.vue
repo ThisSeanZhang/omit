@@ -23,30 +23,23 @@
   </n-message-provider>
   </n-config-provider>
   </template>
-<script lang="ts">
-import { darkTheme } from 'naive-ui';
-// import { invoke } from '@tauri-apps/api/tauri';
-import HeadBar from '@/views/HeadBar.vue';
-import FooterBar from '@/views/FooterBar.vue';
-
+<script setup lang="ts">
 import {
   defineComponent,
   ref,
 } from 'vue';
-export default defineComponent({
-  components: {
-    HeadBar,
-    FooterBar,
-  },
-  setup() {
-      //   invoke<string>('current_path')
-  //     .then(value => {
-  //       this.message = value;
-  //     });
-    return {
-      theme: darkTheme,
-    };
-  }
-});
+import { darkTheme as theme } from 'naive-ui';
+import { useRouter, useRoute } from 'vue-router';
+// import { invoke } from '@tauri-apps/api/tauri';
+import HeadBar from '@/views/HeadBar.vue';
+import FooterBar from '@/views/FooterBar.vue';
+import { useStore as configStore } from '@/store/config';
+
+const router = useRouter();
+const config = configStore();
+
+if (config.needToInit) {
+    router.push({ name: 'InitView'});
+}
 </script>
 

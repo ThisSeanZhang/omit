@@ -55,8 +55,8 @@ import {
 import {
   SnapCardExhibitModel,
 } from '@/lib/Util';
-import { useStore } from '@/store/snapshot';
-import { useStore as repoStore } from '@/store/repository';
+import { snapStore } from '@/store/snapshot';
+import { repoStore } from '@/store/repository';
 // import SnapshotPanel from '@/components/Snapshot/SnapshotPanel.vue';
 import SnapshotCreatePanel from '@/components/Snapshot/SnapshotCreatePanel.vue';
 import SnapshotExhibitCard from '@/components/Snapshot/SnapshotExhibitCard.vue';
@@ -72,7 +72,7 @@ export default defineComponent({
     SnapshotCreatePanel,
   },
   setup() {
-    const storage = useStore();
+    const storage = snapStore();
     const repos_store = repoStore();
     const query_key = ref('');
     storage.FETCH_SNAPSHOTS();

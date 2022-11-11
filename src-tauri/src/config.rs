@@ -250,6 +250,7 @@ pub fn create_file(dir_path: &str, file_name: Option<&str>, data:Option<&str>) -
 pub fn read_file(file_path: &str) -> Result<String, String> {
   let file_path = PathBuf::from(file_path);
   if !file_path.is_file() {
+    println!("read_file_path: {:?}", file_path);
     return Err("file don't exists".into());
   }
   fs::read_to_string(file_path).map_err(|e| e.to_string())
@@ -267,6 +268,20 @@ pub fn list_dir_all(dir_path: &str) -> Result<Vec<String>, String> {
   //   println!("file name: {:?}", entry.file_name());
   //   entry.path().file_stem().unwrap().to_str().unwrap().to_string()
   // })
+  .map(|entry| entry.file_name().to_string_lossy().to_string())
+  .collect::<Vec<String>>();
+  Ok(result)
+}
+
+#[command]
+pub fn list_dir_only_folder(dir_path: &str) -> Result<Vec<String>, String> {
+  let dir_path = PathBuf::from(dir_path);
+  if dir_path.is_file() {
+    return Err("you need config a dir".into());
+  }
+  let dirs = dir_path.read_dir().map_err(|e| e.to_string())?;
+  let result = dirs.filter_map(|path| path.ok())
+  .filter(|entry| entry.file_type().unwrap().is_dir())
   .map(|entry| entry.file_name().to_string_lossy().to_string())
   .collect::<Vec<String>>();
   Ok(result)

@@ -132,7 +132,7 @@ import {
   SnapExhibitModel,
   SnapCardExhibitModel,
 } from '@/lib/Util';
-import { useStore } from '@/store/snapshot';
+import { snapStore } from '@/store/snapshot';
 
 interface BtnShow {
   border: Boolean,
@@ -169,7 +169,7 @@ export default defineComponent({
     },
   },
   setup(props: any) {
-    const snap_store = useStore();
+    const snap_store = snapStore();
     const message = useMessage();
     const current = getCurrent();
     const snap = computed(() => props.snapshot);

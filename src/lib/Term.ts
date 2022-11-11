@@ -56,7 +56,7 @@ export default class Term {
       if (notShrink) {
         this.fit.fit();
       }
-      e.forEach(entry => console.log(`${entry.contentRect.width} x ${entry.contentRect.height}`));
+      // e.forEach(entry => console.log(`${entry.contentRect.width} x ${entry.contentRect.height}`));
       // console.log(e.length);
     });
     this.createListen();
@@ -72,7 +72,7 @@ export default class Term {
 
   createListen() {
     this.term.onResize((a:{cols: number, rows: number}) => {
-      console.log(`on resize: ${JSON.stringify(a)}`);
+      // console.log(`on resize: ${JSON.stringify(a)}`);
       this.tauri_window.emit('ssh-resize-from-front', JSON.stringify({
         SizeChange: {
           width: a.cols,

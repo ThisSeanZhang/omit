@@ -96,6 +96,7 @@
 <script lang="ts">
 import {
   defineComponent,
+  onMounted,
   ref,
 } from 'vue';
 import Shortcut from '@/lib/Shortcut';
@@ -127,10 +128,16 @@ export default defineComponent({
   setup(props) {
     const storage = shortcutStore();
 
-    storage.FETCH_SHORTCURS();
-    const shortcuts = ref(storage.shortcuts);
+    const await_fetch = storage.FETCH_SHORTCURS();
+    const shortcuts = ref<Shortcut[]>([]);
+    
     const edit_shortcut = ref(new Shortcut());
     const shortcut_save_panel = ref(false);
+
+    onMounted(async () => {
+      await await_fetch;
+      shortcuts.value = storage.shortcuts;
+    });
     function edit(index: number|undefined) {
       edit_shortcut.value = index === undefined ? new Shortcut() : shortcuts.value[index];
       console.log(edit_shortcut.value);
@@ -148,7 +155,7 @@ export default defineComponent({
     }
     function dealClose() {
       console.log('close');
-      storage.SAVE_ALL_SHORTCUR();
+      storage.SAVE_ALL_SHORTCUR(shortcuts.value);
     }
 
     return {

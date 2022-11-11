@@ -31,7 +31,7 @@ import {
   ref,
   watch,
 } from 'vue';
-import { useStore } from '@/store/snapshot';
+import { snapStore } from '@/store/snapshot';
 import SnapshotExhibitCard from '@/components/Snapshot/SnapshotExhibitCard.vue';
 
 export default defineComponent({
@@ -50,7 +50,7 @@ export default defineComponent({
     },
   },
   setup(props: any, { emit }) {
-    const storage = useStore();
+    const storage = snapStore();
     const snapshot = ref(props.snap);
     watch(
       () => props.snap,

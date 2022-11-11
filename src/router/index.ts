@@ -5,7 +5,7 @@ import CommandCreateView from '@/views/CommandCreateView.vue';
 import CommandManageView from '@/views/CommandManageView.vue';
 import InitView from '@/views/InitView.vue';
 import Welcome from '@/views/Welcome.vue';
-import TermRoute from './TermRoute';
+// import TermRoute from './TermRoute';
 import CmdRoute from './CmdRoute';
 
 const routes: Array<RouteRecordRaw> = [
@@ -28,7 +28,7 @@ const routes: Array<RouteRecordRaw> = [
     component: CommandManageView,
   },
   {
-    path: '/',
+    path: '/InitView',
     name: 'InitView',
     component: InitView,
   },
@@ -39,7 +39,7 @@ const routes: Array<RouteRecordRaw> = [
   },
 ];
 
-routes.push(...TermRoute);
+// routes.push(...TermRoute);
 routes.push(...CmdRoute);
 
 const router = createRouter({
