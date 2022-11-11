@@ -18,9 +18,9 @@
         <n-button size="small" @click="goToSessionPage">
           换一个
         </n-button>
-        <n-button size="small" @click="connectAgain">
+        <!-- <n-button size="small" @click="connectAgain">
           重试
-        </n-button>
+        </n-button> -->
       </n-space>
     </template>
   </n-empty>
@@ -107,14 +107,14 @@ function goToSessionPage() {
   router.push({ name: 'Welcome'});
 }
 
-async function connectAgain() {
-  if (terminal.value === undefined) return;
-  errorMessge.value = undefined;
-  spin.value = true;
-  await terminal.value.reconnect();
-  terminal.value.exhibitOn(terminal_dom.value as HTMLDivElement);
-  spin.value = false;
-}
+// async function connectAgain() {
+//   if (terminal.value === undefined) return;
+//   errorMessge.value = undefined;
+//   spin.value = true;
+//   await terminal.value.reconnect();
+//   terminal.value.exhibitOn(terminal_dom.value as HTMLDivElement);
+//   spin.value = false;
+// }
 </script>
 <style scoped>
 .n-spin-container {
