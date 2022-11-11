@@ -14,9 +14,14 @@
       </n-icon>
     </template>
     <template #extra>
-      <n-button size="small" @click="goToSessionPage">
-        重新选择
-      </n-button>
+      <n-space justify="center">
+        <n-button size="small" @click="goToSessionPage">
+          换一个
+        </n-button>
+        <n-button size="small" @click="connectAgain">
+          重试
+        </n-button>
+      </n-space>
     </template>
   </n-empty>
 </n-space>
@@ -99,6 +104,14 @@ onBeforeUnmount(() => {
 function goToSessionPage() {
   // TODO need change to replace
   router.push({ name: 'Welcome'});
+}
+
+async function connectAgain() {
+  if (terminal.value === undefined) return;
+  spin.value = true;
+  await terminal.value.reconnect();
+  terminal.value.exhibitOn(terminal_dom.value as HTMLDivElement);
+  spin.value = false;
 }
 </script>
 <style scoped>

@@ -1,4 +1,4 @@
-use std::io::Write;
+use std::{io::Write, fmt::format};
 use std::net::SocketAddr;
 use std::path::Path;
 use std::str::FromStr;
@@ -15,7 +15,7 @@ use serde::{Serialize, Deserialize};
 
 use std::thread;
 use tauri::Window;
-use crate::action::{ChannelAction, Porter};
+use crate::action::{ChannelAction, FrontEndPorter, FrontEndAction};
 
 #[derive(Serialize, Deserialize, Clone)]
 struct SSHMessage {
@@ -23,6 +23,7 @@ struct SSHMessage {
 }
 #[derive(Deserialize)]
 pub struct SSHInfo<'a> {
+    pub uid: &'a str,
     pub ip: &'a str,
     pub port: u32,
     pub username: &'a str,
@@ -30,7 +31,7 @@ pub struct SSHInfo<'a> {
 }
 
 #[tauri::command(async)]
-pub async fn create_pty(window: Window, SSHInfo{ username, ip, port, passwd}: SSHInfo<'_>) -> Result<(), String>{
+pub async fn create_pty(window: Window, SSHInfo{ uid, username, ip, port, passwd}: SSHInfo<'_>) -> Result<(), String>{
     // let (action_send, mut action_get) = unbounded();
     // let ssh = Session::connect("aaaaa", "aaaa", SocketAddr::from_str("10.1.1.130:2333").unwrap()).await;
     // let mut ssh = ssh.unwrap();
@@ -45,7 +46,7 @@ pub async fn create_pty(window: Window, SSHInfo{ username, ip, port, passwd}: SS
     let address = SocketAddr::from_str(format!("{}:{}", ip, port).as_str()).unwrap();
     let (action_send, mut action_get) = mpsc::channel(32);
     let line_send = action_send.clone();
-    let front_listen_id = window.listen("ssh-data-from-frontend", move |event| {
+    let front_listen_id = window.listen(format!("data-from-front_{}", uid), move |event| {
         // trx.send(event.payload().unwrap().to_string());
         let message = event.payload().unwrap().to_string();
         // println!("message {}", message);
@@ -57,7 +58,7 @@ pub async fn create_pty(window: Window, SSHInfo{ username, ip, port, passwd}: SS
         // line_send.blocking_send(ChannelAction::Message(message)).unwrap();
         // println!("got window event-name with payload {:?}", event.payload());
     });
-    let resize_listen_id = window.listen("ssh-resize-from-front", move|event | {
+    let resize_listen_id = window.listen(format!("resize-from-front_{}", uid), move|event | {
         if let Some(size_data) = event.payload().clone() {
             let message = serde_json::from_str(size_data).unwrap();
             let clone_again = action_send.clone();
@@ -86,6 +87,7 @@ pub async fn create_pty(window: Window, SSHInfo{ username, ip, port, passwd}: SS
         (Pty::TTY_OP_OSPEED, 14400),
         (Pty::TTY_OP_END, 1)]).await.unwrap();
       channel.request_shell(true).await.unwrap();
+      let send_emit_action_name = format!("action-from-backend_{}", uid);
     tokio::spawn(async move {
           while !session.is_closed() {
             tokio::select!{
@@ -94,8 +96,12 @@ pub async fn create_pty(window: Window, SSHInfo{ username, ip, port, passwd}: SS
                     match msg {
                         russh::ChannelMsg::Data { ref data } => {
                             let a = std::str::from_utf8(&data);
-                            println!("output {}", a.unwrap_or("error"));
-                            window.emit("ssh-data-from-backend", Porter { data: data.to_vec() }).unwrap();
+                            // println!("output {}", a.unwrap_or("error"));
+                            window.emit(&send_emit_action_name, FrontEndPorter::shell_data(data.to_vec())).unwrap();
+                        }
+                        russh::ChannelMsg::Eof => {
+                            window.emit(&send_emit_action_name, FrontEndPorter::action(FrontEndAction::Eof, None)).unwrap();
+                            break;
                         }
                         _ => {println!("nothing happend")}
                     }
