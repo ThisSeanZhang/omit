@@ -1,7 +1,7 @@
 <template>
 <n-space item-style="align-items: center;display: flex;" class="footer-bar"
 justify="space-between">
-  <ShortcutBar v-show="current_panel" />
+  <ShortcutBar v-show="footerSwitch.shortcut" />
 
   <n-button-group>
     <!-- <n-button size="small" ghost>
@@ -22,19 +22,20 @@ justify="space-between">
         <n-icon><WindowDevEdit20Filled /></n-icon>
       </template>
     </n-button> -->
-    <n-button size="small" dashed :focusable="false"  v-if="current_panel"
-    @click="shortcut_manager_panel = !shortcut_manager_panel">
+    <n-button size="small" dashed :focusable="false" v-if="footerSwitch.shortcut"
+      @click="shortcut_manager_panel = !shortcut_manager_panel">
       <template #icon>
         <n-icon><TextBulletListSquareEdit24Regular /></n-icon>
       </template>
     </n-button>
-    <n-button :focusable="false"
-    size="small" dashed @click="routePush('SnapshotManageView')">
+    <n-button size="small" dashed :focusable="false" v-if="footerSwitch.snapshot"
+    @click="routePush('SnapshotManageView')">
       <template #icon>
         <n-icon><CameraAdd24Regular /></n-icon>
       </template>
     </n-button>
-    <n-button size="small" :focusable="false" dashed @click="routePush('TerminalWorkView')">
+    <n-button size="small" dashed :focusable="false" v-if="footerSwitch.terminal"
+    @click="routePush('TerminalWorkView')">
       <template #icon>
         <n-icon><WindowConsole20Regular /></n-icon>
       </template>
@@ -50,11 +51,14 @@ justify="space-between">
 </template>
 <script lang="ts">
 import {
+computed,
   defineComponent,
   onMounted,
+  watchEffect,
   ref,
 } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
+import { footerSwitchStore } from '@/store/footer_switch';
 import {
   CameraAdd24Regular,
   WindowConsole20Regular,
@@ -80,9 +84,18 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter();
+    const route = useRoute();
+    const switchStore = footerSwitchStore();
+
     const shortcut_manager_panel = ref(false);
     const current_panel = ref(false);
+    const footerSwitch = computed(() => switchStore.barBtnswitch);
 
+    const currentViewName = computed(() => route.name ? route.name.toString() : '');
+    watchEffect(async () => {
+      switchStore.SET_CURRENT_WIEW(currentViewName.value);
+    })
+    
     function routePush(name: string) {
       current_panel.value = name === 'TerminalWorkView';
       console.log(current_panel.value);
@@ -91,6 +104,7 @@ export default defineComponent({
 
     return {
       routePush,
+      footerSwitch,
       shortcut_manager_panel,
       current_panel,
     };
