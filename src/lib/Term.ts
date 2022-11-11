@@ -18,6 +18,7 @@ export default class Term {
   tauri_window: WebviewWindow;
   resizeObserver: ResizeObserver;
   private _data_emit_name: string;
+  error_call_bak: undefined | ((message: string) => void) ;
 
   constructor() {
     this._uid = guid();
@@ -58,7 +59,7 @@ export default class Term {
           break;
         }
         case 'Eof': {
-          this._errorMessage = "Connect close";
+          this.errorMessage = "Connect close";
         }
       }
       
@@ -90,6 +91,9 @@ export default class Term {
 
   set errorMessage(message: string | undefined) {
     this._errorMessage = message;
+    if (this.error_call_bak && message) {
+      this.error_call_bak(message);
+    }
   }
 
   async connect(sess: OmitSession): Promise<void> {
@@ -103,22 +107,23 @@ export default class Term {
 
   private async _connect() : Promise<void> {
     if (this._session_info === undefined) {
-      this._errorMessage = "session info config is missing, can not connect"
+      this.errorMessage = "session info config is missing, can not connect"
     }
     try {
       this.term.clear();
+      this.term.reset();
       await invoke('create_pty', {
         SSHInfo: {
           uid: this._uid,
           ...this._session_info,
         },
       });
-      this._errorMessage = undefined;
+      this.errorMessage = undefined;
     } catch (error) {
       if (error instanceof Error) {
-        this._errorMessage = error.message;
+        this.errorMessage = error.message;
       } else {
-        this._errorMessage = `${error}`;
+        this.errorMessage = `${error}`;
       }
       throw error;
     }
@@ -161,6 +166,7 @@ export default class Term {
     if (element.parentElement != null) {
       this.resizeObserver.unobserve(element.parentElement);
     }
+    this.error_call_bak = undefined;
     // this.term.dispose();
   }
 

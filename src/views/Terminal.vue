@@ -69,13 +69,14 @@ function resolveAfter2Seconds() {
 }
 onMounted(async () =>  {
   // console.log('onMounted');
-  errorMessge.value == undefined;
+  errorMessge.value = undefined;
   spin.value = true;
   // await resolveAfter2Seconds();
   try {
     terminal.value = await termPromise;
     // console.log(terminal_dom.value);
     terminal.value.exhibitOn(terminal_dom.value as HTMLDivElement);
+    terminal.value.error_call_bak = (msg) => errorMessge.value = msg;
   } catch (error) {
     if (error instanceof Error) {
       errorMessge.value = error.message;
@@ -108,6 +109,7 @@ function goToSessionPage() {
 
 async function connectAgain() {
   if (terminal.value === undefined) return;
+  errorMessge.value = undefined;
   spin.value = true;
   await terminal.value.reconnect();
   terminal.value.exhibitOn(terminal_dom.value as HTMLDivElement);
