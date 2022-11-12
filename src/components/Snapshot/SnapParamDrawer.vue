@@ -3,10 +3,10 @@
   @update:show="$emit('update:value', false)"
   to="#drawer-global"
   width="50%" placement="right">
-  <n-drawer-content title="参数编辑" closable>
+  <n-drawer-content :title="i18n.TRANSLATE('snap.paramEdit')" closable>
     <n-space vertical v-if="params.length === 0">
       <n-button block type="primary" @click="add(0)" dashed>
-        搞点参数
+        {{i18n.TRANSLATE('snap.paramAdd')}}
         <template #icon>
           <n-icon><Add16Filled /></n-icon>
         </template>
@@ -47,12 +47,9 @@
   </n-drawer-content>
 </n-drawer>
 </template>
-<script lang="ts">
+<script setup lang="ts">
 import {
-  defineComponent,
   ref,
-  getCurrentInstance,
-  computed,
   watch,
 } from 'vue';
 import {
@@ -62,52 +59,34 @@ import {
   ArrowDown16Filled,
 } from '@vicons/fluent';
 import SnapParam from '@/lib/SnapParam';
+import i18nStore from '@/store/i18n';
 
-export default defineComponent({
-  name: 'SnapParamDrawer',
-  components: {
-    Add16Filled,
-    ArrowUp16Filled,
-    ArrowDown16Filled,
-    DismissCircle20Regular,
-  },
-  props: {
-    value: {
-      type: Boolean,
-      default: false,
-    },
-    snap_params: {
-      type: Array,
-      default: () => [],
-    },
-  },
-  setup(props: any) {
-    // const a = getCurrentInstance();
-    const params = ref(props.snap_params);
-    watch(
-      () => props.snap_params,
-      newOne => {
-        params.value = newOne;
-      },
-    );
-    function dealClose() {
-      console.log('close');
-    }
-    function move(source: number, step: number | undefined) {
-      const option = params.value.splice(source, 1);
-      if (step !== undefined) {
-        params.value.splice(source + step, 0, option[0]);
-      }
-    }
-    function add(source: number) {
-      params.value.splice(source + 1, 0, new SnapParam());
-    }
-    return {
-      add,
-      move,
-      params,
-      dealClose,
-    };
-  },
+const i18n = i18nStore();
+interface Props {
+  value: Boolean;
+  snap_params: Array<SnapParam>;
+}
+const props = withDefaults(defineProps<Props>(), {
+  value: () => false,
+  snap_params: () =>  [],
 });
+const params = ref(props.snap_params);
+
+watch(
+  () => props.snap_params,
+  newOne => {
+    params.value = newOne;
+  },
+);
+
+function move(source: number, step: number | undefined) {
+  const option = params.value.splice(source, 1);
+  if (step !== undefined) {
+    params.value.splice(source + step, 0, option[0]);
+  }
+}
+
+function add(source: number) {
+  params.value.splice(source + 1, 0, new SnapParam());
+}
 </script>

@@ -126,6 +126,12 @@ const dict: any = {
     param: {
       cn: '参数'
     },
+    paramEdit: {
+      cn: '编辑参数'
+    },
+    paramAdd: {
+      cn: '搞点参数'
+    },
   }
 }
 export const i18nStore = defineStore('i18n', () => {
