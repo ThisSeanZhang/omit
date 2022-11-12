@@ -13,7 +13,7 @@
           <n-layout-header style="height: 34px; padding-right: 10px;">
             <n-input type="text"
               v-model:value="query_key"
-              placeholder="filter"
+              :placeholder="i18n.TRANSLATE('snap.filter')"
               clearable
             />
           </n-layout-header>
@@ -62,7 +62,6 @@
 <script setup lang="ts">
 import {
   computed,
-  defineComponent,
   ref,
 } from 'vue';
 // import { CameraAdd24Regular, WindowConsole20Regular } from '@vicons/fluent';
@@ -71,6 +70,9 @@ import SnapshotMorePanel from '@/components/Snapshot/SnapshotMorePanel.vue';
 import { snapStore } from '@/store/snapshot';
 import Terminal from './Terminal.vue';
 import Snapshot from '@/lib/Snapshot';
+import i18nStore from '@/store/i18n';
+
+const i18n = i18nStore();
 const storage = snapStore();
 const query_key = ref('');
 const show_more = ref(false);

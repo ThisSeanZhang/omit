@@ -12,7 +12,7 @@
       <n-popover
         v-if="btn_show.exhibit"
         trigger="hover" placement="top-end">
-        <span>{{SnapExhibitModel.ONELINE === exhibit_model ? '单行模式' : '多行模式'}}</span>
+        <span>{{SnapExhibitModel.ONELINE === exhibit_model ? i18n.TRANSLATE('snap.singleLine') : i18n.TRANSLATE('snap.multipleLine')}}</span>
         <template #trigger>
           <n-button
             @click.stop="exhibit_model = SnapExhibitModel.ONELINE === exhibit_model
@@ -30,7 +30,7 @@
       <!-- send btn -->
       <n-popover
         v-if="btn_show.send" trigger="hover" placement="top-end">
-        <span>发送</span>
+        <span>{{i18n.TRANSLATE('snap.send')}}</span>
         <template #trigger>
           <n-button @click.stop="sendCmd()" type="warning" text size="small">
             <template #icon>
@@ -42,7 +42,7 @@
       <!-- copy btn -->
       <n-popover
         v-if="btn_show.copy" trigger="hover" placement="top-end">
-        <span>复制</span>
+        <span>{{i18n.TRANSLATE('snap.copy')}}</span>
         <template #trigger>
           <n-button @click.stop="copyCmd()" type="warning" text size="small">
             <template #icon>
@@ -54,7 +54,7 @@
       <!-- revise btn -->
       <n-popover
         v-if="btn_show.revise" trigger="hover" placement="top-end">
-        <span>重新编辑</span>
+        <span>{{i18n.TRANSLATE('snap.re_edit')}}</span>
         <template #trigger>
           <n-button @click.stop="$emit('revise:snap', snap.clone())"
           type="warning" text size="small">
@@ -67,7 +67,7 @@
       <!-- delete btn -->
       <n-popover
         v-if="btn_show.delete" trigger="hover" placement="top-end">
-        <span>删除</span>
+        <span>{{i18n.TRANSLATE('snap.delete')}}</span>
         <template #trigger>
           <n-button @click.stop="snap_store.REMOVE_SNAPSHOTS(snap.snap_id)" type="warning" text size="small">
             <template #icon>
@@ -79,7 +79,7 @@
       <!-- more btn -->
       <n-popover
         v-if="btn_show.more" trigger="hover" placement="top-end">
-        <span>更多</span>
+        <span>{{i18n.TRANSLATE('snap.more')}}</span>
         <template #trigger>
           <n-button @click.stop="$emit('open:more', snap)" type="warning" text size="small">
             <template #icon>
@@ -91,7 +91,7 @@
       <!-- more btn -->
       <n-popover
         v-if="btn_show.snap_create" trigger="hover" placement="top-end">
-        <span>创建快照</span>
+        <span>{{i18n.TRANSLATE('snap.create_snap')}}</span>
         <template #trigger>
           <n-button @click.stop="$emit('open:save')" type="warning" text size="small">
             <template #icon>
@@ -110,7 +110,6 @@
 <script setup lang="ts">
 import {
   ref,
-  watch,
   computed,
   withDefaults,
 } from 'vue';
@@ -134,8 +133,9 @@ import {
 } from '@/lib/Util';
 import { snapStore } from '@/store/snapshot';
 import { useStore as termStore } from '@/store/terminal';
+import i18nStore from '@/store/i18n';
 
-
+const i18n = i18nStore();
 interface Props {
   snapshot: Snapshot
   exhibit_btn?: SnapCardExhibitModel
@@ -158,7 +158,7 @@ const snapshot_str_arr = computed(
   () => props.snapshot? props.snapshot.dealCommandExhibit(exhibit_model.value) : [] as string[],
 );
 
-const title = computed(() => snap.value === undefined || snap.value.title === '' ? '指令预览' : snap.value.title );
+const title = computed(() => snap.value === undefined || snap.value.title === '' ?  i18n.TRANSLATE('snap.title') : snap.value.title );
 
 function sendCmd() {
   current.emit(`data-from-front_${term.current_term_uid}`, snapshot_str_arr.value.join('\r'));

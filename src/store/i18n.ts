@@ -78,20 +78,37 @@ const dict: any = {
     }
   },
   snap: {
+    filter: {
+      cn: '过滤'
+    },
     title: {
       cn: '指令预览'
     },
-    singleLine: {},
-    multipleLine: {},
-    send: {},
-    copy: {},
-    re_edit: {
-
+    singleLine: {
+      cn: '单行模式'
     },
-    delete: {},
-    more: {},
-    create_snap: {},
-    
+    multipleLine: {
+      cn: '多行模式'
+    },
+    send: {
+      cn: '发送',
+    },
+    copy: {
+      cn: '复制'
+    },
+    re_edit: {
+      cn: '重新编辑'
+    },
+    delete: {
+      cn: '删除'
+    },
+    more: {
+      cn: '更多'
+    },
+    create_snap: {
+      cn: '创建快照'
+    },
+
   }
 }
 export const i18nStore = defineStore('i18n', () => {
