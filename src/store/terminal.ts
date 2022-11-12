@@ -53,6 +53,7 @@ export const useStore = defineStore('terminals', () => {
   //   return term;
   // }
   return {
+    current_term_uid,
     current_term,
     EXHIBIT_TREM,
     CREAT_TREM,

@@ -2,7 +2,7 @@
 <n-thing :class="btn_show.border ? 'card' : ''">
   <template #header>
     <n-ellipsis style="max-width: 250px">
-    {{snap.title === '' ?'指令预览' : snap.title}}
+    {{title}}
     </n-ellipsis>
   </template>
 
@@ -32,7 +32,7 @@
         v-if="btn_show.send" trigger="hover" placement="top-end">
         <span>发送</span>
         <template #trigger>
-          <n-button @click.stop="sendCmd(snapshot_str_arr)" type="warning" text size="small">
+          <n-button @click.stop="sendCmd()" type="warning" text size="small">
             <template #icon>
               <n-icon size="16"><PaperPlane /></n-icon>
             </template>
@@ -69,7 +69,7 @@
         v-if="btn_show.delete" trigger="hover" placement="top-end">
         <span>删除</span>
         <template #trigger>
-          <n-button @click.stop="removeSnap(snap.snap_id)" type="warning" text size="small">
+          <n-button @click.stop="snap_store.REMOVE_SNAPSHOTS(snap.snap_id)" type="warning" text size="small">
             <template #icon>
               <n-icon size="16"><Delete28Regular /></n-icon>
             </template>
@@ -107,13 +107,12 @@
   </div>
 </n-thing>
 </template>
-<script lang="ts">
+<script setup lang="ts">
 import {
-  defineComponent,
   ref,
-  computed,
   watch,
-  PropType,
+  computed,
+  withDefaults,
 } from 'vue';
 import { getCurrent } from '@tauri-apps/api/window';
 import { PaperPlane } from '@vicons/fa';
@@ -128,144 +127,52 @@ import {
 } from '@vicons/fluent';
 import { useMessage } from 'naive-ui';
 import Snapshot from '@/lib/Snapshot';
+import BtnShow from '@/lib/BtnShow';
 import {
   SnapExhibitModel,
   SnapCardExhibitModel,
 } from '@/lib/Util';
 import { snapStore } from '@/store/snapshot';
+import { useStore as termStore } from '@/store/terminal';
 
-interface BtnShow {
-  border: Boolean,
-  exhibit: Boolean,
-  copy: Boolean,
-  send: Boolean,
-  revise: Boolean,
-  delete: Boolean,
-  more: Boolean,
-  snap_create: Boolean,
+
+interface Props {
+  snapshot: Snapshot
+  exhibit_btn?: SnapCardExhibitModel
+}
+const props = withDefaults(defineProps<Props>(), {
+  exhibit_btn: SnapCardExhibitModel.EXHIBIT_ON_SIDE
+})
+
+const snap_store = snapStore();
+const term = termStore();
+const message = useMessage();
+const current = getCurrent();
+const snap = computed(() => props.snapshot);
+const exhibit_model = ref(SnapExhibitModel.ONELINE);
+
+const btn_show = computed(() => BtnShow.useModelCreateShowConfig(props.exhibit_btn));
+
+// watch(() => props.exhibit_btn, newOne => changeBtnConfig(newOne));
+const snapshot_str_arr = computed(
+  () => props.snapshot? props.snapshot.dealCommandExhibit(exhibit_model.value) : [] as string[],
+);
+
+const title = computed(() => snap.value === undefined || snap.value.title === '' ? '指令预览' : snap.value.title );
+
+function sendCmd() {
+  current.emit(`data-from-front_${term.current_term_uid}`, snapshot_str_arr.value.join('\r'));
 }
 
-export default defineComponent({
-  name: 'SnapshotExhibitCard',
-  components: {
-    Copy20Regular,
-    ArrowHookUpLeft28Regular,
-    LineHorizontal120Filled,
-    LineHorizontal520Filled,
-    MoreCircle20Regular,
-    Delete28Regular,
-    PaperPlane,
-    CameraAdd24Regular,
-  },
-  props: {
-    snapshot: {
-      type: Snapshot,
-      require: true,
-      default: null,
-    },
-    exhibit_btn: {
-      type: Number as PropType<SnapCardExhibitModel>,
-      default: () => SnapCardExhibitModel.EXHIBIT_ON_SIDE,
-    },
-  },
-  setup(props: any) {
-    const snap_store = snapStore();
-    const message = useMessage();
-    const current = getCurrent();
-    const snap = computed(() => props.snapshot);
-    const exhibit_model = ref(SnapExhibitModel.ONELINE);
-    const btn_show = ref({} as BtnShow);
-    function changeBtnConfig(model: SnapCardExhibitModel):void {
-      if (model === SnapCardExhibitModel.EXHIBIT_ON_SIDE) {
-        btn_show.value = {
-          border: true,
-          exhibit: true,
-          copy: true,
-          send: true,
-          revise: false,
-          delete: false,
-          more: true,
-          snap_create: false,
-        };
-      } else if (model === SnapCardExhibitModel.MANAGER_PANEL) {
-        btn_show.value = {
-          border: true,
-          exhibit: true,
-          copy: true,
-          send: false,
-          revise: true,
-          delete: true,
-          more: false,
-          snap_create: false,
-        };
-      } else if (model === SnapCardExhibitModel.CREATE_PANEL) {
-        btn_show.value = {
-          border: false,
-          exhibit: true,
-          copy: true,
-          send: false,
-          revise: false,
-          delete: false,
-          more: false,
-          snap_create: true,
-        };
-      } else if (model === SnapCardExhibitModel.MORE) {
-        btn_show.value = {
-          border: false,
-          exhibit: true,
-          copy: true,
-          send: true,
-          revise: false,
-          delete: false,
-          more: false,
-          snap_create: false,
-        };
-      } else if (model === SnapCardExhibitModel.SAVE) {
-        btn_show.value = {
-          border: true,
-          exhibit: true,
-          copy: true,
-          send: false,
-          revise: false,
-          delete: false,
-          more: false,
-          snap_create: false,
-        };
-      }
-    }
-    changeBtnConfig(props.exhibit_btn);
-    watch(() => props.exhibit_btn, newOne => changeBtnConfig(newOne));
-    const snapshot_str_arr = computed(
-      () => props.snapshot.dealCommandExhibit(exhibit_model.value),
-    );
-
-    function sendCmd(data: string) {
-      current.emit('ssh-data-from-frontend', `${data}\r`);
-    }
-
-    function copyCmd() {
-      navigator.clipboard
-        .writeText(snapshot_str_arr.value.join('\r'))
-        .then(() => {
-          message.info('复制成功');
-        }).catch(err => {
-          message.info('复制失败', err);
-        });
-    }
-
-    return {
-      btn_show,
-      SnapExhibitModel,
-      SnapCardExhibitModel,
-      exhibit_model,
-      sendCmd,
-      copyCmd,
-      snap,
-      snapshot_str_arr,
-      removeSnap: snap_store.REMOVE_SNAPSHOTS,
-    };
-  },
-});
+function copyCmd() {
+  navigator.clipboard
+    .writeText(snapshot_str_arr.value.join('\r'))
+    .then(() => {
+      message.info('复制成功');
+    }).catch(err => {
+      message.info('复制失败', err);
+    });
+}
 </script>
 <style scoped style="scss">
 .card {
