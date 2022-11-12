@@ -3,22 +3,21 @@
   <n-layou>
     <n-steps :current="(current as number)">
       <n-step
-        title="欢迎"
-        description="欢迎使用"
+        :title="i18n.TRANSLATE('init.welcome')"
+        :description="i18n.TRANSLATE('init.welcomeDescription')"
       />
       <n-step
-        title="存放位置"
-        description="指定运行时: 命令, 快照, 快捷输入. 存放位置"
+      :title="i18n.TRANSLATE('init.storeLocation')"
+      :description="i18n.TRANSLATE('init.storeDescription')"
       />
       <n-step
-        title="完成"
-        description="开始使用"
+      :title="i18n.TRANSLATE('init.finish')"
       />
     </n-steps>
   </n-layou>
   <n-layout >
     <n-result v-show="current === 1"
-      title="欢迎使用"
+    :title="i18n.TRANSLATE('init.welcomeDescription')"
     >
     <template #icon>
       <n-icon size="40">
@@ -26,7 +25,7 @@
       </n-icon>
     </template>
       <template #footer>
-        <n-button @click="nextStep">开始配置</n-button>
+        <n-button @click="nextStep">{{i18n.TRANSLATE('init.startConfigBtn')}}</n-button>
       </template>
     </n-result>
     <StorePathVue v-if="current === 2"
@@ -37,13 +36,13 @@
     <!-- 三 -->
     <n-thing v-show="current === 3">
       <template >
-        确认配置
+        {{i18n.TRANSLATE('init.confirmConfig')}}
       </template>
       <n-list hoverable>
         <n-list-item>
           <template #prefix>
             <n-ellipsis style="max-width: 240px">
-              会话存放路径:
+              {{i18n.TRANSLATE('init.sessionLocation')}}:
             </n-ellipsis>
           </template>
           {{config?.sessions_folder}}
@@ -52,7 +51,7 @@
         <n-list-item>
           <template #prefix>
             <n-ellipsis style="max-width: 240px">
-              公共仓库存放路径:
+              {{i18n.TRANSLATE('init.repoLocation')}}:
             </n-ellipsis>
           </template>
           {{config?.repos_folder}}
@@ -61,7 +60,7 @@
         <n-list-item>
           <template #prefix>
             <n-ellipsis style="max-width: 240px">
-              私有仓库文件夹名:
+              {{i18n.TRANSLATE('init.userRepoName')}}:
             </n-ellipsis>
           </template>
           {{config?.user_repo_name}}
@@ -70,10 +69,10 @@
       <template #action>
         <n-space>
           <n-button size="small" @click="comeBack">
-            返回
+            {{i18n.TRANSLATE('init.backBtn')}}
           </n-button>
           <n-button size="small" @click="confirmConfig">
-            确认
+            {{i18n.TRANSLATE('init.confirmBtn')}}
           </n-button>
         </n-space>
       </template>
@@ -94,7 +93,9 @@ import {
 import { useRouter, useRoute } from 'vue-router';
 import StorePathVue from '@/components/Init/StorePath.vue';
 import { useStore, Config } from '@/store/config';
+import i18nStore from '@/store/i18n';
 
+const i18n = i18nStore();
 const store = useStore();
 const router = useRouter();
 const current = ref<number>(1);

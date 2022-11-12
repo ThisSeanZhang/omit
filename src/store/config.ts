@@ -20,17 +20,18 @@ export class Config {
   sessions_folder: string;
   user_repo_name: string;
 
-  constructor() {
-    this.repos_folder = `${APP_CONFIG_HOME}${sep}${REPOS_FOLDER}`;
-    this.sessions_folder = `${APP_CONFIG_HOME}${sep}${SESSIONS_FOLDER_NAME}`;
-    this.user_repo_name = '';
+  constructor(in_config: {
+    repos_folder?: string
+    sessions_folder?: string
+    user_repo_name?: string
+  }) {
+    this.repos_folder = in_config.repos_folder === undefined ? `${APP_CONFIG_HOME}${sep}${REPOS_FOLDER}` : in_config.repos_folder;
+    this.sessions_folder = in_config.sessions_folder === undefined ?`${APP_CONFIG_HOME}${sep}${SESSIONS_FOLDER_NAME}` : in_config.sessions_folder;
+    this.user_repo_name = in_config.user_repo_name === undefined ? '' : in_config.user_repo_name;
   }
 
-  fork(): Config {
-    const config = new Config();
-    config.repos_folder = this.repos_folder;
-    config.sessions_folder = this.sessions_folder;
-    config.user_repo_name = this.user_repo_name;
+  public fork(): Config {
+    const config = new Config(this);
     return config;
   }
 
@@ -44,7 +45,7 @@ async function FETCH_SYSTEM_CONFIG():Promise<[Config, Boolean]> {
     let config: Config = JSON.parse(setting_data);
     return [config, false];
   } catch (error) {
-    return [new Config(), true];
+    return [new Config({}), true];
   }
 }
 const [init_config, is_default] = await FETCH_SYSTEM_CONFIG();
@@ -61,10 +62,7 @@ export const useStore = defineStore('config', () => {
   // const getConfigClone = computed(() => raw_config.value.fork());
 
   function GET_CONFIG_FORK():Config {
-    const config = new Config();
-    config.repos_folder = raw_config.value.repos_folder;
-    config.sessions_folder = raw_config.value.sessions_folder;
-    config.user_repo_name = raw_config.value.user_repo_name;
+    const config = new Config(raw_config.value);
     return config;
   }
   async function REWRITE_CONFIG(config: Config): Promise<void> {
