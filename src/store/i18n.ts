@@ -114,6 +114,15 @@ const dict: any = {
     emptyDescription: {
       cn: '在上面的选择框选个命令吧'
     },
+    option: {
+      cn: '可选项'
+    },
+    edit: {
+      cn: '编辑'
+    },
+    param: {
+      cn: '参数'
+    },
   }
 }
 export const i18nStore = defineStore('i18n', () => {

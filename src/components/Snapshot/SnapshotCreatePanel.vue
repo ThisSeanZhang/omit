@@ -27,13 +27,13 @@
     @open:save="show_save_panel = true"
     :snapshot="snap" :exhibit_btn="SnapCardExhibitModel.CREATE_PANEL">
       <template #title>
-        指令预览
+        {{i18n.TRANSLATE('snap.title')}}
       </template>
     </SnapshotExhibitCard>
   </template>
   <n-list-item>
     <template #prefix>
-      可选项
+      {{i18n.TRANSLATE('snap.option')}}
     </template>
     <template #suffix>
       <n-button type="info" dashed @click="show_option_drawer = true">
@@ -42,7 +42,7 @@
             <TextBulletListSquareEdit20Regular />
           </n-icon>
         </template>
-        编辑
+        {{i18n.TRANSLATE('snap.edit')}}
       </n-button>
     </template>
     <n-space align="center" item-style="display: flex;">
@@ -78,7 +78,7 @@
   </n-list-item>
   <n-list-item>
     <template #prefix>
-      参数
+      {{i18n.TRANSLATE('snap.param')}}
     </template>
     <n-space align="center" item-style="display: flex;">
       <n-button v-for="(param, index) in snap.param_value" :key="index"
@@ -105,7 +105,7 @@
             <TextBulletListSquareEdit20Regular />
           </n-icon>
         </template>
-        编辑
+        {{i18n.TRANSLATE('snap.edit')}}
       </n-button>
     </template>
   </n-list-item>
@@ -139,16 +139,19 @@ import SnapshotExhibitCard from '@/components/Snapshot/SnapshotExhibitCard.vue';
 import { SnapExhibitModel, SnapCardExhibitModel } from '@/lib/Util';
 import Command from '@/lib/Command';
 import Snapshot from '@/lib/Snapshot';
+import i18nStore from '@/store/i18n';
 interface Props {
   command: Command
   edit_snap: Snapshot
 }
 
+const i18n = i18nStore();
 const props = defineProps<Props>();
 const cmd = computed(() => props.command);
-const snap = ref(props.edit_snap);
+console.log(props.edit_snap)
+const snap = ref(props.edit_snap.clone());
 watch(() => props.edit_snap, (newOne: Snapshot) => {
-  snap.value = newOne;
+  snap.value = newOne.clone();
 });
 
 const show_param_drawer = ref(false);
