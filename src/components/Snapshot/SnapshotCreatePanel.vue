@@ -26,9 +26,9 @@
     <SnapshotExhibitCard class="command-exhibit" @reflash:snap="reflashSnap"
     @open:save="show_save_panel = true"
     :snapshot="snap" :exhibit_btn="SnapCardExhibitModel.CREATE_PANEL">
-      <template #title>
+      <!-- <template #title>
         {{i18n.TRANSLATE('snap.title')}}
-      </template>
+      </template> -->
     </SnapshotExhibitCard>
   </template>
   <n-list-item>

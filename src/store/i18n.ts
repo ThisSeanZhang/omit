@@ -132,6 +132,15 @@ const dict: any = {
     paramAdd: {
       cn: '搞点参数'
     },
+    save_title: {
+      cn: '保存快照'
+    },
+    snap_title: {
+      cn: '快照名称'
+    },
+    save: {
+      cn: '保存快照'
+    }
   }
 }
 export const i18nStore = defineStore('i18n', () => {
