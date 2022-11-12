@@ -39,7 +39,36 @@ const dict: any = {
     confirmBtn: {
       cn: '确认'
     }
-  }
+  },
+  session: {
+    filter: {
+      cn: '筛选会话'
+    },
+    connectBtn: {
+      cn: '连接'
+    },
+    deleteConfirm: {
+      cn: '确定删除吗'
+    },
+    name: {
+      cn: '会话名称'
+    },
+    ip: {
+      cn: '地址'
+    },
+    port: {
+      cn: '端口'
+    },
+    username: {
+      cn: '用户名'
+    },
+    passwd: {
+      cn: '密码'
+    },
+    save: {
+      cn: '保存'
+    }
+  },
 }
 export const i18nStore = defineStore('i18n', () => {
 

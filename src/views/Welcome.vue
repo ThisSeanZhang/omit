@@ -6,7 +6,7 @@
         <n-space style="height: 100%; position: relative">
           <n-layout position="absolute">
             <n-layout-header position="absolute" style="padding: 5px">
-              <n-input v-model:value="queryStr" type="text" placeholder="筛选会话" clearable  />
+              <n-input v-model:value="queryStr" type="text" :placeholder="i18n.TRANSLATE('session.filter')" clearable  />
             </n-layout-header>
             <n-layout-content
               style="top: 44px; padding: 5px;"
@@ -31,7 +31,7 @@
   </n-space>
 </div>
 </template>
-<script lang="ts">
+<script setup lang="ts">
 import {
   computed,
   defineComponent,
@@ -42,43 +42,30 @@ import { sessionStore } from '@/store/session';
 import OmitSessionItem from '@/components/Session/OmitSessionItem.vue';
 import OmitSessionForm from '@/components/Session/OmitSessionForm.vue';
 import OmitSession from '@/lib/OmitSession';
+import i18nStore from '@/store/i18n';
 
-export default defineComponent({
-  name: 'Welcome',
-  components: {
-    OmitSessionItem,
-    OmitSessionForm,
-  },
-  setup() {
-    const store = sessionStore();
-    const fetch_wait = store.FETCH_SESSIONS();
-    const queryStr = ref('');
+const i18n = i18nStore();
+const store = sessionStore();
+const fetch_wait = store.FETCH_SESSIONS();
+const queryStr = ref('');
 
-    const exhibitSession = computed(() => {
-      let result = store.sessions;
-      if (queryStr.value !== '') {
-        result = result.filter(sess => sess.name.includes(queryStr.value))
-      }
-      return result;
-    });
-
-    const currentChoice = ref(new OmitSession());
-    
-    function editFinish() {
-      currentChoice.value = new OmitSession();
-    }
-    onMounted(async () => {
-      await fetch_wait;
-    });
-
-    return {
-      queryStr,
-      editFinish,
-      currentChoice,
-      exhibitSession,
-    };
+const exhibitSession = computed(() => {
+  let result = store.sessions;
+  if (queryStr.value !== '') {
+    result = result.filter(sess => sess.name.includes(queryStr.value))
   }
+  return result;
 });
+
+const currentChoice = ref(new OmitSession());
+
+function editFinish() {
+  currentChoice.value = new OmitSession();
+}
+onMounted(async () => {
+  await fetch_wait;
+});
+
 </script>
 <style lang="scss" scoped>
 // .welcome-container {

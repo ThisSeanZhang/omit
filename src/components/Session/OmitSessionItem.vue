@@ -2,13 +2,20 @@
   <div class="session_card" @click="reviewOmitSessionConfig">
     <div>{{props.session?.name}}</div>
     <div class="card_btns">
-      <n-button class="card_btn" text @click.stop="connect">
-        <n-icon>
-         <PlugDisconnected20Regular />
-        </n-icon>
-      </n-button>
+      <n-tooltip trigger="hover">
+        <template #trigger>
+          <n-button class="card_btn" text @click.stop="connect">
+            <n-icon>
+            <PlugDisconnected20Regular />
+            </n-icon>
+          </n-button>
+        </template>
+        {{i18n.TRANSLATE('session.connectBtn')}}
+      </n-tooltip>
+      
 
       <n-popconfirm
+        :show-icon="false"
         @positive-click="clickOK"
         @negative-click="clickNo"
         positive-text="NO!!!" negative-text="YES"
@@ -25,7 +32,7 @@
             </n-icon>
           </n-button>
         </template>
-        确定删除吗
+        {{i18n.TRANSLATE('session.deleteConfirm')}}
       </n-popconfirm>
 
     </div>
@@ -43,7 +50,9 @@ import {
   PlugDisconnected20Regular,
 } from '@vicons/fluent';
 import OmitSession from '@/lib/OmitSession';
-// import SSHInfo from '@/lib/SSInfo';
+import i18nStore from '@/store/i18n';
+
+const i18n = i18nStore();
 const props = defineProps({
   session: OmitSession,
 })

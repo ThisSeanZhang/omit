@@ -7,24 +7,24 @@
       ref="formRef"
     >
       <n-grid :cols="24" :x-gap="24">
-        <n-form-item-gi :span="24" label="会话标签" path="session.name">
-          <n-input placeholder="会话标签" v-model:value="omitSession.name" />
+        <n-form-item-gi :span="24" :label="i18n.TRANSLATE('session.name')" path="session.name">
+          <n-input :placeholder="i18n.TRANSLATE('session.name')" v-model:value="omitSession.name" />
         </n-form-item-gi>
-        <n-form-item-gi :span="20" label="IP" path="session.ip">
-          <n-input placeholder="IP地址" v-model:value="omitSession.ip" />
+        <n-form-item-gi :span="20" :label="i18n.TRANSLATE('session.ip')" path="session.ip">
+          <n-input :placeholder="i18n.TRANSLATE('session.ip')" v-model:value="omitSession.ip" />
         </n-form-item-gi>
-        <n-form-item-gi :span="4" label="端口号" path="session.port">
+        <n-form-item-gi :span="4" :label="i18n.TRANSLATE('session.port')" path="session.port">
           <n-input-number :show-button="false"
-            placeholder="端口号"
+            :placeholder="i18n.TRANSLATE('session.port')"
             v-model:value="omitSession.port"
           />
         </n-form-item-gi>
-        <n-form-item-gi :span="24" label="用户名" path="session.username">
-          <n-input placeholder="用户名" v-model:value="omitSession.username" />
+        <n-form-item-gi :span="24" :label="i18n.TRANSLATE('session.username')" path="session.username">
+          <n-input :placeholder="i18n.TRANSLATE('session.username')" v-model:value="omitSession.username" />
         </n-form-item-gi>
-        <n-form-item-gi :span="24" label="密码" path="session.passwd">
+        <n-form-item-gi :span="24" :label="i18n.TRANSLATE('session.passwd')" path="session.passwd">
           <n-input
-            placeholder="密码"
+            :placeholder="i18n.TRANSLATE('session.passwd')"
             type="password"
             show-password-on="mousedown"
             v-model:value="omitSession.passwd"
@@ -32,7 +32,7 @@
         </n-form-item-gi>
         <n-gi :span="24">
           <div style="display: flex; justify-content: flex-end;">
-            <n-button @click="save" round type="primary" >保存</n-button>
+            <n-button @click="save" round type="primary" >{{i18n.TRANSLATE('session.save')}}</n-button>
           </div>
         </n-gi>
       </n-grid>
@@ -49,7 +49,9 @@ import { sessionStore } from '@/store/session';
 import { useRouter, useRoute } from 'vue-router';
 import { invoke } from '@tauri-apps/api/tauri';
 import OmitSession from '@/lib/OmitSession';
+import i18nStore from '@/store/i18n';
 
+const i18n = i18nStore();
 const store = sessionStore();
 const props = defineProps({
   session: OmitSession,

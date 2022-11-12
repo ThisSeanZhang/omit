@@ -44,6 +44,7 @@ import {
   NSteps,
   NSpin,
   NEmpty,
+  NTooltip,
 } from 'naive-ui'
 import './style.css'
 import App from './App.vue'
@@ -98,6 +99,7 @@ const naive = create({
     NSteps,
     NSpin,
     NEmpty,
+    NTooltip,
   ],
 });
 
