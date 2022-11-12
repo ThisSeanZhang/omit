@@ -46,7 +46,7 @@
     </n-layout-sider>
   </n-layout>
 </template>
-<script lang="ts">
+<script setup lang="ts">
 import {
   computed,
   defineComponent,
@@ -64,44 +64,25 @@ import CommandSearchBar from '@/components/Command/CommandSearchBar.vue';
 import Snapshot from '@/lib/Snapshot';
 import Command from '@/lib/Command';
 
-export default defineComponent({
-  name: 'SnapshotCreateView',
-  components: {
-    CommandSearchBar,
-    SnapshotExhibitCard,
-    SnapshotCreatePanel,
-  },
-  setup() {
-    const storage = snapStore();
-    const repos_store = repoStore();
-    const query_key = ref('');
-    storage.FETCH_SNAPSHOTS();
-    const snapshots = computed(() => storage.snapshots.filter(snap => (query_key.value === '' ? true : snap.title.includes(query_key.value))));
+const storage = snapStore();
+const repos_store = repoStore();
+const query_key = ref('');
+storage.FETCH_SNAPSHOTS();
+const snapshots = computed(() => storage.snapshots.filter(snap => (query_key.value === '' ? true : snap.title.includes(query_key.value))));
 
-    const select_cmd = ref(null as unknown as Command);
-    const edit_snap = ref(null as unknown as Snapshot);
+const select_cmd = ref(null as unknown as Command);
+const edit_snap = ref(null as unknown as Snapshot);
 
-    function handleUpdateCmd(updateCmd: Command) {
-      select_cmd.value = updateCmd;
-      edit_snap.value = Snapshot.fromCmd(updateCmd);
-    }
+function handleUpdateCmd(updateCmd: Command) {
+  select_cmd.value = updateCmd;
+  edit_snap.value = Snapshot.fromCmd(updateCmd);
+}
 
-    function reviseSnap(snap: Snapshot) {
-      edit_snap.value = snap.clone();
-      select_cmd.value = repos_store.FIND_CMD_USE(snap.command_id);
-      console.log(select_cmd.value);
-      console.log(snap);
-    }
+function reviseSnap(snap: Snapshot) {
+  edit_snap.value = snap.clone();
+  select_cmd.value = repos_store.FIND_CMD_USE(snap.command_id);
+  console.log(select_cmd.value);
+  console.log(snap);
+}
 
-    return {
-      handleUpdateCmd,
-      reviseSnap,
-      select_cmd,
-      edit_snap,
-      SnapCardExhibitModel,
-      snapshots,
-      query_key,
-    };
-  },
-});
 </script>
