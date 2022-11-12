@@ -117,6 +117,9 @@ const dict: any = {
     option: {
       cn: '可选项'
     },
+    optionEdit: {
+      cn: '编辑可选项'
+    },
     edit: {
       cn: '编辑'
     },

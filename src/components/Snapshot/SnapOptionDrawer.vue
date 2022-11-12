@@ -3,7 +3,7 @@
   @update:show="$emit('update:value', false)"
   to="#drawer-global"
   width="50%" placement="right">
-  <n-drawer-content title="选项编辑" closable>
+  <n-drawer-content :title="i18n.TRANSLATE('snap.optionEdit')" closable>
     <n-space vertical>
       <n-input-group>
         <n-select
@@ -48,7 +48,6 @@ import {
   ref,
   computed,
   watch,
-  defineProps,
 } from 'vue';
 import {
   DismissCircle20Regular,
@@ -58,7 +57,9 @@ import {
 import SnapOption from '@/lib/SnapOption';
 import ValueType from '@/lib/ValueType';
 import CmdOption from '@/lib/CmdOption';
+import i18nStore from '@/store/i18n';
 
+const i18n = i18nStore();
 interface Props {
   value: Boolean;
   snap_options: Array<SnapOption>;
