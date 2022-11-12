@@ -4,7 +4,7 @@
     content-style="padding: 10px 30px 0px 10px;display: flex;flex-direction: column;">
       <CommandSearchBar v-on:selectCmd="handleUpdateCmd" />
       <SnapshotCreatePanel
-        v-if="show_create_snap_panel"
+        v-if="select_cmd !== undefined && edit_snap !== undefined"
         :command="select_cmd"
         :edit_snap="edit_snap"
       />
@@ -73,8 +73,6 @@ const snapshots = computed(() => storage.snapshots.filter(snap => (query_key.val
 
 const select_cmd = ref<Command>();
 const edit_snap = ref<Snapshot>();
-
-const show_create_snap_panel = computed(() => select_cmd.value !== undefined && edit_snap.value !== undefined)
 
 function handleUpdateCmd(updateCmd: Command) {
   select_cmd.value = updateCmd;
