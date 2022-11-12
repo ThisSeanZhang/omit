@@ -21,34 +21,21 @@
   </n-space>
 </div>
 </template>
-<script lang="ts">
-import {
-  defineComponent,
-  ref,
-  computed,
-} from 'vue';
+<script setup lang="ts">
+import { computed } from 'vue';
 import { getCurrent } from '@tauri-apps/api/window';
 import { shortcutStore } from '@/store/shortcut';
-import Shortcut from '@/lib/Shortcut';
+import { useStore as termStore } from '@/store/terminal';
 
-export default defineComponent({
-  name: 'ShortcutBar',
-  components: {
-  },
-  setup() {
-    const current = getCurrent();
-    const store = shortcutStore();
-    store.FETCH_SHORTCURS();
-    const shortcuts = computed(() => store.shortcuts);
-    function sendCmd(data: string) {
-      current.emit('ssh-data-from-frontend', `${data}`);
-    }
-    return {
-      sendCmd,
-      shortcuts,
-    };
-  },
-});
+const current = getCurrent();
+const store = shortcutStore();
+const term = termStore();
+
+store.FETCH_SHORTCURS();
+const shortcuts = computed(() => store.shortcuts);
+function sendCmd(data: string) {
+  current.emit(`data-from-front_${term.current_term_uid}`, `${data}`);
+}
 </script>
 <style scoped>
 </style>

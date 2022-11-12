@@ -141,6 +141,14 @@ const dict: any = {
     save: {
       cn: '保存快照'
     }
+  },
+  param: {
+    editParam: {
+      cn: '选项编辑'
+    },
+    addParam: {
+      cn: '搞点快捷按钮'
+    }
   }
 }
 export const i18nStore = defineStore('i18n', () => {

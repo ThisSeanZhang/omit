@@ -1,25 +1,15 @@
 <template>
-  <!-- <n-modal
-    :show="value"
-    preset="card"
-    style="width: 50%;"
-    title="保存快照"
-    size="small"
-    :bordered="false"
-    :segmented="segmented"
-    @update:show="$emit('update:value', false)"
-  > -->
 <n-drawer :show="value"
   @update:show="$emit('update:value', false)"
   :on-after-leave="dealClose"
   width="60%" placement="left">
   <n-drawer-content closable>
     <template #header>
-        选项编辑
+        {{i18n.TRANSLATE('param.editParam')}}
       </template>
     <n-space vertical v-if="shortcuts.length === 0">
       <n-button block type="primary" @click="add(0)" dashed>
-        搞点快捷按钮
+        {{i18n.TRANSLATE('param.addParam')}}
         <template #icon>
           <n-icon><Add16Filled /></n-icon>
         </template>
@@ -86,16 +76,14 @@
       </n-space>
     </n-list-item>
   </n-list>
-  <!-- </n-modal> -->
   </n-drawer-content>
 </n-drawer>
   <ShortcutSavePanel
   v-bind:shortcut="edit_shortcut"
   v-model:value="shortcut_save_panel" />
 </template>
-<script lang="ts">
+<script setup lang="ts">
 import {
-  defineComponent,
   onMounted,
   ref,
 } from 'vue';
@@ -108,65 +96,45 @@ import {
   ArrowDown16Filled,
 } from '@vicons/fluent';
 import ShortcutSavePanel from '@/components/Shortcut/ShortcutSavePanel.vue';
+import i18nStore from '@/store/i18n';
 
-export default defineComponent({
-  name: 'ShortcutManagePanel',
-  components: {
-    ShortcutSavePanel,
-    Add16Filled,
-    ArrowUp16Filled,
-    ArrowDown16Filled,
-    DismissCircle20Regular,
-  },
-  props: {
-    value: {
-      type: Boolean,
-      require: true,
-      default: () => false,
-    },
-  },
-  setup(props) {
-    const storage = shortcutStore();
+const i18n = i18nStore();
+interface Props {
+  value: Boolean
+}
+const props = withDefaults(defineProps<Props>(), {
+  value: () => false
+})
 
-    const await_fetch = storage.FETCH_SHORTCURS();
-    const shortcuts = ref<Shortcut[]>([]);
-    
-    const edit_shortcut = ref(new Shortcut());
-    const shortcut_save_panel = ref(false);
+const storage = shortcutStore();
 
-    onMounted(async () => {
-      await await_fetch;
-      shortcuts.value = storage.shortcuts;
-    });
-    function edit(index: number|undefined) {
-      edit_shortcut.value = index === undefined ? new Shortcut() : shortcuts.value[index];
-      console.log(edit_shortcut.value);
-      shortcut_save_panel.value = true;
-    }
+const await_fetch = storage.FETCH_SHORTCURS();
+const shortcuts = ref<Shortcut[]>([]);
 
-    function move(source: number, step: number | undefined) {
-      const option = shortcuts.value.splice(source, 1);
-      if (step !== undefined) {
-        shortcuts.value.splice(source + step, 0, option[0]);
-      }
-    }
-    function add(source: number) {
-      shortcuts.value.splice(source + 1, 0, new Shortcut());
-    }
-    function dealClose() {
-      console.log('close');
-      storage.SAVE_ALL_SHORTCUR(shortcuts.value);
-    }
+const edit_shortcut = ref(new Shortcut());
+const shortcut_save_panel = ref(false);
 
-    return {
-      dealClose,
-      add,
-      move,
-      edit,
-      edit_shortcut,
-      shortcut_save_panel,
-      shortcuts,
-    };
-  },
+onMounted(async () => {
+  await await_fetch;
+  shortcuts.value = storage.shortcuts;
 });
+function edit(index: number|undefined) {
+  edit_shortcut.value = index === undefined ? new Shortcut() : shortcuts.value[index];
+  console.log(edit_shortcut.value);
+  shortcut_save_panel.value = true;
+}
+
+function move(source: number, step: number | undefined) {
+  const option = shortcuts.value.splice(source, 1);
+  if (step !== undefined) {
+    shortcuts.value.splice(source + step, 0, option[0]);
+  }
+}
+function add(source: number) {
+  shortcuts.value.splice(source + 1, 0, new Shortcut());
+}
+function dealClose() {
+  console.log('close');
+  storage.SAVE_ALL_SHORTCUR(shortcuts.value);
+}
 </script>
