@@ -260,7 +260,7 @@ pub fn read_file(file_path: &str) -> Result<String, String> {
 pub fn list_dir_all(dir_path: &str) -> Result<Vec<String>, String> {
   let dir_path = PathBuf::from(dir_path);
   if dir_path.is_file() {
-    return Err("you need config a dir".into());
+    return Err("This is a file path not a folder".into());
   }
   let dirs = dir_path.read_dir().map_err(|e| e.to_string())?;
   let result = dirs.filter_map(|path| path.ok())
@@ -277,7 +277,7 @@ pub fn list_dir_all(dir_path: &str) -> Result<Vec<String>, String> {
 pub fn list_dir_only_folder(dir_path: &str) -> Result<Vec<String>, String> {
   let dir_path = PathBuf::from(dir_path);
   if dir_path.is_file() {
-    return Err("you need config a dir".into());
+    return Err("This is a file path not a folder".into());
   }
   let dirs = dir_path.read_dir().map_err(|e| e.to_string())?;
   let result = dirs.filter_map(|path| path.ok())

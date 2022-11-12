@@ -16,10 +16,10 @@
     <template #extra>
       <n-space justify="center">
         <n-button size="small" @click="goToSessionPage">
-          换一个
+          {{i18n.TRANSLATE('terminal.tryAnother')}}
         </n-button>
         <!-- <n-button size="small" @click="connectAgain">
-          重试
+          {{i18n.TRANSLATE('terminal.tryAgain')}}
         </n-button> -->
       </n-space>
     </template>
@@ -41,7 +41,9 @@ import { useRouter, useRoute } from 'vue-router';
 import { useStore } from '@/store/terminal';
 import Term from '@/lib/Term';
 import { LinkDismiss20Filled } from '@vicons/fluent';
+import i18nStore from '@/store/i18n';
 
+const i18n = i18nStore();
 const route = useRoute();
 const router = useRouter();
 const terminalStore = useStore();

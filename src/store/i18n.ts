@@ -69,6 +69,30 @@ const dict: any = {
       cn: '保存'
     }
   },
+  terminal: {
+    tryAnother: {
+      cn: '试个别的 ?'
+    },
+    tryAgain: {
+      cn: '或者再试一次 ?'
+    }
+  },
+  snap: {
+    title: {
+      cn: '指令预览'
+    },
+    singleLine: {},
+    multipleLine: {},
+    send: {},
+    copy: {},
+    re_edit: {
+
+    },
+    delete: {},
+    more: {},
+    create_snap: {},
+    
+  }
 }
 export const i18nStore = defineStore('i18n', () => {
 
