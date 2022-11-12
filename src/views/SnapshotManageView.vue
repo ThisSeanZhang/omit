@@ -71,8 +71,8 @@ const query_key = ref('');
 storage.FETCH_SNAPSHOTS();
 const snapshots = computed(() => storage.snapshots.filter(snap => (query_key.value === '' ? true : snap.title.includes(query_key.value))));
 
-const select_cmd = ref(null as unknown as Command);
-const edit_snap = ref(null as unknown as Snapshot);
+const select_cmd = ref<Command>();
+const edit_snap = ref<Snapshot>();
 
 const show_create_snap_panel = computed(() => select_cmd.value !== undefined && edit_snap.value !== undefined)
 
