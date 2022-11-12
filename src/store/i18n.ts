@@ -79,7 +79,7 @@ const dict: any = {
   },
   snap: {
     filter: {
-      cn: '过滤'
+      cn: '过滤快照'
     },
     title: {
       cn: '指令预览'
@@ -108,7 +108,12 @@ const dict: any = {
     create_snap: {
       cn: '创建快照'
     },
-
+    empty: {
+      cn: '空空如也'
+    },
+    emptyDescription: {
+      cn: '在上面的选择框选个命令吧'
+    },
   }
 }
 export const i18nStore = defineStore('i18n', () => {

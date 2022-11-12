@@ -7,7 +7,7 @@
       v-if="select_cmd !== null"
       :command="select_cmd" :edit_snap="edit_snap"/>
       <div v-else style="flex: 1;display: flex;justify-content: center;align-items: center;">
-        <n-result title="空空如也" description="在上面的选择框选个命令">
+        <n-result :title="i18n.TRANSLATE('snap.empty')" :description="i18n.TRANSLATE('snap.emptyDescription')">
           <template #icon>
             <!-- <div style="width: 300px">
             </div> -->
@@ -27,7 +27,7 @@
           <n-layout-header style="height: 34px; padding-right: 10px;">
             <n-input type="text"
               v-model:value="query_key"
-              placeholder="filter"
+              :placeholder="i18n.TRANSLATE('snap.filter')"
               clearable
             />
           </n-layout-header>
@@ -52,9 +52,7 @@ import {
   defineComponent,
   ref,
 } from 'vue';
-import {
-  SnapCardExhibitModel,
-} from '@/lib/Util';
+import { SnapCardExhibitModel, } from '@/lib/Util';
 import { snapStore } from '@/store/snapshot';
 import { repoStore } from '@/store/repository';
 // import SnapshotPanel from '@/components/Snapshot/SnapshotPanel.vue';
@@ -63,7 +61,9 @@ import SnapshotExhibitCard from '@/components/Snapshot/SnapshotExhibitCard.vue';
 import CommandSearchBar from '@/components/Command/CommandSearchBar.vue';
 import Snapshot from '@/lib/Snapshot';
 import Command from '@/lib/Command';
+import i18nStore from '@/store/i18n';
 
+const i18n = i18nStore();
 const storage = snapStore();
 const repos_store = repoStore();
 const query_key = ref('');

@@ -1,32 +1,4 @@
 <template>
-<!-- <div style="height: 100%; position: relative">
-  <n-layout position="absolute">
-    <n-layout-header style="height: 64px; padding: 24px" bordered>
-      颐和园路
-    </n-layout-header>
-    <n-layout position="absolute" style="top: 64px; bottom: 64px">
-        <n-h2>平山道</n-h2>
-        <n-h2>平山道</n-h2>
-        <n-h2>平山道</n-h2>
-        <n-h2>平山道</n-h2>
-        <n-h2>平山道</n-h2>
-        <n-h2>平山道</n-h2>
-        <n-h2>平山道</n-h2>
-        <n-h2>平山道</n-h2>
-        <n-h2>平山道</n-h2>
-        <n-h2>平山道</n-h2>
-        <n-h2>平山道</n-h2>
-        <n-h2>平山道</n-h2>
-    </n-layout>
-    <n-layout-footer
-      bordered
-      position="absolute"
-      style="height: 64px; padding: 24px"
-    >
-      城府路
-    </n-layout-footer>
-  </n-layout>
-</div> -->
 <n-list style="margin-top: 0px;">
   <template #header>
     <n-thing style="margin-top: 10px;">
