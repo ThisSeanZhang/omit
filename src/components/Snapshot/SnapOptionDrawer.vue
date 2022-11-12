@@ -43,11 +43,9 @@
   </n-drawer-content>
 </n-drawer>
 </template>
-<script lang="ts">
+<script setup lang="ts">
 import {
-  defineComponent,
   ref,
-  getCurrentInstance,
   computed,
   watch,
   defineProps,
@@ -61,67 +59,43 @@ import SnapOption from '@/lib/SnapOption';
 import ValueType from '@/lib/ValueType';
 import CmdOption from '@/lib/CmdOption';
 
-defineProps<{ selectValue: Boolean }>();
-export default defineComponent({
-  name: 'SnapOptionDrawer',
-  components: {
-    ArrowUp16Filled,
-    ArrowDown16Filled,
-    DismissCircle20Regular,
-  },
-  props: {
-    value: {
-      type: Boolean,
-      default: () => false,
-    },
-    snap_options: {
-      type: Array,
-      default: () => [],
-    },
-    cmd_options: {
-      type: Array,
-      default: () => [],
-    },
-  },
-  setup(props: any) {
-    // const a = getCurrentInstance();
-    const selectValue = ref('');
-    const ops = ref(props.snap_options);
-    watch(
-      () => props.snap_options,
-      newOne => {
-        ops.value = newOne;
-      },
-    );
-    const cops = computed(
-      () => props.cmd_options
-        .map((op: CmdOption) => ({ label: op.full_name, value: op })),
-    );
-    function dealClose() {
-      console.log('close');
-    }
+interface Props {
+  value: Boolean;
+  snap_options: Array<SnapOption>;
+  cmd_options: Array<CmdOption>;
+}
+const props = withDefaults(defineProps<Props>(), {
+  value: () => false,
+  snap_options: () =>  [],
+  cmd_options: () =>  []
+})
 
-    function handleSelectValue(value: CmdOption) {
-      selectValue.value = '';
-      // ops.value.push(props.cmd_options[value]);
-      ops.value.push(SnapOption.fromCmdOption(value));
-    }
-
-    function move(source: number, step: number | undefined) {
-      const option = ops.value.splice(source, 1);
-      if (step !== undefined) {
-        ops.value.splice(source + step, 0, option[0]);
-      }
-    }
-    return {
-      selectValue,
-      handleSelectValue,
-      cops,
-      move,
-      ops,
-      ValueType,
-      dealClose,
-    };
+const selectValue = ref('');
+const ops = ref(props.snap_options);
+watch(
+  () => props.snap_options,
+  newOne => {
+    ops.value = newOne;
   },
-});
+);
+const cops = computed(
+  () => props.cmd_options
+    .map((op: CmdOption) => ({ label: op.full_name, value: op })),
+);
+function dealClose() {
+  console.log('close');
+}
+
+function handleSelectValue(value: CmdOption) {
+  selectValue.value = '';
+  // ops.value.push(props.cmd_options[value]);
+  ops.value.push(SnapOption.fromCmdOption(value));
+}
+
+function move(source: number, step: number | undefined) {
+  const option = ops.value.splice(source, 1);
+  if (step !== undefined) {
+    ops.value.splice(source + step, 0, option[0]);
+  }
+}
 </script>
