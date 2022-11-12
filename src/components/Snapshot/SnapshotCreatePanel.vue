@@ -23,42 +23,6 @@
     </n-thing>
   </template>
   <template #footer>
-    <!-- <n-thing>
-      <template #header>
-        指令预览
-      </template>
-      <template  #header-extra>
-        <n-space>
-          <n-button v-if="display_model === SnapExhibitModel.ONELINE"
-            @click="display_model = SnapExhibitModel.MULTLINE"
-            type="warning" text size="small">
-            <template #icon>
-              <n-icon size="20"><LineHorizontal520Regular /></n-icon>
-            </template>
-          </n-button>
-          <n-button v-else
-            @click="display_model = SnapExhibitModel.ONELINE"
-            type="warning" text size="medium">
-            <template #icon>
-              <n-icon size="20"><LineHorizontal120Filled /></n-icon>
-            </template>
-          </n-button>
-          <n-button type="warning" text size="medium"
-            @click="copyCmd()">
-            <template #icon>
-              <n-icon size="20"><Copy20Regular /></n-icon>
-            </template>
-          </n-button>
-          <n-button type="warning" text size="medium"
-            @click="show_save_panel = true">
-            <template #icon>
-              <n-icon size="20"><CameraAdd24Regular /></n-icon>
-            </template>
-          </n-button>
-        </n-space>
-      </template>
-      <div v-for="(line, index) in command_str" :key="index">{{line}}</div>
-    </n-thing> -->
     <SnapshotExhibitCard class="command-exhibit" @reflash:snap="reflashSnap"
     @open:save="show_save_panel = true"
     :snapshot="snap" :exhibit_btn="SnapCardExhibitModel.CREATE_PANEL">
@@ -158,22 +122,16 @@
     v-model:value="show_save_panel" />
   </n-list>
 </template>
-<script lang="ts">
+<script setup lang="ts">
 import {
   computed,
-  defineComponent,
   ref,
   watch,
 } from 'vue';
 import {
   TextBulletListSquareEdit20Regular,
   DismissCircle16Filled,
-  LineHorizontal120Filled,
-  LineHorizontal520Regular,
-  Copy20Regular,
-  CameraAdd24Regular,
 } from '@vicons/fluent';
-import { useMessage } from 'naive-ui';
 import SnapParamDrawer from '@/components/Snapshot/SnapParamDrawer.vue';
 import SnapOptionDrawer from '@/components/Snapshot/SnapOptionDrawer.vue';
 import SnapshotSavePanel from '@/components/Snapshot/SnapshotSavePanel.vue';
@@ -181,79 +139,27 @@ import SnapshotExhibitCard from '@/components/Snapshot/SnapshotExhibitCard.vue';
 import { SnapExhibitModel, SnapCardExhibitModel } from '@/lib/Util';
 import Command from '@/lib/Command';
 import Snapshot from '@/lib/Snapshot';
+interface Props {
+  command: Command
+  edit_snap: Snapshot
+}
 
-export default defineComponent({
-  name: 'SnapshotCreatePanel',
-  components: {
-    SnapshotExhibitCard,
-    SnapshotSavePanel,
-    DismissCircle16Filled,
-    TextBulletListSquareEdit20Regular,
-    SnapParamDrawer,
-    SnapOptionDrawer,
-    // LineHorizontal120Filled,
-    // LineHorizontal520Regular,
-    // Copy20Regular,
-    // CameraAdd24Regular,
-  },
-  props: {
-    command: {
-      type: Command,
-    },
-    edit_snap: {
-      type: Snapshot,
-      default: () => null,
-    },
-  },
-  setup(props: any) {
-    const message = useMessage();
-    const cmd = computed(() => props.command);
-    const snap = ref(props.edit_snap);
-    watch(() => props.edit_snap, (newOne: Snapshot) => {
-      snap.value = newOne;
-    });
-    const check = ref(false);
-    const display_model = ref(SnapExhibitModel.ONELINE);
-    const command_str = computed(() => snap.value.dealCommandExhibit(display_model.value));
-
-    const show_param_drawer = ref(false);
-    const show_option_drawer = ref(false);
-    const show_save_panel = ref(false);
-
-    function handleClose() {
-      console.log('handle');
-    }
-
-    function copyCmd() {
-      navigator.clipboard
-        .writeText(command_str.value.join('\r'))
-        .then(() => {
-          message.info('复制成功');
-        }).catch(err => {
-          message.info('复制失败', err);
-        });
-    }
-    function reflashSnap() {
-      snap.value = snap.value.clone();
-      console.log('reflashSnap');
-    }
-    return {
-      SnapCardExhibitModel,
-      reflashSnap,
-      show_save_panel,
-      copyCmd,
-      SnapExhibitModel,
-      display_model,
-      command_str,
-      show_param_drawer,
-      show_option_drawer,
-      check,
-      cmd,
-      snap,
-      handleClose,
-    };
-  },
+const props = defineProps<Props>();
+const cmd = computed(() => props.command);
+const snap = ref(props.edit_snap);
+watch(() => props.edit_snap, (newOne: Snapshot) => {
+  snap.value = newOne;
 });
+
+const show_param_drawer = ref(false);
+const show_option_drawer = ref(false);
+const show_save_panel = ref(false);
+
+function reflashSnap() {
+  snap.value = snap.value.clone();
+  // console.log('reflashSnap');
+}
+
 </script>
 <style lang="scss">
 .command-exhibit {

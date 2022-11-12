@@ -2,7 +2,6 @@
   <n-layout has-sider sider-placement="right">
     <n-layout-content content-style="padding-right: 20px;">
       <Terminal></Terminal>
-      <!-- <SnapshotCreatePanel v-show="!exhibit_terminal" /> -->
     </n-layout-content>
     <n-layout-sider
       show-trigger="bar"

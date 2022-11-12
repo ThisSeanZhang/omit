@@ -4,8 +4,10 @@
     content-style="padding: 10px 30px 0px 10px;display: flex;flex-direction: column;">
       <CommandSearchBar v-on:selectCmd="handleUpdateCmd" />
       <SnapshotCreatePanel
-      v-if="select_cmd !== null"
-      :command="select_cmd" :edit_snap="edit_snap"/>
+        v-if="show_create_snap_panel"
+        :command="select_cmd"
+        :edit_snap="edit_snap"
+      />
       <div v-else style="flex: 1;display: flex;justify-content: center;align-items: center;">
         <n-result :title="i18n.TRANSLATE('snap.empty')" :description="i18n.TRANSLATE('snap.emptyDescription')">
           <template #icon>
@@ -49,7 +51,6 @@
 <script setup lang="ts">
 import {
   computed,
-  defineComponent,
   ref,
 } from 'vue';
 import { SnapCardExhibitModel, } from '@/lib/Util';
@@ -72,6 +73,8 @@ const snapshots = computed(() => storage.snapshots.filter(snap => (query_key.val
 
 const select_cmd = ref(null as unknown as Command);
 const edit_snap = ref(null as unknown as Snapshot);
+
+const show_create_snap_panel = computed(() => select_cmd.value !== undefined && edit_snap.value !== undefined)
 
 function handleUpdateCmd(updateCmd: Command) {
   select_cmd.value = updateCmd;
