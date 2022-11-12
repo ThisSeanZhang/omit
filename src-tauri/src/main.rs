@@ -41,8 +41,8 @@ use crate::repository::{
 use std::{collections::HashMap, sync::{Arc, Mutex}};
 
 fn main() {
-  let config = Config::init();
-  println!("config file: {:?}", config);
+  // let config = Config::init();
+  // println!("config file: {:?}", config);
 
   tauri::Builder::default()
     .invoke_handler(tauri::generate_handler![
@@ -71,7 +71,7 @@ fn main() {
     ])
     .manage(SnapConfig::new())
     // .manage(SSHState(Arc::new(Mutex::new(HashMap::new()))))
-    .manage(ConfigState(Arc::new(Mutex::new(config))))
+    // .manage(ConfigState(Arc::new(Mutex::new(config))))
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }
