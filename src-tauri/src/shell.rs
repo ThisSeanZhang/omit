@@ -40,7 +40,7 @@ pub async fn create_pty(window: Window, SSHInfo{ uid, username, ip, port, passwd
     // assert!(r.success());
     // println!("Result: {}", r.output());
     // ssh.close().await.unwrap();
-    println!("{} {} {} {}", username, ip, port, passwd);
+    // println!("{} {} {} {}", username, ip, port, passwd);
     let username = username.to_string();
     let passwd = passwd.to_string();
     let address = SocketAddr::from_str(format!("{}:{}", ip, port).as_str()).unwrap();
@@ -79,7 +79,7 @@ pub async fn create_pty(window: Window, SSHInfo{ uid, username, ip, port, passwd
         // .authenticate_publickey(user, Arc::new(key_pair))
       .await.map_err(|e| e.to_string())?;
       let mut channel = session.channel_open_session().await.map_err(|e| e.to_string())?;
-      println!("open channel");
+    //   println!("open channel");
       channel.request_pty(false, "xterm-256color", 129, 33, 0,0, &[
         (Pty::ECHO, 1),
         (Pty::ECHOCTL, 0),
@@ -92,7 +92,7 @@ pub async fn create_pty(window: Window, SSHInfo{ uid, username, ip, port, passwd
           while !session.is_closed() {
             tokio::select!{
                 Some(msg) = channel.wait() => {
-                    println!("wait: {:?}", msg);
+                    // println!("wait: {:?}", msg);
                     match msg {
                         russh::ChannelMsg::Data { ref data } => {
                             let a = std::str::from_utf8(&data);
