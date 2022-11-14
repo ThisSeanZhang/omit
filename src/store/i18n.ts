@@ -198,7 +198,7 @@ const dict: any = {
 }
 export const i18nStore = defineStore('i18n', () => {
 
-  const raw_laguage = ref('cn');
+  const raw_laguage = ref('en');
   const language = computed(() => raw_laguage.value);
 
   function TRANSLATE(info: string): string {
