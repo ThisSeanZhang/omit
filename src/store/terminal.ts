@@ -23,7 +23,7 @@ export const useStore = defineStore('terminals', () => {
     const use_term_id = term_id ? term_id : current_term_uid.value;
     const current_term = raw_terms.value.get(use_term_id);
     if (current_term === undefined) {
-      throw Error("找不到对应的会话");
+      throw Error("Can not find Session");
     }
     current_term_uid.value = use_term_id;
     return current_term;
@@ -32,7 +32,7 @@ export const useStore = defineStore('terminals', () => {
   async function CREAT_TREM(sessionName: string): Promise<Term> {
     console.log(raw_terms.value);
     const session_info = session.FIND_SESSION_INFO(sessionName);
-    if (session_info === undefined) throw Error("can not find session info to connect");
+    if (session_info === undefined) throw Error("Can not find session info to connect");
 
     const term = new Term();
     current_term_uid.value = term.uid;

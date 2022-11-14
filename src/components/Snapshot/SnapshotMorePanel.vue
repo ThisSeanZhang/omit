@@ -3,7 +3,7 @@
   @update:show="$emit('update:value', false)"
   to="#drawer-global"
   width="400px" placement="right">
-  <n-drawer-content title="更多" closable>
+  <n-drawer-content :title="i18n.TRANSLATE('snap.more')" closable>
 <n-list style="margin-top: 0px;">
   <!-- <template #header>
     <n-thing style="margin-top: 10px;">
@@ -32,7 +32,9 @@
   </template>
   <n-list-item>
     <template #prefix>
-      可选项
+      <n-ellipsis style="max-width: 50px">
+        {{i18n.TRANSLATE('snap.option')}}
+      </n-ellipsis>
     </template>
     <!-- <template #suffix>
       <n-button type="info" dashed @click="show_option_drawer = true">
@@ -69,7 +71,9 @@
   </n-list-item>
   <n-list-item>
     <template #prefix>
-      参数
+      <n-ellipsis style="max-width: 50px">
+        {{i18n.TRANSLATE('snap.param')}}
+      </n-ellipsis>
     </template>
     <n-space align="center" item-style="display: flex;">
       <n-button v-for="(param, index) in snapshot.param_value" :key="index"
@@ -108,45 +112,32 @@
 </n-drawer>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import {
-  defineComponent,
   ref,
-  getCurrentInstance,
-  computed,
   watch,
 } from 'vue';
 import {
-  DismissCircle20Regular,
+  TextBulletListSquareEdit20Regular,
   ArrowUp16Filled,
   ArrowDown16Filled,
 } from '@vicons/fluent';
 import SnapshotExhibitCard from '@/components/Snapshot/SnapshotExhibitCard.vue';
 import Snapshot from '@/lib/Snapshot';
 import { SnapCardExhibitModel } from '@/lib/Util';
+import i18nStore from '@/store/i18n';
 
-export default defineComponent({
-  name: 'SnapshotMorePanle',
-  components: {
-    SnapshotExhibitCard,
-  },
-  props: {
-    value: {
-      type: Boolean,
-      default: () => false,
-    },
-    snap: {
-      type: Snapshot,
-      require: false,
-    },
-  },
-  setup(props: any) {
-    const snapshot = ref(props.snap);
-    watch(() => props.snap, newOne => { snapshot.value = newOne; });
-    return {
-      SnapCardExhibitModel,
-      snapshot,
-    };
-  },
-});
+const i18n = i18nStore();
+interface Props {
+  value: Boolean
+  snap?: Snapshot
+}
+const props = withDefaults(defineProps<Props>(), {
+  value: () => false,
+  snap: () => new Snapshot()
+})
+
+const snapshot = ref(props.snap);
+watch(() => props.snap, newOne => { snapshot.value = newOne; });
+
 </script>

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { ref, computed, ComputedRef } from 'vue';
 const dict: any = {
   init: {
     welcome: {
@@ -44,17 +44,17 @@ const dict: any = {
     },
     backBtn: {
       cn: '返回',
-      en: 'back'
+      en: 'Back'
     },
     confirmBtn: {
       cn: '确认',
-      en: 'confirm'
+      en: 'Confirm'
     }
   },
   session: {
     filter: {
       cn: '筛选会话',
-      en: 'Filter the Session'
+      en: 'Filter The Session'
     },
     connectBtn: {
       cn: '连接',
@@ -62,15 +62,15 @@ const dict: any = {
     },
     deleteConfirm: {
       cn: '确定删除吗',
-      en: 'Confirm delete'
+      en: 'Confirm Delete'
     },
     name: {
       cn: '会话名称',
-      en: 'Session name'
+      en: 'Session Name'
     },
     ip: {
       cn: 'IP 地址',
-      en: 'Host name / IP Address'
+      en: 'Host Name / IP Address'
     },
     port: {
       cn: '端口',
@@ -86,23 +86,23 @@ const dict: any = {
     },
     save: {
       cn: '保存',
-      en: 'save'
+      en: 'Save'
     }
   },
   terminal: {
     tryAnother: {
       cn: '试个别的 ?',
-      en: 'try another?'
+      en: 'Try Another?'
     },
     tryAgain: {
       cn: '或者再试一次 ?',
-      en: 'or try again?'
+      en: 'OR Try Again?'
     }
   },
   snap: {
     filter: {
       cn: '过滤快照',
-      en: 'filter snapshot'
+      en: 'Filter Snapshot'
     },
     title: {
       cn: '指令预览',
@@ -110,11 +110,11 @@ const dict: any = {
     },
     singleLine: {
       cn: '单行模式',
-      嗯: 'Single line'
+      en: 'Single Line'
     },
     multipleLine: {
       cn: '多行模式',
-      嗯: 'Multiple line'
+      en: 'Multiple Line'
     },
     send: {
       cn: '发送',
@@ -198,18 +198,25 @@ const dict: any = {
 }
 export const i18nStore = defineStore('i18n', () => {
 
-  const laguage = ref('cn');
+  const raw_laguage = ref('cn');
+  const language = computed(() => raw_laguage.value);
 
   function TRANSLATE(info: string): string {
     const arr = info.split('.');
-    arr.push(laguage.value);
+    arr.push(raw_laguage.value);
     return arr.reduce((o, i) => {
       if (o) return o[i]
     }, dict);
   }
 
+  function SET_LAN(lang: string) {
+    raw_laguage.value = lang;
+  }
+
   return {
-    TRANSLATE
+    language,
+    TRANSLATE,
+    SET_LAN,
   };
 })
 
