@@ -41,18 +41,16 @@
 </template>
 <script setup lang="ts">
 import {
-  defineComponent,
   ref,
   watch,
 } from 'vue';
-import { sessionStore } from '@/store/session';
+import { useSessionStore } from '@/store/session';
 import { useRouter, useRoute } from 'vue-router';
-import { invoke } from '@tauri-apps/api/tauri';
 import OmitSession from '@/lib/OmitSession';
 import i18nStore from '@/store/i18n';
 
 const i18n = i18nStore();
-const store = sessionStore();
+const sessionStore = useSessionStore();
 const props = defineProps({
   session: OmitSession,
 })
@@ -60,13 +58,13 @@ const emit = defineEmits<{
   (e: 'edit_finish'): void
 }>()
 
-const omitSession = ref<OmitSession>(new OmitSession());
+const omitSession = ref<OmitSession>(new OmitSession({}));
 watch(() => props.session, (_) => {
   if (props.session !== undefined)
   omitSession.value = props.session;
 })
 function save(): void {
-  store.SAVE_SESSION(omitSession.value);
+  sessionStore.SAVE_SESSION(omitSession.value);
   emit('edit_finish');
 }
 </script>

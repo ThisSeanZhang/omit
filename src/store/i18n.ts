@@ -30,9 +30,17 @@ const dict: any = {
       cn: '确认配置',
       en: 'Confirm config'
     },
+    dataLocation: {
+      cn: '数据路径',
+      en: 'data store location'
+    },
     sessionLocation: {
       cn: '会话存放路径',
       en: 'Session store location'
+    },
+    snapLocation: {
+      cn: '快照存放路径',
+      en: 'Snapshot store location'
     },
     repoLocation: {
       cn: '公共仓库存放路径',
@@ -69,7 +77,7 @@ const dict: any = {
       en: 'Session Name'
     },
     ip: {
-      cn: 'IP 地址',
+      cn: '主机名 / IP 地址',
       en: 'Host Name / IP Address'
     },
     port: {

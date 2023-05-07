@@ -21,11 +21,10 @@
           </n-layout>
         </n-space>
       </n-layout-sider>
-        <n-layout-content
-          style="flex: 2"
-          :native-scrollbar='false'
-        >
-        <OmitSessionForm :session="currentChoice" @edit_finish="editFinish" />
+        <n-layout-content>
+          <n-space style="height: 100%;" align="center" >
+            <OmitSessionForm :session="currentChoice" @edit_finish="editFinish" />
+          </n-space>
         </n-layout-content>
     </n-layout>
   </n-space>
@@ -34,34 +33,34 @@
 <script setup lang="ts">
 import {
   computed,
-  defineComponent,
   onMounted,
   ref,
 } from 'vue';
-import { sessionStore } from '@/store/session';
+import { useSessionStore } from '@/store/session';
 import OmitSessionItem from '@/components/Session/OmitSessionItem.vue';
 import OmitSessionForm from '@/components/Session/OmitSessionForm.vue';
 import OmitSession from '@/lib/OmitSession';
 import i18nStore from '@/store/i18n';
 
 const i18n = i18nStore();
-const store = sessionStore();
-const fetch_wait = store.FETCH_SESSIONS();
+const sessionStore = useSessionStore();
+const fetch_wait = sessionStore.FETCH_SESSIONS();
 const queryStr = ref('');
 
 const exhibitSession = computed(() => {
-  let result = store.sessions;
+  let result = sessionStore.sessions;
   if (queryStr.value !== '') {
     result = result.filter(sess => sess.name.includes(queryStr.value))
   }
   return result;
 });
 
-const currentChoice = ref(new OmitSession());
+const currentChoice = ref(new OmitSession({}));
 
 function editFinish() {
-  currentChoice.value = new OmitSession();
+  currentChoice.value = new OmitSession({});
 }
+
 onMounted(async () => {
   await fetch_wait;
 });

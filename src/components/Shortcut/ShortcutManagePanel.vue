@@ -111,7 +111,7 @@ const storage = shortcutStore();
 const await_fetch = storage.FETCH_SHORTCURS();
 const shortcuts = ref<Shortcut[]>([]);
 
-const edit_shortcut = ref(new Shortcut());
+const edit_shortcut = ref(new Shortcut({}));
 const shortcut_save_panel = ref(false);
 
 onMounted(async () => {
@@ -119,7 +119,7 @@ onMounted(async () => {
   shortcuts.value = storage.shortcuts;
 });
 function edit(index: number|undefined) {
-  edit_shortcut.value = index === undefined ? new Shortcut() : shortcuts.value[index];
+  edit_shortcut.value = index === undefined ? new Shortcut({}) : shortcuts.value[index];
   console.log(edit_shortcut.value);
   shortcut_save_panel.value = true;
 }
@@ -131,7 +131,7 @@ function move(source: number, step: number | undefined) {
   }
 }
 function add(source: number) {
-  shortcuts.value.splice(source + 1, 0, new Shortcut());
+  shortcuts.value.splice(source + 1, 0, new Shortcut({}));
 }
 function dealClose() {
   console.log('close');

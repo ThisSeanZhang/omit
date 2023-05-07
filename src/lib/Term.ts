@@ -41,8 +41,10 @@ export default class Term {
     this.term.loadAddon(this.serializeAddon);
     this.term.loadAddon(this.fit);
     this.term.onData(data => {
-      // console.log(`send data${JSON.stringify(data)}`);
-      this.tauri_window.emit(this._data_emit_name, data);
+      console.log(`send data${JSON.stringify(data)}`);
+      this.tauri_window.emit(this._data_emit_name, {
+        Message: data
+      });
     });
     // this.tauri_window.listen(`action-from-backend_${this._uid}`, (e: Event<{data: Uint8Array}>) => {
     //   this.term.write(e.payload.data, () => {
@@ -113,7 +115,7 @@ export default class Term {
       this.term.clear();
       this.term.reset();
       await invoke('create_pty', {
-        SSHInfo: {
+        sshInfo: {
           uid: this._uid,
           ...this._session_info,
         },
@@ -133,14 +135,14 @@ export default class Term {
     const action_name = `resize-from-front_${this._uid}`;
     this.term.onResize((a:{cols: number, rows: number}) => {
       // console.log(`on resize: ${JSON.stringify(a)}`);
-      this.tauri_window.emit(action_name, JSON.stringify({
+      this.tauri_window.emit(action_name, {
         SizeChange: {
           width: a.cols,
           height: a.rows,
-          width_px: null,
-          height_px: null,
+          // width_px: null,
+          // height_px: null,
         },
-      }));
+      });
     });
   }
 

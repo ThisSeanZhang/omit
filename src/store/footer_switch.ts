@@ -10,9 +10,9 @@ export class FooterSwitch {
   constructor(obj: {
     terminal?: Boolean, snapshot?: Boolean, shortcut?: Boolean,
   }) {
-    this.terminal = obj.terminal === undefined ? false : obj.terminal;
-    this.snapshot = obj.snapshot === undefined ? false : obj.snapshot;
-    this.shortcut = obj.shortcut === undefined ? false : obj.shortcut;
+    this.terminal = obj.terminal ?? false
+    this.snapshot = obj.snapshot ?? false
+    this.shortcut = obj.shortcut ?? false
   }
 }
 
@@ -23,6 +23,12 @@ export const footerSwitchStore = defineStore('footer-switch', () => {
 
   function SET_CURRENT_WIEW(name: string) {
     switch (name) {
+      case 'Welcome': {
+        raw_switch.value = new FooterSwitch({
+          snapshot: true
+        });
+        break;
+      };
       case 'TerminalWorkView': {
         raw_switch.value = new FooterSwitch({
           snapshot: true,

@@ -4,9 +4,10 @@ use std::path::Path;
 use std::str::FromStr;
 use std::sync::Arc;
 use std::time::Duration;
-use anyhow::{Result as AyResult, Ok};
+use anyhow::{Result as AyResult};
 use crossbeam::channel::unbounded;
 use futures::select;
+use log::debug;
 // use log::info;
 use russh::*;
 use russh_keys::*;
@@ -48,18 +49,28 @@ pub async fn create_pty(window: Window, SSHInfo{ uid, username, ip, port, passwd
     let line_send = action_send.clone();
     let front_listen_id = window.listen(format!("data-from-front_{}", uid), move |event| {
         // trx.send(event.payload().unwrap().to_string());
-        let message = event.payload().unwrap().to_string();
-        // println!("message {}", message);
-        let clone_again = line_send.clone();
-        tokio::spawn(async move {
-            clone_again.send(ChannelAction::Message(message)).await;
-        });
+        // let message = event.payload().unwrap().to_string();
+        // // println!("message {}", message);
+        // let clone_again = line_send.clone();
+        // tokio::spawn(async move {
+        //     clone_again.send(ChannelAction::Message(message)).await;
+        // });
+        if let Some(size_data) = event.payload().clone() {
+            println!("{size_data:?}");
+            let message = serde_json::from_str(size_data).unwrap();
+            let clone_again = line_send.clone();
+            tokio::spawn(async move {
+                clone_again.send(message).await;
+            });
+        }
+
         // line_send.send(ChannelAction::Message(message));
         // line_send.blocking_send(ChannelAction::Message(message)).unwrap();
         // println!("got window event-name with payload {:?}", event.payload());
     });
     let resize_listen_id = window.listen(format!("resize-from-front_{}", uid), move|event | {
         if let Some(size_data) = event.payload().clone() {
+            println!("{size_data:?}");
             let message = serde_json::from_str(size_data).unwrap();
             let clone_again = action_send.clone();
             tokio::spawn(async move {
@@ -73,6 +84,7 @@ pub async fn create_pty(window: Window, SSHInfo{ uid, username, ip, port, passwd
       };
       let config = Arc::new(config);
       let mut session = client::connect(config, address,  Client {}).await.map_err(|e| e.to_string())?;
+      debug!("start auth");
       let _auth_res = session
     //   .authenticate_none(username)
       .authenticate_password(username, passwd)
@@ -87,6 +99,7 @@ pub async fn create_pty(window: Window, SSHInfo{ uid, username, ip, port, passwd
         (Pty::TTY_OP_OSPEED, 14400),
         (Pty::TTY_OP_END, 1)]).await.unwrap();
       channel.request_shell(true).await.unwrap();
+    //   let a = channel.request_subsystem(true, "ftp");
       let send_emit_action_name = format!("action-from-backend_{}", uid);
     tokio::spawn(async move {
           while !session.is_closed() {
@@ -173,32 +186,48 @@ pub async fn create_pty(window: Window, SSHInfo{ uid, username, ip, port, passwd
 
 struct Client {}
 
+use async_trait::async_trait;
+
+#[async_trait]
 impl client::Handler for Client {
     type Error = russh::Error;
-    type FutureUnit = futures::future::Ready<Result<(Self, client::Session), Self::Error>>;
-    type FutureBool = futures::future::Ready<Result<(Self, bool), Self::Error>>;
 
-    fn finished_bool(self, b: bool) -> Self::FutureBool {
-      println!("finished_bool: {}", b);
-        futures::future::ready(Result::Ok((self, b)))
-    }
-    fn finished(self, session: client::Session) -> Self::FutureUnit {
-        futures::future::ready(Result::Ok((self, session)))
-    }
-    fn check_server_key(self, _server_public_key: &key::PublicKey) -> Self::FutureBool {
-        self.finished_bool(true)
+    async fn check_server_key(
+        self,
+        _server_public_key: &key::PublicKey,
+    ) -> anyhow::Result<(Self, bool), Self::Error> {
+        debug!("server_key: {_server_public_key:?}");
+        Ok((self, true))
     }
 }
+
+// impl client::Handler for Client {
+//     type Error = russh::Error;
+//     type FutureUnit = Result<(Self, client::Session), Self::Error>;
+//     type FutureBool = Result<(Self, bool), Self::Error>;
+
+//     async fn finished_bool(self, b: bool) -> Self::FutureBool {
+//       println!("finished_bool: {}", b);
+//         futures::future::ready(Result::Ok((self, b)))
+//     }
+//     fn finished(self, session: client::Session) -> Self::FutureUnit {
+//         futures::future::ready(Result::Ok((self, session)))
+//     }
+//     fn check_server_key(self, _server_public_key: &key::PublicKey) -> Self::FutureBool {
+//         self.finished_bool(true)
+//     }
+// }
+
 
 pub struct Session {
     session: client::Handle<Client>,
 }
 
 impl Session {
-    async fn connect<P: AsRef<Path>>(
+    async fn connect<P: AsRef<Path>, A: tokio::net::ToSocketAddrs>(
         key_path: P,
         user: impl Into<String>,
-        addr: SocketAddr,
+        addr: A,
     ) -> AyResult<Self> {
         // let key_pair = load_secret_key(key_path, None)?;
         let config = client::Config {

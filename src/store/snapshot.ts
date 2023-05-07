@@ -1,16 +1,12 @@
 import { invoke } from '@tauri-apps/api/tauri';
-import { sep } from '@tauri-apps/api/path';
 import { defineStore } from 'pinia';
 import Snapshot from '@/lib/Snapshot';
-import { useStore as configStore } from './config'
+import { useSettingStore } from './setting'
 import { computed, ref } from 'vue';
-
-
-const SNAPSHOT_FILE = '_snapshots.json';
 
 export const snapStore = defineStore('snap', () => {
   // util
-  const config = configStore();
+  const settingStore = useSettingStore();
 
   // const
   const raw_snaps = ref<Snapshot[]>([]);
@@ -21,39 +17,25 @@ export const snapStore = defineStore('snap', () => {
   // actions
   async function FETCH_SNAPSHOTS(): Promise<void> {
     try {
-      // console.log(`${config.userRepoPath}${sep}${SNAPSHOT_FILE}`);
-      let snaps_data = await invoke<string>('read_file', {
-        filePath: `${config.userRepoPath}${sep}${SNAPSHOT_FILE}`,
+      // console.log(`${settingStore.userRepoPath}${sep}${SNAPSHOT_FILE}`);
+      let snaps_data = await invoke<string[]>('read_snapshots', {
+        path: settingStore.setting.snapshots_path,
       });
       // console.log(`snaps_data: ${snaps_data}`);
-      raw_snaps.value = JSON.parse(snaps_data).map(Snapshot.fromObj);
+      raw_snaps.value = snaps_data.map((e: string) => new Snapshot(JSON.parse(e)));
     } catch (e) {
       console.log(e);
     }
   }
 
-  function GET_COPY_WITHOUT(snap_id: string): [Snapshot[], number] {
-    const delete_index = raw_snaps.value.findIndex(sp => sp.snap_id === snap_id);
-    const copy = raw_snaps.value.slice();
-    if (delete_index > -1) copy.splice(delete_index, 1);
-    return [copy, delete_index];
-  }
-  async function  SAVE_SNAPSHOTS(snap: Snapshot): Promise<void> {
+  async function SAVE_SNAPSHOTS(snap: Snapshot): Promise<void> {
     try {
-      const [save, index] = GET_COPY_WITHOUT(snap.snap_id);
-      console.log(`fined info: ${JSON.stringify(save)}, index: ${index}`);
-      if (index > -1) {
-        save.splice(index, 0, snap);
-      } else {
-        save.push(snap);
-      }
-      await invoke<string>('create_file', {
-        dirPath: config.userRepoPath,
-        fileName: SNAPSHOT_FILE,
-        data: JSON.stringify(save, null, 2)
+      await invoke<string>('append_snapshots', {
+        path: settingStore.setting.snapshots_path,
+        snapshots: [[snap.snap_id, JSON.stringify(snap)]]
       });
       // await invoke<string>('save_snapshots', { snaps: JSON.stringify(save, null, 2) });
-      raw_snaps.value = save;
+      raw_snaps.value.push(snap);
     } catch (e) {
       console.log(e);
     }
@@ -61,15 +43,12 @@ export const snapStore = defineStore('snap', () => {
 
   async function REMOVE_SNAPSHOTS(snap_id: string): Promise<void> {
     try {
-      const [save, _] = GET_COPY_WITHOUT(snap_id);
-      // if (index < 0) return;
-      // save.splice(index, 1);
-      await invoke<string>('create_file', {
-        dirPath: config.userRepoPath,
-        fileName: SNAPSHOT_FILE,
-        data: JSON.stringify(save, null, 2)
+      await invoke<string>('delete_snapshot', {
+        path: settingStore.setting.snapshots_path,
+        id: snap_id
       });
-      raw_snaps.value = save;
+      const delete_index = raw_snaps.value.findIndex(sp => sp.snap_id === snap_id);
+      raw_snaps.value.splice(delete_index, 1);
       // this.raw_snaps.splice(delete_index, 1);
     } catch (e) {
       console.log(e);

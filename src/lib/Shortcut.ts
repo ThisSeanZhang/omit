@@ -1,19 +1,21 @@
+import { guid } from "./Util"
+
 export default class Shortcut {
-  create_time: number;
-  title: string;
-  value: string;
+  id: string
+  create_time: number
+  title: string
+  value: string
 
-  constructor() {
-    this.create_time = new Date().getTime();
-    this.title = '';
-    this.value = '';
+  constructor(o: {
+    id?: string
+    create_time?: number;
+    title?: string;
+    value?: string;
+  }) {
+    this.id = guid();
+    this.create_time = o.create_time ?? new Date().getTime();
+    this.title = o.title ?? '';
+    this.value = o.value ?? '';
   }
 
-  static fromObj(obj: any): Shortcut {
-    const sc = new Shortcut();
-    sc.create_time = obj.create_time;
-    sc.title = obj.title;
-    sc.value = obj.value;
-    return sc;
-  }
 }

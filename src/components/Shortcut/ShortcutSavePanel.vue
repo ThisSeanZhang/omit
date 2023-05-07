@@ -38,7 +38,7 @@ export default defineComponent({
     },
     shortcut: {
       type: Shortcut,
-      default: () => new Shortcut(),
+      default: () => new Shortcut({}),
     },
   },
   setup(props) {

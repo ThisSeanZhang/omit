@@ -7,7 +7,9 @@ pub enum ChannelAction {
     SizeChange {
         width: u32,
         height: u32,
+        #[serde(default)]
         width_px: Option<i32>,
+        #[serde(default)]
         height_px: Option<i32>
     },
     EXIT,

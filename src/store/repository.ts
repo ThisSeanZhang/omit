@@ -3,12 +3,12 @@ import { sep } from '@tauri-apps/api/path';
 import { defineStore } from 'pinia';
 import Repo from '@/lib/Repo';
 import Command from '@/lib/Command';
-import { useStore as configStore } from './config'
+import { useSettingStore } from './setting'
 import { computed, ref } from 'vue';
 
 export const repoStore = defineStore('repositpry', () => {
   // util
-  const config = configStore();
+  const settingStore = useSettingStore();
 
   // const
   const raw_repo_dirs = ref<string[]>([]);
@@ -21,7 +21,7 @@ export const repoStore = defineStore('repositpry', () => {
   async function FETCH_REPOS(): Promise<void> {
     try {
       const repo_dirs = await invoke<string[]>('list_dir_all', {
-        dirPath: config.reposPath,
+        dirPath: settingStore.setting.command_path,
       });
       raw_repo.value = await Promise.all(
         repo_dirs.map(repo_name => 
@@ -35,11 +35,11 @@ export const repoStore = defineStore('repositpry', () => {
 
   async function read_single_repo(repo_name: string): Promise<Repo> {
     // console.log(`read repo: ${repo_name}`);
-    const repo_path = `${config.reposPath}${sep}${repo_name}`;
+    const repo_path = `${settingStore.setting.command_path}${sep}${repo_name}`;
     const repo = new Repo(repo_name);
     try {
       const repo_dir_list = await invoke<string[]>('list_dir_only_folder', {
-        dirPath: `${config.reposPath}${sep}${repo_name}`,
+        dirPath: `${settingStore.setting.command_path}${sep}${repo_name}`,
       });
       
       const repo_cmd_dirs = repo_dir_list

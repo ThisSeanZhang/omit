@@ -18,7 +18,7 @@
         :show-icon="false"
         @positive-click="clickOK"
         @negative-click="clickNo"
-        positive-text="NO!!!" negative-text="YES"
+        positive-text="YES" negative-text="Cancel"
       >
         <!-- <template #icon>
           <n-icon color="red">
@@ -40,7 +40,6 @@
 </template>
 <script setup lang="ts">
 import {
-  defineComponent,
   ref,
   computed,
 } from 'vue';
@@ -51,7 +50,9 @@ import {
 } from '@vicons/fluent';
 import OmitSession from '@/lib/OmitSession';
 import i18nStore from '@/store/i18n';
+import { useSessionStore } from '@/store/session'
 
+const sessionStore = useSessionStore();
 const i18n = i18nStore();
 const props = defineProps({
   session: OmitSession,
@@ -75,6 +76,9 @@ function reviewOmitSessionConfig():void {
 }
 
 function clickOK(): void {
+  if (props.session !== undefined) {
+    sessionStore.DELETE_SESSION(props.session.id)
+  }
   console.log('ok');
 }
 

@@ -25,21 +25,25 @@
   </template>
 <script setup lang="ts">
 import {
-  defineComponent,
   ref,
+  onMounted,
 } from 'vue';
 import { darkTheme as theme } from 'naive-ui';
 import { useRouter, useRoute } from 'vue-router';
 // import { invoke } from '@tauri-apps/api/tauri';
 import HeadBar from '@/views/HeadBar.vue';
 import FooterBar from '@/views/FooterBar.vue';
-import { useStore as configStore } from '@/store/config';
+import { useSettingStore } from '@/store/setting';
 
 const router = useRouter();
-const config = configStore();
+const settingStore = useSettingStore();
 
-if (config.needToInit) {
+onMounted(async() => {
+  try {
+    await settingStore.FETCH_SYSTEM_SETTING();
+  } catch {
     router.push({ name: 'InitView'});
-}
+  }
+})
 </script>
 

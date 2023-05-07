@@ -39,7 +39,7 @@ interface Props {
 }
 const props = withDefaults(defineProps<Props>(), {
   value: () => false,
-  snap: () => new Snapshot(),
+  snap: () => new Snapshot({}),
 })
 const emit = defineEmits<{
   (e: 'reflash:snap'): void

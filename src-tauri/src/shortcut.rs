@@ -1,35 +1,33 @@
 use std::path::PathBuf;
+use crate:: error::IPCError;
+use crate::database::SaveUnit;
 
-use tauri::State;
-
-use crate::{config::ConfigState, util};
-
-const SHORTCUT_FILE_NAME: &'static str = "_shortcuts.json";
+// 先默认存一下
+const DEFAULT_SHORTCUT_FILE_NAME: &str = "shortcuts-0";
 
 #[tauri::command]
-pub fn read_shortcuts(config: State<ConfigState>) -> Result<String, String> {
-  // Ok(snap_config.read_str(snap_config.config_name()).unwrap_or("".to_string()))
-  let path = if let Ok(conf) = config.0.lock() {
-    conf.repos_folder.clone()
-  } else {
-    return Err("get config error".to_string());
-  };
-  let mut path = PathBuf::from(path);
-  match util::read_file(&path, SHORTCUT_FILE_NAME) {
-    Ok(data) => Ok(data),
-    Err(e) => Err(e.message),
+pub fn append_shortcuts(path: String, shortcuts: Vec<(String, String)>) -> Result<(), IPCError> {
+
+  let shortcuts_floder = PathBuf::from(path);
+
+  if !shortcuts_floder.exists() {
+    std::fs::create_dir_all(&shortcuts_floder)?;
+  } else if shortcuts_floder.is_file() {
+    return Err(IPCError::SomeThingWrong("shortcut folder should a folder".to_owned()));
   }
+  let note_path = shortcuts_floder.join(DEFAULT_SHORTCUT_FILE_NAME);
+  SaveUnit::append(&note_path, shortcuts)
+}
+
+
+#[tauri::command]
+pub fn read_shortcuts(path: String) -> Result<Vec<String>, IPCError> {
+  let shortcuts_floder = PathBuf::from(path).join(DEFAULT_SHORTCUT_FILE_NAME);
+  SaveUnit::list(&shortcuts_floder)
 }
 
 #[tauri::command]
-pub fn save_shortcuts(config: State<ConfigState>, snaps: String) -> Result<String, String> {
-  let path = if let Ok(conf) = config.0.lock() {
-    conf.repos_folder.clone()
-  } else {
-    return Err("get config error".to_string());
-  };
-  match util::save_file(&PathBuf::from(path), SHORTCUT_FILE_NAME, &snaps) {
-    Ok(_) => Ok("success".to_string()),
-    Err(e) => Err(e.message),
-  }
+pub fn delete_shortcut(path: String, id: Option<String>) -> Result<(), IPCError> {
+  let shortcuts_floder = PathBuf::from(path).join(DEFAULT_SHORTCUT_FILE_NAME);
+  SaveUnit::delete(&shortcuts_floder, id)
 }

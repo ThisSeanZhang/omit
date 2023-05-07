@@ -134,7 +134,7 @@ interface Props {
 }
 const props = withDefaults(defineProps<Props>(), {
   value: () => false,
-  snap: () => new Snapshot()
+  snap: () => new Snapshot({})
 })
 
 const snapshot = ref(props.snap);

@@ -19,18 +19,26 @@ export default class Snapshot {
   option_value: Array<SnapOption>;
   param_value: Array<SnapParam>;
 
-  constructor() {
-    this.snap_id = guid();
-    this.title = '';
-    this.command_name = '';
-    this.command_id = '';
-    this.description = '';
-    this.param_value = [];
-    this.option_value = [];
+  constructor(o: {
+    snap_id?: string;
+    title?: string;
+    command_name?: string;
+    command_id?: string;
+    description?: string;
+    option_value?: Array<SnapOption>;
+    param_value?: Array<SnapParam>;
+  }) {
+    this.snap_id =  o.snap_id ?? guid();
+    this.title = o.title ?? '';
+    this.command_name = o.command_name ?? '';
+    this.command_id = o.command_id ?? '';
+    this.description = o.description ?? '';
+    this.option_value = o.option_value ?? [];
+    this.param_value = o.param_value ?? [];
   }
 
   clone() :Snapshot {
-    const snap = new Snapshot();
+    const snap = new Snapshot({});
     snap.snap_id = this.snap_id ?? guid();
     snap.title = this.title;
     snap.command_name = this.command_name;
@@ -42,23 +50,11 @@ export default class Snapshot {
   }
 
   static fromCmd(cmd: Command): Snapshot {
-    const snap = new Snapshot();
+    const snap = new Snapshot({});
     snap.command_name = cmd.command_name;
     snap.command_id = cmd.command_id;
     // snap.option_value = SnapOption.default();
     // snap.param_value = SnapParam.default();
-    return snap;
-  }
-
-  static fromObj(obj: any): Snapshot {
-    const snap = new Snapshot();
-    snap.snap_id = obj.snap_id ?? guid();
-    snap.title = obj.title;
-    snap.command_name = obj.command_name;
-    snap.command_id = obj.command_id;
-    snap.description = obj.description;
-    snap.option_value = obj.option_value.map(SnapOption.fromObj);
-    snap.param_value = obj.param_value.map(SnapParam.fromObj);
     return snap;
   }
 
