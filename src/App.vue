@@ -6,17 +6,9 @@
           <HeadBar class="title" />
         </n-layout-header>
   
-        <!-- :native-scrollbar="false" -->
-        <router-view id="drawer-global" class="contents"/>
-        <!-- <n-layout position="absolute" style="top: 30px; bottom: 30px;">
-          <router-view />
-        </n-layout> -->
-        <!-- <n-layout-content
-          position="absolute"
-          style="top: 30px; bottom: 30px;"
-           >
+        <n-layout id="drawer-global" class="contents">
           <router-view/>
-        </n-layout-content> -->
+        </n-layout>
   
         <n-layout-footer style="height: 36px;"><footer-bar></footer-bar></n-layout-footer>
     <!-- </n-space> -->

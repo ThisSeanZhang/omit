@@ -1,5 +1,5 @@
 <template>
-  <n-layout has-sider sider-placement="right">
+  <n-layout style="height: 100%;" has-sider sider-placement="right">
     <n-layout-content content-style="padding-right: 20px;">
       <Terminal></Terminal>
     </n-layout-content>

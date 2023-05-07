@@ -1,5 +1,5 @@
 <template>
-  <n-layout has-sider sider-placement="right">
+  <n-layout style="height: 100%;" has-sider sider-placement="right">
     <n-layout-content
     content-style="padding: 10px 30px 0px 10px;display: flex;flex-direction: column;">
       <CommandSearchBar v-on:selectCmd="handleUpdateCmd" />

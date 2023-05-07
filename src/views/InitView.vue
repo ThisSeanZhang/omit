@@ -1,5 +1,5 @@
 <template>
-<n-layout size="large" content-style="padding: 20px;">
+<n-layout style="height: 100%;" size="large" content-style="padding: 20px;">
   <n-layou>
     <n-steps :current="(current as number)">
       <n-step

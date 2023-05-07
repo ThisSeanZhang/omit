@@ -2,6 +2,7 @@
 <n-drawer :show="value"
   @update:show="$emit('update:value', false)"
   :on-after-leave="dealClose"
+  to="#drawer-global"
   width="60%" placement="left">
   <n-drawer-content closable>
     <template #header>

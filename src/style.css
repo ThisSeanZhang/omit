@@ -15,7 +15,7 @@ html, body , #app {
 .contents {
   height: calc(100% - 66px);
   position: relative;
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 /* // .n-config-provider{
 //   height: 100%;
