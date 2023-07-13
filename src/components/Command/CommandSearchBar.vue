@@ -6,6 +6,7 @@ import {
 } from 'vue';
 // import { invoke } from '@tauri-apps/api/tauri';
 import useCommandStore from '@/store/command';
+import { useRouter, useRoute } from 'vue-router';
 import Command from '@/lib/Command'
 import { Add } from '@vicons/carbon'
 
@@ -13,6 +14,8 @@ const emit = defineEmits<{
   (event: 'selectCmd', cmd: Command): void
 }>()
 
+const router = useRouter();
+const route = useRoute();
 const commandStore = useCommandStore();
 const cmd_query_key = ref('');
 const raw_cmds = ref([]);
@@ -54,10 +57,13 @@ function selectValue(value: string) {
   }
 }
 
+function toCreateCommand() {
+  router.push({ name: 'CommandCreateView'})
+}
 </script>
 <template>
   <n-input-group>
-    <n-button ghost >
+    <n-button ghost @click="toCreateCommand()">
       <n-icon>
         <Add />
       </n-icon>
